@@ -1,13 +1,25 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\clean\\source\\repos\\backend\\",
+  "WorkspaceRootPath": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{9BBDA199-27EA-44EA-96BF-76E66F8171F0}|backend.csproj|c:\\users\\clean\\source\\repos\\backend\\weatherforecast.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{9BBDA199-27EA-44EA-96BF-76E66F8171F0}|backend.csproj|c:\\users\\clean\\documents\\github\\wpr\\backend\\models\\huuraanvraag.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9BBDA199-27EA-44EA-96BF-76E66F8171F0}|backend.csproj|solutionrelative:models\\huuraanvraag.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9BBDA199-27EA-44EA-96BF-76E66F8171F0}|backend.csproj|c:\\users\\clean\\documents\\github\\wpr\\backend\\models\\klant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{9BBDA199-27EA-44EA-96BF-76E66F8171F0}|backend.csproj|solutionrelative:models\\klant.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9BBDA199-27EA-44EA-96BF-76E66F8171F0}|backend.csproj|c:\\users\\clean\\documents\\github\\wpr\\backend\\backend.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{9BBDA199-27EA-44EA-96BF-76E66F8171F0}|backend.csproj|solutionrelative:backend.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{9BBDA199-27EA-44EA-96BF-76E66F8171F0}|backend.csproj|c:\\users\\clean\\documents\\github\\wpr\\backend\\weatherforecast.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9BBDA199-27EA-44EA-96BF-76E66F8171F0}|backend.csproj|solutionrelative:weatherforecast.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{9BBDA199-27EA-44EA-96BF-76E66F8171F0}|backend.csproj|c:\\users\\clean\\source\\repos\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{9BBDA199-27EA-44EA-96BF-76E66F8171F0}|backend.csproj|c:\\users\\clean\\documents\\github\\wpr\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{9BBDA199-27EA-44EA-96BF-76E66F8171F0}|backend.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
@@ -23,23 +35,62 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "HuurAanvraag.cs",
+              "DocumentMoniker": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\Models\\HuurAanvraag.cs",
+              "RelativeDocumentMoniker": "Models\\HuurAanvraag.cs",
+              "ToolTip": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\Models\\HuurAanvraag.cs*",
+              "RelativeToolTip": "Models\\HuurAanvraag.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-18T11:52:29.78Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Klant.cs",
+              "DocumentMoniker": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\Models\\Klant.cs",
+              "RelativeDocumentMoniker": "Models\\Klant.cs",
+              "ToolTip": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\Models\\Klant.cs*",
+              "RelativeToolTip": "Models\\Klant.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-11-18T11:48:14.728Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "backend",
+              "DocumentMoniker": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\backend.csproj",
+              "RelativeDocumentMoniker": "backend.csproj",
+              "ToolTip": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\backend.csproj*",
+              "RelativeToolTip": "backend.csproj*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2024-11-18T10:56:43.509Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "WeatherForecast.cs",
-              "DocumentMoniker": "C:\\Users\\clean\\source\\repos\\backend\\WeatherForecast.cs",
+              "DocumentMoniker": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\WeatherForecast.cs",
               "RelativeDocumentMoniker": "WeatherForecast.cs",
-              "ToolTip": "C:\\Users\\clean\\source\\repos\\backend\\WeatherForecast.cs",
+              "ToolTip": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\WeatherForecast.cs",
               "RelativeToolTip": "WeatherForecast.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-11-04T10:36:26.175Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\clean\\source\\repos\\backend\\Program.cs",
+              "DocumentMoniker": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\clean\\source\\repos\\backend\\Program.cs",
+              "ToolTip": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\Program.cs",
               "RelativeToolTip": "Program.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
