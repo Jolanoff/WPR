@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\clean\\source\\repos\\backend\\backend.csproj": {}
+    "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\backend.csproj": {}
   },
   "projects": {
-    "C:\\Users\\clean\\source\\repos\\backend\\backend.csproj": {
+    "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\backend.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\clean\\source\\repos\\backend\\backend.csproj",
+        "projectUniqueName": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\backend.csproj",
         "projectName": "backend",
-        "projectPath": "C:\\Users\\clean\\source\\repos\\backend\\backend.csproj",
+        "projectPath": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\backend.csproj",
         "packagesPath": "C:\\Users\\clean\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\clean\\source\\repos\\backend\\obj\\",
+        "outputPath": "C:\\Users\\clean\\Documents\\GitHub\\WPR\\backend\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\clean\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -46,6 +46,30 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.0, )"
+            },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.6.2, )"

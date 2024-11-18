@@ -1,0 +1,61 @@
+# Build Folders
+bin/
+obj/
+
+# User-Specific Files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Temporary Files
+.vs/
+
+# Logs
+*.log
+
+# Generated Files
+*.nupkg
+*.snupkg
+*.swagger
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+
+# IDE Config Files
+.idea/
+.vscode/
+
+# Packages
+packages/
+*.psmdcp
+
+# Publish Output
+.publish/
+
+# Environment Variables
+.env
+.env.*
+
+# Resharper Files
+_ReSharper*/
+*.DotSettings.user
+
+# Rider Files
+.idea/
+.idea_modules/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Entity Framework Migrations
+migrations/
+
+# Configuration Files
+appsettings*.json
+secrets.json
+
+# Other Ignored Files
+wwwroot/
+node_modules/
