@@ -1,4 +1,4 @@
-﻿namespace backend.Models.Klanten.Bedrijf
+﻿namespace backend.Models.Klanten.Bedrijven
 {
     public class WagenparkBeheerder
     {

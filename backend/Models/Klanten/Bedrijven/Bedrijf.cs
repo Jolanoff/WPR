@@ -1,6 +1,4 @@
-﻿using backend.Models.Klanten.Bedrijf;
-
-namespace backend.Models.Klanten.Bedrijven
+﻿namespace backend.Models.Klanten.Bedrijven
 {
     public class Bedrijf
     {

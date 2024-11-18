@@ -1,7 +1,9 @@
 ﻿using backend.Models.Klanten;
 using backend.Models.Voertuigen;
 
-namespace backend.Models
+
+namespace backend.Models.Aanvragen
+
 {
     public class HuurAanvraag
     {
