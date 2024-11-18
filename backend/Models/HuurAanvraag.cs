@@ -1,4 +1,5 @@
-﻿using backend.Models.Voertuigen;
+﻿using backend.Models.Klanten;
+using backend.Models.Voertuigen;
 
 namespace backend.Models
 {

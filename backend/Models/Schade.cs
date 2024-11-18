@@ -1,4 +1,5 @@
-﻿using backend.Models.Voertuigen;
+﻿using backend.Models.Klanten;
+using backend.Models.Voertuigen;
 
 namespace backend.Models
 {
@@ -10,7 +11,7 @@ namespace backend.Models
         private string[] Fotos { get; set; }
         private int ReparatieKosten { get; set; }
 
-        private Klant klant {  get; set; }
+        private HuurAanvraag HuurAanvraag { get; set; }
         private Voertuig Voertuig {  get; set; }
     }
 }
