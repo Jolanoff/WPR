@@ -1,6 +1,6 @@
 ﻿namespace backend.Models.Klanten
 {
-    public class ParticuliereHuurder
+    public class ParticuliereHuurder : Klant
     {
     }
 }

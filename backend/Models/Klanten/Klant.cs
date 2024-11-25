@@ -1,4 +1,5 @@
-﻿namespace backend.Models.Klanten
+﻿using backend.Models.Aanvragen;
+namespace backend.Models.Klanten
 {
     public class Klant
     {
