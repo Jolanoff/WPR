@@ -1,3 +1,4 @@
+using backend.DbContext;
 using backend.Extentions;
 using backend.Models.Gebruiker;
 using Microsoft.AspNetCore.Identity;
@@ -17,7 +18,8 @@ namespace backend
             builder.Services.AddSwaggerGen();
 
             // Add Authentication and Authorization
-            builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme);
+            builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme)
+                .AddBearerToken(IdentityConstants.BearerScheme);
             builder.Services.AddAuthorization();
 
             // Add Identity and Database Context
@@ -36,11 +38,11 @@ namespace backend
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-                app.ApplyMigrations(); // Custom extension for auto-migrations
+                //app.ApplyMigrations(); 
             }
 
             app.UseHttpsRedirection();
-            app.UseAuthentication(); // Ensure authentication middleware is added
+            app.UseAuthentication(); 
             app.UseAuthorization();
 
             app.MapControllers();

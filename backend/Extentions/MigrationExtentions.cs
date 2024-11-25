@@ -1,4 +1,5 @@
-﻿using backend.Models.Gebruiker;
+﻿
+using backend.DbContext;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Extentions
