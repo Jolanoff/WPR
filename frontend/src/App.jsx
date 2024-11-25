@@ -1,13 +1,11 @@
-import { useState } from "react";
+import LoginPage from "./pages/LoginPage";
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  return (
-    <>
-      <h1 className="text-4xl">Hello world</h1>
-    </>
-  );
+    return (
+        <>
+            <LoginPage />
+        </>
+    );
 }
 
 export default App;
