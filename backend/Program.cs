@@ -12,6 +12,20 @@ namespace backend
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp", policy =>
+                {
+                    policy.WithOrigins("http://localhost:3000") // React app origin
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials(); // Required for cookies/auth headers
+                });
+            });
+
+            
+
             // Add services to the container
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
@@ -24,11 +38,12 @@ namespace backend
 
             // Add Identity and Database Context
             builder.Services.AddIdentityCore<User>()
-                .AddEntityFrameworkStores<ApplicationsDbContext>()
-                .AddApiEndpoints();
+            .AddSignInManager<SignInManager<User>>()
+            .AddEntityFrameworkStores<ApplicationsDbContext>()
+            .AddApiEndpoints();
 
             builder.Services.AddDbContext<ApplicationsDbContext>(options =>
-     options.UseMySQL(builder.Configuration.GetConnectionString("Database")));
+            options.UseMySQL(builder.Configuration.GetConnectionString("Database")));
 
 
             var app = builder.Build();
@@ -40,6 +55,7 @@ namespace backend
                 app.UseSwaggerUI();
                 //app.ApplyMigrations(); 
             }
+            app.UseCors("AllowReactApp");
 
             app.UseHttpsRedirection();
             app.UseAuthentication(); 
