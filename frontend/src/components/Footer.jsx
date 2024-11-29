@@ -1,10 +1,27 @@
 export default function Footer() {
     return (
-        <>
-            <div className="h-24 w-full bg-gray-950 absolute bottom-0">
-                <img src="src/assets/CarAndAllLogo.svg" />
-                <p className="text-white">Privacyverklaring</p>
-            </div>
-        </>
+      <footer className="h-24 w-full bg-gray-950 flex items-center justify-between px-8">
+        {/* Logo */}
+        <div>
+          <img
+            src="src/assets/CarAndAllLogo.svg"
+            alt="CarAndAll logo"
+            className="h-10"
+          />
+        </div>
+        {/* Privacy Statement */}
+        <div>
+          <p className="text-white text-sm">
+            <a
+              href="#"
+              className="hover:underline"
+              aria-label="Bekijk de privacyverklaring"
+            >
+              Privacyverklaring
+            </a>
+          </p>
+        </div>
+      </footer>
     );
-}
+  }
+  

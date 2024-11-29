@@ -1,50 +1,66 @@
 using backend.DbContext;
-using backend.Extentions;
+using backend.Seeders;
 using backend.Models.Gebruiker;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace backend
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // JWT Configuration from appsettings.json
+            var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+            var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
 
+            // CORS Configuration
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowReactApp", policy =>
                 {
-                    policy.WithOrigins("http://localhost:3000") // React app origin
+                    policy.WithOrigins("http://localhost:5173")
                           .AllowAnyHeader()
                           .AllowAnyMethod()
-                          .AllowCredentials(); // Required for cookies/auth headers
+                          .AllowCredentials();
                 });
             });
-
-            
 
             // Add services to the container
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            // Add Authentication and Authorization
-            builder.Services.AddAuthentication().AddCookie(IdentityConstants.ApplicationScheme)
-                .AddBearerToken(IdentityConstants.BearerScheme);
-            builder.Services.AddAuthorization();
-
             // Add Identity and Database Context
-            builder.Services.AddIdentityCore<User>()
-            .AddSignInManager<SignInManager<User>>()
-            .AddEntityFrameworkStores<ApplicationsDbContext>()
-            .AddApiEndpoints();
-
             builder.Services.AddDbContext<ApplicationsDbContext>(options =>
             options.UseMySQL(builder.Configuration.GetConnectionString("Database")));
 
+            builder.Services.AddIdentityCore<User>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequiredLength = 6;
+            })
+            .AddRoles<IdentityRole>() // If you're using roles
+            .AddSignInManager<SignInManager<User>>() // Registers SignInManager
+            .AddEntityFrameworkStores<ApplicationsDbContext>() // Use your DbContext
+            .AddDefaultTokenProviders(); // For token generation (e.g., password reset)
+
+            // Add JWT Authentication
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
+                options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
+            })
+            .AddCookie(IdentityConstants.ApplicationScheme);
+
+            builder.Services.AddAuthorization();
 
             var app = builder.Build();
 
@@ -53,18 +69,30 @@ namespace backend
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
-                //app.ApplyMigrations(); 
             }
-            app.UseCors("AllowReactApp");
 
             app.UseHttpsRedirection();
-            app.UseAuthentication(); 
+            app.UseCors("AllowReactApp");
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            app.MapControllers();
-            app.MapIdentityApi<User>();
+            // Seed Roles
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
 
-            app.Run();
+                try
+                {
+                    await SeedRoles.Seed(services);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error while seeding roles: {ex.Message}");
+                }
+            }
+
+            app.MapControllers();
+            await app.RunAsync();
         }
     }
 }
