@@ -1,33 +1,28 @@
 import React, { useState } from "react";
+import api from "../api";
+import { useNavigate } from "react-router-dom";
+import eventEmitter from "../utils/EventEmitter";
 
 function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        const loginData = { email, password };
+        setError(null);
 
         try {
-            const response = await fetch("http://localhost:5000/api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(loginData),
-            });
+            await api.post("/auth/login", { email, password });
 
-            if (response.ok) {
-                const data = await response.json();
-                alert("Login succesvol!");
-                console.log("Token:", data.token); // Opslaan in localStorage of een state
-            } else {
-                const error = await response.json();
-                alert(error.message || "Login mislukt");
-            }
+            // Update localStorage and emit login event
+            localStorage.setItem("isLoggedIn", "true");
+            eventEmitter.emit("login", true);
+
+            navigate("/Dashboard");
         } catch (err) {
-            console.error("Error:", err);
-            alert("Er is een fout opgetreden. Probeer het later opnieuw.");
+            setError(err.response?.data?.message || "Login failed");
         }
     };
 
@@ -72,6 +67,7 @@ function LoginForm() {
                 >
                     Inloggen
                 </button>
+                {error && <p className="text-red-500 mt-4">{error}</p>}
             </form>
         </div>
     );
