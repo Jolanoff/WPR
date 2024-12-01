@@ -1,4 +1,7 @@
+import { Login } from './buttons/Login';
+
 export default function Header() {
+  
     return (
       <>
         <div className="h-40 w-full bg-gray-50 shadow">
@@ -21,9 +24,10 @@ export default function Header() {
             <a href="#" className="hover:text-blue-500">
               Contact
             </a>
-            <a href="#" className="hover:text-blue-500">
-              Inloggen
-            </a>
+
+            {/* inloggen button */}
+            <Login />
+
             <a href="#" className="hover:text-blue-500">
               Aanbod
             </a>

@@ -3,8 +3,6 @@ using backend.Seeders;
 using backend.Models.Gebruiker;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace backend
@@ -14,10 +12,6 @@ namespace backend
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
-            // JWT Configuration from appsettings.json
-            var jwtSettings = builder.Configuration.GetSection("JwtSettings");
-            var key = Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]);
 
             // CORS Configuration
             builder.Services.AddCors(options =>
@@ -38,27 +32,46 @@ namespace backend
 
             // Add Identity and Database Context
             builder.Services.AddDbContext<ApplicationsDbContext>(options =>
-            options.UseMySQL(builder.Configuration.GetConnectionString("Database")));
+                options.UseMySQL(builder.Configuration.GetConnectionString("Database")));
 
-            builder.Services.AddIdentityCore<User>(options =>
+            builder.Services.AddIdentity<User, IdentityRole>(options =>
             {
                 options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = true;
                 options.Password.RequireUppercase = true;
                 options.Password.RequiredLength = 6;
             })
-            .AddRoles<IdentityRole>() // If you're using roles
-            .AddSignInManager<SignInManager<User>>() // Registers SignInManager
-            .AddEntityFrameworkStores<ApplicationsDbContext>() // Use your DbContext
-            .AddDefaultTokenProviders(); // For token generation (e.g., password reset)
+            .AddRoles<IdentityRole>()
+            .AddSignInManager<SignInManager<User>>()
+            .AddEntityFrameworkStores<ApplicationsDbContext>()
+            .AddDefaultTokenProviders();
 
-            // Add JWT Authentication
-            builder.Services.AddAuthentication(options =>
+            // Configure Cookie Authentication
+            builder.Services.ConfigureApplicationCookie(options =>
             {
-                options.DefaultAuthenticateScheme = IdentityConstants.ApplicationScheme;
-                options.DefaultChallengeScheme = IdentityConstants.ApplicationScheme;
-            })
-            .AddCookie(IdentityConstants.ApplicationScheme);
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+                options.SlidingExpiration = true;
+
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always; 
+
+                options.LoginPath = "/auth/login";
+                options.AccessDeniedPath = "/auth/access-denied";
+
+                options.ExpireTimeSpan = TimeSpan.FromHours(1);
+                options.Cookie.SameSite = SameSiteMode.None;
+
+                options.Events.OnRedirectToLogin = context =>
+                {
+                    context.Response.StatusCode = 401;
+                    return Task.CompletedTask;
+                };
+                options.Events.OnRedirectToAccessDenied = context =>
+                {
+                    context.Response.StatusCode = 403;
+                    return Task.CompletedTask;
+                };
+            });
 
             builder.Services.AddAuthorization();
 
