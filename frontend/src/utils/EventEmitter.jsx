@@ -1,3 +1,4 @@
+
 class EventEmitter {
     constructor() {
         this.events = {};
@@ -8,6 +9,12 @@ class EventEmitter {
             this.events[event] = [];
         }
         this.events[event].push(listener);
+    }
+
+    off(event, listener) {
+        if (this.events[event]) {
+            this.events[event] = this.events[event].filter((l) => l !== listener);
+        }
     }
 
     emit(event, data) {

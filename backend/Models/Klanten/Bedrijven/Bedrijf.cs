@@ -1,12 +1,17 @@
-﻿namespace backend.Models.Klanten.Bedrijven
+﻿using backend.Models.Gebruiker;
+
+namespace backend.Models.Klanten.Bedrijven
 {
-    public class Bedrijf
+    public class Bedrijf 
     {
-        private string Naam { get; set; }
-        private string Kvk_nummer { get; set; }
+        public int Id { get; set; }
+        public string KvkNummer { get; set; }
 
-        private string Adres { get; set; }
+        public string UserId { get; set; } // Buitenlandse sleutel naar User
+        public User User { get; set; } // Navigatie-eigenschap
 
-        private WagenparkBeheerder[] WagenparkBeheerder { get; set; }
+        // Relaties naar medewerkers
+        public ICollection<WagenparkBeheerder> WagenparkBeheerders { get; set; } = new List<WagenparkBeheerder>();
+        public ICollection<ZakelijkeHuurder> ZakelijkeHuurders { get; set; } = new List<ZakelijkeHuurder>();
     }
 }
