@@ -1,11 +1,16 @@
-﻿namespace backend.Models.Medewerkers
+﻿using backend.Models.Gebruiker;
+
+namespace backend.Models.Medewerkers
 {
     public class Medewerker
     {
-        private string Naam { get; set; }
-        private string Functie { get; set; }
-        private string[] Bevoegdheden { get; set; }
-        private string Email { get; set; }
+        public int Id { get; set; } // Primaire sleutel
+        public string Naam { get; set; }
+ 
+        public string Functie { get; set; } // "FrontOffice" of "BackOffice"
 
+        // Relatie met User
+        public string UserId { get; set; } // Buitenlandse sleutel naar User
+        public User User { get; set; } // Navigatie-eigenschap
     }
 }

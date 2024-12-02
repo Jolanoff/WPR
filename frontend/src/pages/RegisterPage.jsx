@@ -1,17 +1,25 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"; // Import voor navigatie
+import { useNavigate } from "react-router-dom";
+import { RedirectIfLoggedIn } from "../utils/RedirectIfLoggedIn";
+import api from "../api"; // Import your axios instance
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
-    userName: "",
+    userName: "", 
+    naam: "", 
     email: "",
     password: "",
-    role: "ParticuliereHuurder", // Standaard waarde
+    phoneNumber: "",
+    address: "",
+    role: "ParticuliereHuurder",
+    kvkNummer: "", 
   });
 
   const [error, setError] = useState(null);
-  const [responsePayload, setResponsePayload] = useState(null); 
-  const navigate = useNavigate(); 
+  const [responsePayload, setResponsePayload] = useState(null);
+  const navigate = useNavigate();
+
+  RedirectIfLoggedIn();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,52 +32,15 @@ const RegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-    setResponsePayload(null); 
+    setResponsePayload(null);
 
     try {
-      const response = await fetch("http://localhost:7135/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await api.post("/auth/register", formData);
+      setResponsePayload(response.data);
 
-      const data = await response.json();
-      console.log("Response Payload:", data);
-
-      if (!response.ok) {
-        throw new Error(data.message || "Registratie mislukt.");
-      }
-
-      // Als succesvol, stel de payload in en toon het
-      setResponsePayload(data);
-
-      // Simuleer een login (je kunt hier een echte login API call maken)
-      const loginResponse = await fetch("http://localhost:7135/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      });
-
-      const loginData = await loginResponse.json();
-
-      if (!loginResponse.ok) {
-        throw new Error(loginData.message || "Login mislukt na registratie.");
-      }
-
-      console.log("Login Response Payload:", loginData);
-
-      // Redirect na succesvolle registratie en login
-      navigate("/dashboard"); // Verander '/dashboard' naar je gewenste route
+      navigate("/login");
     } catch (err) {
-      console.error("Error:", err.message);
-      setError(err.message);
+      setError(err.response?.data?.message || "Registration failed.");
     }
   };
 
@@ -84,12 +55,15 @@ const RegisterPage = () => {
         </h2>
         {error && (
           <div className="text-red-500 text-sm mb-4">
-            <p><strong>Error:</strong> {error}</p>
+            <p>
+              <strong>Error:</strong> {error}
+            </p>
           </div>
         )}
         {responsePayload && (
           <div className="text-green-500 text-sm mb-4">
-            <p><strong>Succesvol:</strong> {JSON.stringify(responsePayload)}</p>
+            <p>
+              <strong>Succesvol:</strong> {JSON.stringify(responsePayload)}</p>
           </div>
         )}
         <div className="mb-4">
@@ -101,6 +75,20 @@ const RegisterPage = () => {
             id="userName"
             name="userName"
             value={formData.userName}
+            onChange={handleChange}
+            required
+            className="w-full mt-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="naam" className="block text-gray-700 font-medium">
+            Volledige Naam
+          </label>
+          <input
+            type="text"
+            id="naam"
+            name="naam"
+            value={formData.naam}
             onChange={handleChange}
             required
             className="w-full mt-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
@@ -135,6 +123,37 @@ const RegisterPage = () => {
           />
         </div>
         <div className="mb-4">
+          <label
+            htmlFor="phoneNumber"
+            className="block text-gray-700 font-medium"
+          >
+            Telefoonnummer
+          </label>
+          <input
+            type="text"
+            id="phoneNumber"
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            required
+            className="w-full mt-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="address" className="block text-gray-700 font-medium">
+            Adres
+          </label>
+          <input
+            type="text"
+            id="address"
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            required
+            className="w-full mt-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+        <div className="mb-4">
           <label htmlFor="role" className="block text-gray-700 font-medium">
             Accounttype
           </label>
@@ -149,6 +168,25 @@ const RegisterPage = () => {
             <option value="Bedrijf">Bedrijf</option>
           </select>
         </div>
+        {formData.role === "Bedrijf" && (
+          <div className="mb-4">
+            <label
+              htmlFor="kvkNummer"
+              className="block text-gray-700 font-medium"
+            >
+              KvK-nummer
+            </label>
+            <input
+              type="text"
+              id="kvkNummer"
+              name="kvkNummer"
+              value={formData.kvkNummer}
+              onChange={handleChange}
+              required={formData.role === "Bedrijf"}
+              className="w-full mt-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            />
+          </div>
+        )}
         <button
           type="submit"
           className="w-full py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600 transition-colors"

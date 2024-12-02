@@ -1,7 +1,14 @@
 import React from "react";
 import LoginForm from "../components/LoginForm.jsx";
+import { RedirectIfLoggedIn } from "../utils/RedirectIfLoggedIn.jsx";
+
 
 function LoginPage() {
+
+
+  RedirectIfLoggedIn();
+
+  
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-gray-50 shadow">

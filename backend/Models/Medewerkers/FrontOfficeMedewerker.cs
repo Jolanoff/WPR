@@ -1,6 +1,6 @@
 ﻿namespace backend.Models.Medewerkers
 {
-    public class BackOfficeMedewerker
+    public class BackOfficeMedewerker : Medewerker
     {
     }
 }
