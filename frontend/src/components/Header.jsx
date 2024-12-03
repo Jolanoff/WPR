@@ -1,42 +1,106 @@
+import React, { useState, useEffect } from "react";
+import eventEmitter from "../utils/EventEmitter";
 import { Login } from './buttons/Login';
 
 export default function Header() {
-  
-    return (
-      <>
-        <div className="h-40 w-full bg-gray-50 shadow">
-          <div className="h-28 flex justify-center items-start relative">
-            <img
-              src="src/assets/carandall.svg"
-              alt="CarAndAll logo"
-              className="mt-4"
-            />
-            <img
-              src="src/assets/placeholder.png"
-              alt="User avatar"
-              className="w-16 h-auto rounded-full absolute right-0 mr-12 mt-8"
-            />
-          </div>
-          <div className="flex h-12 justify-center space-x-8 mt-2 font-Alata text-2xl">
-            <a href="#" className="hover:text-blue-500">
-              Home
-            </a>
-            <a href="#" className="hover:text-blue-500">
-              Contact
-            </a>
+  const [isLoggedIn, setIsLoggedIn] = useState(
+    localStorage.getItem("isLoggedIn") === "true"
+  );
+  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
-            {/* inloggen button */}
-            <Login />
+  useEffect(() => {
+    const updateLoginState = (loggedIn) => {
+      setIsLoggedIn(loggedIn);
+    };
 
-            <a href="#" className="hover:text-blue-500">
-              Aanbod
-            </a>
-            <a href="#" className="hover:text-blue-500">
-              Abonnementbeheer
-            </a>
-          </div>
+    const handleAccountDeleted = () => {
+      setIsLoggedIn(false);
+      setShowProfileMenu(false);
+      localStorage.removeItem("isLoggedIn");
+    };
+
+    eventEmitter.on("login", updateLoginState);
+    eventEmitter.on("accountDeleted", handleAccountDeleted);
+
+    return () => {
+      eventEmitter.off("login", updateLoginState);
+      eventEmitter.off("accountDeleted", handleAccountDeleted);
+    };
+  }, []);
+
+  const toggleProfileMenu = () => {
+    setShowProfileMenu((prev) => !prev);
+  };
+
+  return (
+    <header className="bg-gray-50 shadow-sm">
+      <div className="flex items-center justify-between px-4 py-2">
+        <div>
+          <img
+            src="src/assets/carandall.svg"
+            alt="CarAndAll logo"
+            className="w-28"
+          />
         </div>
-      </>
-    );
-  }
-  
+
+        <nav className="hidden md:flex space-x-6 font-Alata text-lg">
+          <a href="/" className="hover:text-blue-500">
+            Home
+          </a>
+          <a href="/contact" className="hover:text-blue-500">
+            Contact
+          </a>
+          <a href="/aanbod" className="hover:text-blue-500">
+            Aanbod
+          </a>
+          <a href="/abonnementbeheer" className="hover:text-blue-500">
+            Abonnementbeheer
+          </a>
+        </nav>
+
+        <div className="flex items-center space-x-4">
+          {!isLoggedIn ? (
+            <Login />
+          ) : (
+            <div className="relative">
+              <img
+                src="src/assets/placeholder.png"
+                alt="User avatar"
+                className="w-10 h-10 rounded-full cursor-pointer"
+                onClick={toggleProfileMenu}
+              />
+              {showProfileMenu && (
+                <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-md">
+                  <a
+                    href="/profiel"
+                    className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                  >
+                    Profiel
+                  </a>
+                  <Login />
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="block md:hidden px-4 py-2">
+        <nav className="flex flex-col space-y-2 font-Alata text-lg">
+          <a href="/" className="hover:text-blue-500">
+            Home
+          </a>
+          <a href="/contact" className="hover:text-blue-500">
+            Contact
+          </a>
+          <a href="/aanbod" className="hover:text-blue-500">
+            Aanbod
+          </a>
+          <a href="/abonnementbeheer" className="hover:text-blue-500">
+            Abonnementbeheer
+          </a>
+        </nav>
+      </div>
+    </header>
+  );
+}

@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
@@ -174,28 +175,7 @@ namespace backend.Controllers
             return Ok(new { message = "Logout successful" });
         }
 
-        [HttpGet("me")]
-        [Authorize]
-        public async Task<IActionResult> Me()
-        {
-            var userId = User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
-                return Unauthorized();
 
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-                return Unauthorized();
-
-            var roles = await _userManager.GetRolesAsync(user);
-
-            return Ok(new
-            {
-                Id = user.Id,
-                Email = user.Email,
-                UserName = user.UserName,
-                Roles = roles
-            });
-        }
 
         [HttpGet("validate-session")]
         public IActionResult ValidateSession()

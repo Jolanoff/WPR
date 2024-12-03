@@ -1,27 +1,27 @@
-
 class EventEmitter {
     constructor() {
-        this.events = {};
+      this.events = {};
     }
-
+  
     on(event, listener) {
-        if (!this.events[event]) {
-            this.events[event] = [];
-        }
-        this.events[event].push(listener);
+      if (!this.events[event]) {
+        this.events[event] = [];
+      }
+      this.events[event].push(listener);
     }
-
+  
     off(event, listener) {
-        if (this.events[event]) {
-            this.events[event] = this.events[event].filter((l) => l !== listener);
-        }
+      if (this.events[event]) {
+        this.events[event] = this.events[event].filter((l) => l !== listener);
+      }
     }
-
+  
     emit(event, data) {
-        if (this.events[event]) {
-            this.events[event].forEach((listener) => listener(data));
-        }
+      if (this.events[event]) {
+        this.events[event].forEach((listener) => listener(data));
+      }
     }
-}
-
-export default new EventEmitter();
+  }
+  
+  export default new EventEmitter();
+  
