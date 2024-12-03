@@ -14,7 +14,6 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		  <PrivateAssets>all</PrivateAssets>
 		</PackageReference>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite.Core" Version="8.0.8" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		  <PrivateAssets>all</PrivateAssets>
@@ -23,11 +22,9 @@
 		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.2.1" />
 
 		<!-- MySQL Database Provider -->
-		<PackageReference Include="MySql.EntityFrameworkCore" Version="8.0.8" />
 
 		<!-- ASP.NET Core Identity -->
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
-		<PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="2.1.10" />
 
 		<!-- Swagger for API Documentation -->
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />

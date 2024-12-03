@@ -1,13 +1,17 @@
-﻿namespace backend.Models.Voertuigen
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace backend.Models.Voertuigen
 {
     public class Voertuig
     {
-        private string Merk { get; set; }
-        private string Type { get; set; }
-        private string Kenteken { get; set; }
-        private string Kleur { get; set; }
-        private int BouwJaar { get; set; }
-        private bool Status { get; set; }
-        private string VoertuigType { get; set; }
+        [Key]
+        public int Id { get; set; }
+        public string Merk { get; set; }
+        public string Type { get; set; }
+        public string Kenteken { get; set; }
+        public string Kleur { get; set; }
+        public int Aanschafjaar { get; set; }
+        public bool Status { get; set; }
+        public string VoertuigType { get; set; }
     }
 }

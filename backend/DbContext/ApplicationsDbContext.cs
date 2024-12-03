@@ -2,8 +2,10 @@
 using backend.Models.Klanten;
 using backend.Models.Klanten.Bedrijven;
 using backend.Models.Medewerkers;
+using backend.Models.Voertuigen;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 
 namespace backend.DbContext
 {
@@ -23,13 +25,33 @@ namespace backend.DbContext
 
         public DbSet<Medewerker> Medewerkers { get; set; }
 
+        public DbSet<Voertuig> Voertuigen { get; set; }
+        public DbSet<Auto> Autos { get; set; }
+        public DbSet<Caravan> Caravans { get; set; }
+        public DbSet<Camper> Campers { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            builder.Entity<User>().Property(u => u.initials).HasMaxLength(5);
-            builder.HasDefaultSchema("applicationdb");
 
+            // Configureer Voertuig als de basisentiteit
+            builder.Entity<Voertuig>()
+                .ToTable("Voertuigen");  // De tabel voor de gemeenschappelijke velden
+
+            // Configureer Auto met een eigen tabel, maar gedeelde velden van Voertuig
+            builder.Entity<Auto>()
+                .ToTable("Autos")  // Een aparte tabel voor Auto
+                .HasBaseType<Voertuig>();  // Auto is een subtype van Voertuig
+
+            // Configureer Caravans en Campers, beide zullen de basisentiteit Voertuig gebruiken
+            builder.Entity<Caravan>()
+                .ToTable("Caravans")
+                .HasBaseType<Voertuig>();
+
+            builder.Entity<Camper>()
+                .ToTable("Campers")
+                .HasBaseType<Voertuig>();
 
             builder.Entity<User>()
                .HasOne(u => u.ParticuliereHuurder)

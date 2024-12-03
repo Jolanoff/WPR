@@ -2,6 +2,6 @@
 {
     public class Caravan : Voertuig
     {
-        private int Trekvermogen { get; set; }
+        public int Trekvermogen { get; set; }
     }
 }

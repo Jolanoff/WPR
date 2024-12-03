@@ -32,7 +32,7 @@ namespace backend
 
             // Add Identity and Database Context
             builder.Services.AddDbContext<ApplicationsDbContext>(options =>
-                options.UseMySQL(builder.Configuration.GetConnectionString("Database")));
+                options.UseSqlite("Data Source=database.db"));
 
             builder.Services.AddIdentity<User, IdentityRole>(options =>
             {
@@ -97,12 +97,13 @@ namespace backend
                 try
                 {
                     await SeedRoles.Seed(services);
+                    await SeedAutos.Seed(services);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error while seeding roles: {ex.Message}");
                 }
-            }
+            } 
 
             app.MapControllers();
             await app.RunAsync();
