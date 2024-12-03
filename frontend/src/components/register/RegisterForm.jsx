@@ -22,12 +22,13 @@ const RegisterForm = ({ formData, setFormData, onSubmit, error, responsePayload 
         Registreren
       </h2>
       {error && (
-        <div className="text-red-500 text-sm mb-4">
-          <p>
-            <strong>Error:</strong> {error}
-          </p>
+        <div className="text-red-500 mt-4">
+          {error.split("\n").map((line, index) => (
+            <div key={index}>{line}</div>
+          ))}
         </div>
       )}
+
       {responsePayload && (
         <div className="text-green-500 text-sm mb-4">
           <p>

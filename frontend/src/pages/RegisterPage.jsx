@@ -29,15 +29,27 @@ const RegisterPage = () => {
   const handleSubmit = async () => {
     setError(null);
     setResponsePayload(null);
-
+  
     try {
       const response = await api.post("/auth/register", formData);
       setResponsePayload(response.data);
       navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed.");
+      if (err.response && err.response.data && err.response.data.errors) {
+        // Extract the validation errors
+        const validationErrors = err.response.data.errors;
+        // Format the errors into a readable string or object for display
+        const errorMessages = Object.entries(validationErrors)
+          .map(([field, messages]) => `${field}: ${messages.join(", ")}`)
+          .join("\n");
+        setError(errorMessages);
+      } else {
+        // Default error message if response format is unexpected
+        setError(err.response?.data?.title || "Registration failed.");
+      }
     }
   };
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

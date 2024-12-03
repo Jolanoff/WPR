@@ -35,7 +35,11 @@ namespace backend
             builder.Services.AddDbContext<ApplicationsDbContext>(options =>
                 options.UseMySQL(builder.Configuration.GetConnectionString("Database")));
 
+
+            // Configure Services
             builder.Services.AddScoped<AccountService>();
+            builder.Services.AddScoped<AuthService>();
+
 
             builder.Services.AddIdentity<User, IdentityRole>(options =>
             {
