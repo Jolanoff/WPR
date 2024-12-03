@@ -5,14 +5,17 @@ import api from "../api"; // Import your axios instance
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
-    userName: "", 
-    naam: "", 
+    userName: "",
+    voornaam: "",
+    achternaam: "",
     email: "",
     password: "",
     phoneNumber: "",
-    address: "",
+    straatnaam: "",
+    huisnummer: "",
     role: "ParticuliereHuurder",
-    kvkNummer: "", 
+    kvkNummer: "",
+    initials: "",
   });
 
   const [error, setError] = useState(null);
@@ -81,14 +84,28 @@ const RegisterPage = () => {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="naam" className="block text-gray-700 font-medium">
-            Volledige Naam
+          <label htmlFor="voornaam" className="block text-gray-700 font-medium">
+            Voornaam
           </label>
           <input
             type="text"
-            id="naam"
-            name="naam"
-            value={formData.naam}
+            id="voornaam"
+            name="voornaam"
+            value={formData.voornaam}
+            onChange={handleChange}
+            required
+            className="w-full mt-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="achternaam" className="block text-gray-700 font-medium">
+            Achternaam
+          </label>
+          <input
+            type="text"
+            id="achternaam"
+            name="achternaam"
+            value={formData.achternaam}
             onChange={handleChange}
             required
             className="w-full mt-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
@@ -123,10 +140,7 @@ const RegisterPage = () => {
           />
         </div>
         <div className="mb-4">
-          <label
-            htmlFor="phoneNumber"
-            className="block text-gray-700 font-medium"
-          >
+          <label htmlFor="phoneNumber" className="block text-gray-700 font-medium">
             Telefoonnummer
           </label>
           <input
@@ -140,14 +154,28 @@ const RegisterPage = () => {
           />
         </div>
         <div className="mb-4">
-          <label htmlFor="address" className="block text-gray-700 font-medium">
-            Adres
+          <label htmlFor="straatnaam" className="block text-gray-700 font-medium">
+            Straatnaam
           </label>
           <input
             type="text"
-            id="address"
-            name="address"
-            value={formData.address}
+            id="straatnaam"
+            name="straatnaam"
+            value={formData.straatnaam}
+            onChange={handleChange}
+            required
+            className="w-full mt-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="huisnummer" className="block text-gray-700 font-medium">
+            Huisnummer
+          </label>
+          <input
+            type="number"
+            id="huisnummer"
+            name="huisnummer"
+            value={formData.huisnummer}
             onChange={handleChange}
             required
             className="w-full mt-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
@@ -170,10 +198,7 @@ const RegisterPage = () => {
         </div>
         {formData.role === "Bedrijf" && (
           <div className="mb-4">
-            <label
-              htmlFor="kvkNummer"
-              className="block text-gray-700 font-medium"
-            >
+            <label htmlFor="kvkNummer" className="block text-gray-700 font-medium">
               KvK-nummer
             </label>
             <input

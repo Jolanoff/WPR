@@ -38,27 +38,29 @@ namespace backend.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(new { message = "Invalid input." });
 
-            if (model.Role != "ParticuliereHuurder" && model.Role != "Bedrijf")
+            // Validatie van rol
+            if (!new[] { "ParticuliereHuurder", "Bedrijf" }.Contains(model.Role))
                 return BadRequest(new { message = "Invalid role." });
 
-            var existingUserName = await _userManager.FindByNameAsync(model.UserName);
-            if (existingUserName != null)
+            // Controleer of gebruikersnaam en e-mail al bestaan
+            if (await _userManager.FindByNameAsync(model.UserName) != null)
                 return BadRequest(new { message = "Username is already in use." });
 
-            var existingEmail = await _userManager.FindByEmailAsync(model.Email);
-            if (existingEmail != null)
+            if (await _userManager.FindByEmailAsync(model.Email) != null)
                 return BadRequest(new { message = "Email is already in use." });
 
+            // Specifieke validatie voor bedrijven
             if (model.Role == "Bedrijf" && string.IsNullOrWhiteSpace(model.KvkNummer))
                 return BadRequest(new { message = "KvK-nummer is required for a company." });
 
+            // Maak een nieuwe gebruiker aan
             var user = new User
             {
                 UserName = model.UserName,
                 Email = model.Email,
                 PhoneNumber = model.PhoneNumber,
-                Adres = model.Address,
-                Naam = model.Naam,
+                Voornaam = model.Voornaam,
+                Achternaam = model.Achternaam,
                 initials = model.Initials
             };
 
@@ -72,49 +74,61 @@ namespace backend.Controllers
                 });
             }
 
+            // Koppel gebruiker aan rol
             await _userManager.AddToRoleAsync(user, model.Role);
 
+            // Maak klant aan
+            var klant = new Klant
+            {
+                UserId = user.Id,
+                Straatnaam = model.Straatnaam,
+                Huisnummer = model.Huisnummer ?? 0,
+                KlantType = model.Role
+            };
+
+            _context.Klanten.Add(klant);
+            await _context.SaveChangesAsync();
+
+            // Specifieke logica voor bedrijf of particuliere huurder
             if (model.Role == "Bedrijf")
             {
-                AddBedrijf(user, model);
+                AddBedrijf(klant, model.KvkNummer);
             }
             else if (model.Role == "ParticuliereHuurder")
             {
-                AddParticuliereHuurder(user);
+                AddParticuliereHuurder(klant);
             }
 
             await _context.SaveChangesAsync();
 
-            // Generate email confirmation token
+            // Stuur verificatielink
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var encodedToken = HttpUtility.UrlEncode(token);
-
             var confirmationLink = $"http://localhost:5173/verify-email?userId={user.Id}&token={encodedToken}";
-
-            // TODO: Send this confirmation link via email (e.g., using an email service like SendGrid or SMTP)
             Console.WriteLine($"Confirmation Link: {confirmationLink}");
 
-            return Ok(new { message = $"Account created. Please verify your email address." });
+            return Ok(new { message = "Account created. Please verify your email address." });
         }
 
-        private void AddBedrijf(User user, RegisterUserDto model)
+        private void AddBedrijf(Klant klant, string kvkNummer)
         {
             var bedrijf = new Bedrijf
             {
-                UserId = user.Id,
-                KvkNummer = model.KvkNummer
+                KlantId = klant.Id,
+                KvkNummer = kvkNummer
             };
             _context.Bedrijven.Add(bedrijf);
         }
 
-        private void AddParticuliereHuurder(User user)
+        private void AddParticuliereHuurder(Klant klant)
         {
             var particulier = new ParticuliereHuurder
             {
-                UserId = user.Id
+                KlantId = klant.Id
             };
             _context.ParticuliereHuurders.Add(particulier);
         }
+
 
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail([FromQuery] string userId, [FromQuery] string token)
