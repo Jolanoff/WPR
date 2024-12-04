@@ -6,8 +6,10 @@ namespace backend.Models.Klanten
     public class ZakelijkeHuurder
     {
         public int Id { get; set; }
-        public string UserId { get; set; } 
-        public User User { get; set; }
+
+        public int KlantId { get; set; } // Buitenlandse sleutel naar Klant
+        public Klant Klant { get; set; } // Navigatie-eigenschap
+
 
         public int BedrijfId { get; set; } // Buitenlandse sleutel naar Bedrijf
         public Bedrijf Bedrijf { get; set; }

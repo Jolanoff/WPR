@@ -9,7 +9,7 @@ const ProtectedRoute = ({ children }) => {
         const checkAuth = async () => {
             try {
                 // Make a call to the backend to check if the user is authenticated
-                await api.get("/auth/me");
+                await api.get("/account/Account");
                 setIsAuthenticated(true);
             } catch (error) {
                 setIsAuthenticated(false);

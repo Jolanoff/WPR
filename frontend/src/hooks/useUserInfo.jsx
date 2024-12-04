@@ -9,7 +9,7 @@ const useUserInfo = () => {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const response = await api.get("/auth/me");
+                const response = await api.get("/account/Account");
                 console.log("User Info Response:", response.data); // Log the response to verify
                 setUserInfo(response.data);
             } catch (err) {

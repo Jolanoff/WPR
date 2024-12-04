@@ -4,6 +4,7 @@ using backend.Models.Gebruiker;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
+using backend.Services;
 
 namespace backend
 {
@@ -33,6 +34,12 @@ namespace backend
             // Add Identity and Database Context
             builder.Services.AddDbContext<ApplicationsDbContext>(options =>
                 options.UseSqlite("Data Source=database.db"));
+
+
+            // Configure Services
+            builder.Services.AddScoped<AccountService>();
+            builder.Services.AddScoped<AuthService>();
+
 
             builder.Services.AddIdentity<User, IdentityRole>(options =>
             {
