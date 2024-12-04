@@ -32,15 +32,27 @@ namespace backend.Controllers
 
         [HttpPut("Account")]
         [Authorize]
-        public IActionResult UpdateProfile([FromBody] UpdateUserDto dto)
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserDto dto)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.ToDictionary(
+                    kvp => kvp.Key,
+                     kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                 );
+                return BadRequest(ModelState); // Return validation errors
+            }
+
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             if (userId == null)
                 return Unauthorized();
 
-            var success = _accountService.UpdateProfile(userId, dto);
-            return success ? Ok(new { message = "Profile updated successfully" }) : BadRequest(new { message = "Update failed" });
+            var (success, message) = await _accountService.UpdateProfile(userId, dto);
+            return success
+                ? Ok(new { message })
+                : BadRequest(new { message });
         }
+
 
         [HttpDelete("Account")]
         [Authorize]

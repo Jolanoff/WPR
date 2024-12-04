@@ -1,13 +1,25 @@
 import React from "react";
 import BedrijfField from "./BedrijfField";
 
-const RegisterForm = ({ formData, setFormData, onSubmit, error, responsePayload }) => {
+const RegisterForm = ({ formData, setFormData, onSubmit, responsePayload }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  
+    if (name.startsWith("adres.")) {
+      const field = name.split(".")[1];
+      setFormData((prev) => ({
+        ...prev,
+        adres: {
+          ...prev.adres,
+          [field]: value,
+        },
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
   return (
@@ -21,13 +33,7 @@ const RegisterForm = ({ formData, setFormData, onSubmit, error, responsePayload 
       <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
         Registreren
       </h2>
-      {error && (
-        <div className="text-red-500 mt-4">
-          {error.split("\n").map((line, index) => (
-            <div key={index}>{line}</div>
-          ))}
-        </div>
-      )}
+    
 
       {responsePayload && (
         <div className="text-green-500 text-sm mb-4">

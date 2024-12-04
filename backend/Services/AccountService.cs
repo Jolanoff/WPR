@@ -1,4 +1,5 @@
 ﻿
+using System.ComponentModel.DataAnnotations;
 using backend.DbContext;
 using backend.Dtos.Profiel;
 using backend.Models;
@@ -20,18 +21,16 @@ namespace backend.Services
 
         public async Task<ProfielDto> GetProfileAsync(string userId)
         {
-            // Gebruik UserManager om de gebruiker op te halen
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
                 return null;
 
-            // Haal rollen op
             var roles = await _userManager.GetRolesAsync(user);
 
             var klant = await _context.Klanten
-            .Include(k => k.Bedrijf) 
-            .FirstOrDefaultAsync(k => k.UserId == userId);
-            // Bouw het profiel
+                .Include(k => k.Bedrijf)
+                .FirstOrDefaultAsync(k => k.UserId == userId);
+
             return new ProfielDto
             {
                 UserName = user.UserName,
@@ -39,26 +38,39 @@ namespace backend.Services
                 Voornaam = user.Voornaam,
                 Achternaam = user.Achternaam,
                 Telefoonnummer = user.PhoneNumber,
-                Adres = new ProfielDto.AddressDto
-                {
-                    Straatnaam = user.Klanten!.Straatnaam,
-                    Huisnummer = user.Klanten!.Huisnummer
-                },
-                KvKNummer = user.Klanten!.Bedrijf?.KvkNummer,
+                Adres = klant != null
+                    ? new ProfielDto.AddressDto
+                    {
+                        Straatnaam = klant.Straatnaam ?? "N/A",
+                        Huisnummer = klant.Huisnummer
+                    }
+                    : null,
+                KvKNummer = klant?.Bedrijf?.KvkNummer,
                 Roles = roles.ToList()
             };
         }
 
-        public bool UpdateProfile(string userId, UpdateUserDto dto)
-        {
-            // Find the user by ID
-            var user = _context.Users
-                .Include(u => u.Klanten) // Include related Klanten entity
-                .ThenInclude(k => k.Bedrijf) // Include related Bedrijf entity if applicable
-                .FirstOrDefault(u => u.Id == userId);
 
+        public async Task<(bool success, string message)> UpdateProfile(string userId, UpdateUserDto dto)
+        {
+            // Check for duplicate username
+            if (await _userManager.FindByNameAsync(dto.UserName) is User existingUserWithUsername &&
+                existingUserWithUsername.Id != userId)
+            {
+                return (false, "Username is already in use.");
+            }
+
+            // Check for duplicate email
+            if (await _userManager.FindByEmailAsync(dto.Email) is User existingUserWithEmail &&
+                existingUserWithEmail.Id != userId)
+            {
+                return (false, "Email is already in use.");
+            }
+
+            // Find the user by ID
+            var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
-                return false;
+                return (false, "User not found.");
 
             // Update User fields
             user.UserName = dto.UserName;
@@ -67,23 +79,32 @@ namespace backend.Services
             user.Email = dto.Email;
             user.PhoneNumber = dto.Telefoonnummer;
 
-            // Update Klanten fields
-            if (user.Klanten != null)
+            // Update Adres fields
+            var klant = await _context.Klanten.FirstOrDefaultAsync(k => k.UserId == userId);
+            if (klant != null)
             {
-                user.Klanten.Straatnaam = dto.Straatnaam;
-                user.Klanten.Huisnummer = dto.Huisnummer;
+                klant.Straatnaam = dto.Adres.Straatnaam;
+                klant.Huisnummer = dto.Adres.Huisnummer;
 
-                // If it's a company, update the KvKNummer
-                if (user.Klanten.Bedrijf != null)
+                if (klant.Bedrijf != null)
                 {
-                    user.Klanten.Bedrijf.KvkNummer = dto.KvKNummer;
+                    klant.Bedrijf.KvkNummer = dto.KvKNummer;
                 }
             }
 
-            // Save changes to the database
-            _context.Users.Update(user);
-            return _context.SaveChanges() > 0;
+            // Save changes
+            var result = await _userManager.UpdateAsync(user);
+            if (!result.Succeeded)
+            {
+                return (false, "Failed to update user profile.");
+            }
+
+            _context.Klanten.Update(klant);
+            await _context.SaveChangesAsync();
+
+            return (true, "Profile updated successfully.");
         }
+
 
         public bool DeleteAccount(string userId)
         {

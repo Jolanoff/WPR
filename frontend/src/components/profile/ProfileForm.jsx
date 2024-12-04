@@ -1,64 +1,185 @@
-import React from "react";
+import React, { useState } from "react";
 
-function ProfileForm({ userData, setUserData, onSave, onDelete, onOpenPasswordModal }) {
+const ProfileForm = ({ userData, setUserData, onSave, onDelete, onOpenPasswordModal }) => {
+  const [localData, setLocalData] = useState(userData);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserData((prev) => ({
-      ...prev,
-      adres: name === "straatnaam" || name === "huisnummer"
-        ? {
-            ...prev.adres,
-            [name]: name === "huisnummer" ? parseInt(value) || "" : value,
-          }
-        : prev[name] = value,
-    }));
+
+    // Handle nested adres fields
+    if (name.startsWith("adres.")) {
+      const field = name.split(".")[1];
+      setLocalData((prev) => ({
+        ...prev,
+        adres: {
+          ...prev.adres,
+          [field]: value,
+        },
+      }));
+    } else {
+      setLocalData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
   };
 
-  const handleSave = () => {
-    const payload = {
-      ...userData,
-      straatnaam: userData.adres.straatnaam,
-      huisnummer: userData.adres.huisnummer,
-    };
-    onSave(payload);
+  const handleSubmit = (e) => {
+   e.preventDefault()
+    onSave(localData);
   };
 
   return (
-    <div className="space-y-4">
-      {[
-        { label: "Gebruikersnaam", id: "userName", type: "text", value: userData.userName },
-        { label: "Email", id: "email", type: "email", value: userData.email },
-        { label: "Telefoonnummer", id: "telefoonnummer", type: "text", value: userData.telefoonnummer },
-        { label: "Voornaam", id: "voornaam", type: "text", value: userData.voornaam },
-        { label: "Achternaam", id: "achternaam", type: "text", value: userData.achternaam },
-        { label: "Straatnaam", id: "straatnaam", type: "text", value: userData.adres.straatnaam },
-        { label: "Huisnummer", id: "huisnummer", type: "number", value: userData.adres.huisnummer },
-      ].map(({ label, id, type, value }) => (
-        <div key={id}>
-          <label htmlFor={id} className="block text-gray-700 font-medium">{label}</label>
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="userName" className="block text-gray-700 font-medium">
+            Gebruikersnaam
+          </label>
           <input
-            type={type}
-            id={id}
-            name={id}
-            value={value}
+            type="text"
+            id="userName"
+            name="userName"
+            value={localData.userName}
             onChange={handleChange}
-            className="w-full mt-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+            required
+            className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
           />
         </div>
-      ))}
-      <div className="mt-6 flex justify-between">
-        <button onClick={handleSave} className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+        <div>
+          <label htmlFor="email" className="block text-gray-700 font-medium">
+            Email
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={localData.email}
+            onChange={handleChange}
+            required
+            className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="voornaam" className="block text-gray-700 font-medium">
+            Voornaam
+          </label>
+          <input
+            type="text"
+            id="voornaam"
+            name="voornaam"
+            value={localData.voornaam}
+            onChange={handleChange}
+            required
+            className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label htmlFor="achternaam" className="block text-gray-700 font-medium">
+            Achternaam
+          </label>
+          <input
+            type="text"
+            id="achternaam"
+            name="achternaam"
+            value={localData.achternaam}
+            onChange={handleChange}
+            required
+            className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="telefoonnummer" className="block text-gray-700 font-medium">
+            Telefoonnummer
+          </label>
+          <input
+            type="text"
+            id="telefoonnummer"
+            name="telefoonnummer"
+            value={localData.telefoonnummer}
+            onChange={handleChange}
+            className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label htmlFor="adres.straatnaam" className="block text-gray-700 font-medium">
+            Straatnaam
+          </label>
+          <input
+            type="text"
+            id="adres.straatnaam"
+            name="adres.straatnaam"
+            value={localData.adres.straatnaam}
+            onChange={handleChange}
+            className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+        <div>
+          <label htmlFor="adres.huisnummer" className="block text-gray-700 font-medium">
+            Huisnummer
+          </label>
+          <input
+            type="number"
+            id="adres.huisnummer"
+            name="adres.huisnummer"
+            value={localData.adres.huisnummer}
+            onChange={handleChange}
+            className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      {localData.roles.includes("Bedrijf") && (
+        <div>
+          <label htmlFor="kvKNummer" className="block text-gray-700 font-medium">
+            KvK Nummer
+          </label>
+          <input
+            type="text"
+            id="kvKNummer"
+            name="kvKNummer"
+            value={localData.kvKNummer || ""}
+            onChange={handleChange}
+            className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          />
+        </div>
+      )}
+
+      <div className="flex items-center justify-between">
+        <button
+          type="button"
+        onClick={handleSubmit}
+
+          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
+        >
           Opslaan
         </button>
-        <button onClick={onOpenPasswordModal} className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">
-          Wachtwoord wijzigen
+        <button
+          type="button"
+          onClick={onOpenPasswordModal}
+          className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none"
+        >
+          Wachtwoord Wijzigen
         </button>
-        <button onClick={onDelete} className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
-          Account verwijderen
+        <button
+          type="button"
+          onClick={onDelete}
+          className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none"
+        >
+          Account Verwijderen
         </button>
       </div>
     </div>
   );
-}
+};
 
 export default ProfileForm;

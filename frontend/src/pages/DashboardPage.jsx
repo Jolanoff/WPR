@@ -4,6 +4,7 @@ import useUserInfo from "../hooks/useUserInfo";
 function DashboardPage() {
     const { userInfo, loading, error } = useUserInfo();
 
+    
     if (loading) {
         return <div>Loading...</div>;
     }

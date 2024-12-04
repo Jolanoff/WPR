@@ -2,22 +2,27 @@ import React, { useState, useEffect } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import eventEmitter from "../utils/EventEmitter";
-import ProfileForm from "../components/profile/ProfileForm";
-import PasswordModal from "../components/profile/PasswordModal";
+import ProfileForm from "../components/Profile/ProfileForm";
+import PasswordModal from "../components/Profile/PasswordModal";
+
+import { HandleApiErrors } from "../utils/HandleApiError";
+import ErrorMessage from "../components/ErrorMessage";
+
 
 function ProfielPage() {
   const [userData, setUserData] = useState({
     userName: "",
     email: "",
-    phoneNumber: "",
     voornaam: "",
     achternaam: "",
-    adres: { straatnaam: "", huisnummer: "" },
+    telefoonnummer: "",
+    adres: { straatnaam: "", huisnummer: 0 },
+    kvKNummer: null,
     roles: [],
-    kvKNummer: "",
   });
+
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -37,10 +42,9 @@ function ProfielPage() {
         }
 
         setUserData(data);
-        setLoading(false);
       } catch (err) {
-        console.error("Failed to fetch user data", err);
-        setError("Kon gebruikersinformatie niet laden.");
+        setError(HandleApiErrors(err.response));
+      } finally {
         setLoading(false);
       }
     };
@@ -48,16 +52,30 @@ function ProfielPage() {
     fetchUserData();
   }, []);
 
+
+
   const handleSave = async (updatedUserData) => {
+
+    setError(null);
+
     try {
-      await api.put("/account/Account", updatedUserData);
-      setUserData(updatedUserData);
+      const payload = {
+        ...updatedUserData,
+        adres: {
+          straatnaam: updatedUserData.adres.straatnaam,
+          huisnummer: updatedUserData.adres.huisnummer,
+        },
+        kvKNummer: updatedUserData.kvKNummer || "",
+      };
+
+      const response = await api.put("/account/Account", payload);
+      setUserData(response.data);
       alert("Informatie succesvol bijgewerkt!");
     } catch (err) {
-      console.error("Failed to update user data", err);
-      alert("Bijwerken mislukt. Probeer opnieuw.");
+      alert(err.response?.data?.message)
     }
   };
+
 
   const handleDeleteAccount = async () => {
     if (window.confirm("Weet je zeker dat je je account wilt verwijderen?")) {
@@ -69,8 +87,8 @@ function ProfielPage() {
         alert("Account succesvol verwijderd.");
         navigate("/");
       } catch (err) {
-        console.error("Failed to delete account", err);
-        alert("Account verwijderen mislukt. Probeer opnieuw.");
+        setError(HandleApiErrors(err.response));
+
       }
     }
   };
@@ -82,8 +100,8 @@ function ProfielPage() {
       setIsPasswordModalOpen(false);
       setPasswordData({ currentPassword: "", newPassword: "" });
     } catch (err) {
-      console.error("Password change failed", err);
-      alert("Wachtwoord wijzigen mislukt. Probeer opnieuw.");
+      setError(HandleApiErrors(err.response));
+
     }
   };
 
@@ -111,6 +129,7 @@ function ProfielPage() {
           onClose={() => setIsPasswordModalOpen(false)}
         />
       )}
+      <ErrorMessage error={error} />
     </div>
   );
 }

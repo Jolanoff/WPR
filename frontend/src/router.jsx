@@ -6,6 +6,8 @@ import RegisterRouter from "./routes/RegisterRouter";
 import DashboardRouter from "./routes/DashboardRouter";
 import VerifyEmailRoute from "./routes/VerifyEmailRoute";
 import ProfielRouter from "./routes/ProfielRouter";
+import FactuurRouter from "./routes/FactuurRoute";
+
 
 
 const routes = [
@@ -13,7 +15,7 @@ const routes = [
         path: "/",
         element: <App />,
         children: [
-            ...LoginRouter, ...RegisterRouter, ...DashboardRouter, ...VerifyEmailRoute, ...ProfielRouter
+            ...LoginRouter, ...RegisterRouter, ...DashboardRouter, ...VerifyEmailRoute, ...ProfielRouter, ...FactuurRouter
             
         ]
     }
