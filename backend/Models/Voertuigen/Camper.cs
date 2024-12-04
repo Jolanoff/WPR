@@ -2,6 +2,6 @@
 {
     public class Camper : Voertuig
     {
-        private int Slaapplaatsen { get; set; }
+        public int Slaapplaatsen { get; set; }
     }
 }

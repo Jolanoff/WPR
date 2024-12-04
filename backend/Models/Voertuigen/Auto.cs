@@ -2,6 +2,6 @@
 {
     public class Auto : Voertuig
     {
-        private int AantalDeuren { get; set; }
+        public int AantalDeuren { get; set; }
     }
 }

@@ -1,7 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading.Tasks;
 
 namespace backend.Seeders
 {
@@ -22,3 +19,4 @@ namespace backend.Seeders
         }
     }
 }
+    
