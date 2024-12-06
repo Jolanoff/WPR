@@ -1,7 +1,10 @@
-﻿using backend.Dtos.Profiel;
+﻿using System.Security.Claims;
+using backend.Dtos.Profiel;
+using backend.Models.Gebruiker;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Controllers
@@ -11,10 +14,12 @@ namespace backend.Controllers
     public class AccountController : ControllerBase
     {
         private readonly AccountService _accountService;
+        private readonly UserManager<User> _userManager;
 
-        public AccountController(AccountService accountService)
+        public AccountController(AccountService accountService, UserManager<User> userManager)
         {
             _accountService = accountService;
+            _userManager = userManager;
         }
 
         [HttpGet("Account")]
@@ -83,6 +88,29 @@ namespace backend.Controllers
 
             var success = await _accountService.ChangePasswordAsync(userId, dto);
             return success ? Ok(new { message = "Password updated successfully" }) : BadRequest(new { message = "Password update failed" });
+        }
+
+        [Authorize]
+        [HttpGet("role")]
+        public async Task<IActionResult> GetUserRole()
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId == null)
+                    return Unauthorized(new { message = "User not authenticated." });
+
+                var user = await _userManager.FindByIdAsync(userId);
+                if (user == null)
+                    return NotFound(new { message = "User not found." });
+
+                var roles = await _userManager.GetRolesAsync(user);
+                return Ok(roles); 
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
     }
 }

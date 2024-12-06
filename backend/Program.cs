@@ -39,6 +39,7 @@ namespace backend
             // Configure Services
             builder.Services.AddScoped<AccountService>();
             builder.Services.AddScoped<AuthService>();
+            builder.Services.AddScoped<BedrijfService>();
 
 
             builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -52,6 +53,8 @@ namespace backend
             .AddSignInManager<SignInManager<User>>()
             .AddEntityFrameworkStores<ApplicationsDbContext>()
             .AddDefaultTokenProviders();
+
+           
 
             // Configure Cookie Authentication
             builder.Services.ConfigureApplicationCookie(options =>

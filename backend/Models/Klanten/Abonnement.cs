@@ -1,15 +1,24 @@
-﻿namespace backend.Models.Klanten
+﻿using backend.Models.Klanten.Bedrijven;
+
+namespace backend.Models.Klanten
 {
     public class Abonnement
     {
+        public int Id { get; set; }
 
-        private DateOnly StartDatum {  get; set; }
+        public int BedrijfId { get; set; } 
+        public Bedrijf Bedrijf { get; set; } 
 
-        private DateOnly EindDatum { get; set; }
+        public string AbonnementType { get; set; } 
 
-        private int Kosten { get; set; }
+        public string Betaalmethode { get; set; } 
 
-        private Boolean Status { get; set; }
+        public DateOnly StartDatum { get; set; }
 
+        public DateOnly EindDatum { get; set; }
+
+        public int Kosten { get; set; }
+
+        public bool Status { get; set; } 
     }
 }

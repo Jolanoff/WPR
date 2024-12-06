@@ -21,10 +21,16 @@ namespace backend.DbContext
         public DbSet<ZakelijkeHuurder> ZakelijkeHuurders { get; set; }
         public DbSet<Medewerker> Medewerkers { get; set; }
 
+
+
         public DbSet<Voertuig> Voertuigen { get; set; }
         public DbSet<Auto> Autos { get; set; }
         public DbSet<Caravan> Caravans { get; set; }
         public DbSet<Camper> Campers { get; set; }
+
+        public DbSet<Abonnement> Abonnementen { get; set; }
+
+
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -115,6 +121,13 @@ namespace backend.DbContext
                 .WithOne(z => z.WagenparkBeheerder)
                 .HasForeignKey(z => z.WagenparkBeheerderId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            builder.Entity<Abonnement>()
+           .HasOne(a => a.Bedrijf)
+           .WithMany(b => b.Abonnementen)
+           .HasForeignKey(a => a.BedrijfId);
+
+
 
             // **Configure Medewerker-tabel**
             builder.Entity<Medewerker>().ToTable("Medewerkers");

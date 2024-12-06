@@ -53,7 +53,7 @@ export default function Header() {
           <a href="/aanbod" className="hover:text-blue-500">
             Aanbod
           </a>
-          <a href="/abonnementbeheer" className="hover:text-blue-500">
+          <a href="/abonnementen" className="hover:text-blue-500">
             Abonnementbeheer
           </a>
         </nav>
