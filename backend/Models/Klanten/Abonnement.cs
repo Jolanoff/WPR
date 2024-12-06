@@ -17,6 +17,8 @@ namespace backend.Models.Klanten
 
         public DateOnly EindDatum { get; set; }
 
+
+        public DateOnly? StopDatum { get; set; }
         public int Kosten { get; set; }
 
         public bool Status { get; set; } 
