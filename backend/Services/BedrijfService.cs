@@ -27,6 +27,7 @@ namespace backend.Services
             // Haal alle abonnementen van het bedrijf op
             var abonnementen = await _context.Abonnementen
                 .Where(a => a.BedrijfId == klant.Bedrijf.Id)
+                .OrderByDescending(a => a.StartDatum)
                 .ToListAsync();
 
             var today = DateOnly.FromDateTime(DateTime.Now);
