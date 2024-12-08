@@ -1,4 +1,5 @@
-﻿using backend.Models.Klanten;
+﻿using System.Text.Json.Serialization;
+using backend.Models.Klanten;
 using backend.Models.Medewerkers;
 using Microsoft.AspNetCore.Identity;
 
@@ -12,8 +13,10 @@ namespace backend.Models.Gebruiker
 
 
         // Relaties naar rollen
+        [JsonIgnore]
         public Klant? Klanten { get; set; }
 
+        [JsonIgnore]
         public Medewerker? Medewerker { get; set; }
 
     }

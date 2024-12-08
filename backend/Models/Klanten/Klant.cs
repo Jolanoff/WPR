@@ -1,4 +1,5 @@
-﻿using backend.Models.Gebruiker;
+﻿using System.Text.Json.Serialization;
+using backend.Models.Gebruiker;
 using backend.Models.Klanten.Bedrijven;
 
 namespace backend.Models.Klanten
@@ -14,6 +15,7 @@ namespace backend.Models.Klanten
 
         public string KlantType { get; set; }
 
+        [JsonIgnore]
         public Bedrijf? Bedrijf { get; set; }
         public ParticuliereHuurder? ParticuliereHuurder { get; set; }
         public ZakelijkeHuurder? ZakelijkeHuurder { get; set; }
