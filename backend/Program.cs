@@ -40,6 +40,8 @@ namespace backend
             builder.Services.AddScoped<AccountService>();
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<BedrijfService>();
+            builder.Services.AddScoped<VoertuigService>();
+
 
 
             builder.Services.AddIdentity<User, IdentityRole>(options =>
