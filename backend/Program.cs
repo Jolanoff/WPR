@@ -108,6 +108,8 @@ namespace backend
                 {
                     await SeedRoles.Seed(services);
                     await SeedAutos.Seed(services);
+                    await SeedCaravans.Seed(services);
+
                 }
                 catch (Exception ex)
                 {
