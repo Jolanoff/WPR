@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import VoertuigCard from "../components/VoertuigCard";
 import autoplaceholder from "./../assets/autoplaceholder.png";
+import camperplaceholder from "./../assets/camperplaceholder.png";
+import caravanplaceholder from "./../assets/caravanplaceholder.png";
 import api from "../api"; // Assuming api is an Axios instance or similar
 
 function VoertuigenPage() {
@@ -33,6 +35,18 @@ function VoertuigenPage() {
     return <div>Error: {error}</div>; // Display error message if fetching fails
   }
 
+  // Function to get the appropriate placeholder based on voertuigType
+  const getPlaceholder = (voertuigType) => {
+    switch (voertuigType.toLowerCase()) {
+      case "camper":
+        return camperplaceholder;
+      case "caravan":
+        return caravanplaceholder;
+      default:
+        return autoplaceholder;
+    }
+  };
+
   // Filter voertuigen based on the selected filter
   const filteredVoertuigen = voertuigen.filter((voertuig) => {
     if (filter === "alle") return true; // Show all vehicles
@@ -62,7 +76,7 @@ function VoertuigenPage() {
             kleur={voertuig.kleur}
             aanschafjaar={voertuig.aanschafjaar}
             prijs="Prijs is onbekend"
-            imageUrl={autoplaceholder} // Use actual image URL if available
+            imageUrl={getPlaceholder(voertuig.voertuigType)} // Dynamically use the placeholder
           />
         ))}
       </div>
