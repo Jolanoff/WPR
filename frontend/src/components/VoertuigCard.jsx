@@ -22,11 +22,11 @@ export default function VoertuigCard({
         <h1 className="text-4xl font-Alata mb-4">
           {merk} {type}
         </h1>
-        <div className="mb-8    ">
+        <div className="mb-8 font-Alata">
           <p>Kenteken : {kenteken}</p>
           <p>Kleur: {kleur}</p>
           <p>Aanschafjaar : {aanschafjaar}</p>
-          <p>Prijs : {prijs} p/m</p>
+          <p className="mt-8 text-xl font-bold">{prijs}</p>
         </div>
 
         <button
