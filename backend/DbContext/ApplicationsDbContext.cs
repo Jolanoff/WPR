@@ -1,4 +1,5 @@
-﻿using backend.Models.Gebruiker;
+﻿using backend.Models.Aanvragen;
+using backend.Models.Gebruiker;
 using backend.Models.Klanten;
 using backend.Models.Klanten.Bedrijven;
 using backend.Models.Medewerkers;
@@ -29,6 +30,8 @@ namespace backend.DbContext
         public DbSet<Camper> Campers { get; set; }
 
         public DbSet<Abonnement> Abonnementen { get; set; }
+        public DbSet<Uitgifte> Uitgiften { get; set; }
+
 
 
 
@@ -126,6 +129,17 @@ namespace backend.DbContext
            .HasOne(a => a.Bedrijf)
            .WithMany(b => b.Abonnementen)
            .HasForeignKey(a => a.BedrijfId);
+
+             // **Relatie Uitgifte -> Voertuig**
+            builder.Entity<Uitgifte>()
+                .HasOne(u => u.Voertuig)
+                .WithMany()
+                .HasForeignKey(u => u.VoertuigId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Configure de tabelnaam (optioneel)
+            builder.Entity<Uitgifte>().ToTable("Uitgiften");
+
 
 
 
