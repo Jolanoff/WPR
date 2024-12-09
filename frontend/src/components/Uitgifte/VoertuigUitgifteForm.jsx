@@ -3,7 +3,7 @@ import React, { useState } from "react";
 const VoertuigUitgifteForm = () => {
   const [formData, setFormData] = useState({
     customerName: "",
-    vehicleId: "",
+    VoertuigId: "",
     remarks: "",
   });
 
@@ -17,6 +17,13 @@ const VoertuigUitgifteForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Controleer of de vereiste velden ingevuld zijn
+    if (!formData.customerName || !formData.VoertuigId) {
+      alert("Alle velden zijn verplicht.");
+      return;
+    }
+
     try {
       console.log(`Sending request to: ${apiBaseUrl}/vehicle/issue`);
       const response = await fetch(`${apiBaseUrl}/vehicle/issue`, {
@@ -26,13 +33,17 @@ const VoertuigUitgifteForm = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        // Als de response niet ok is, gooi een fout
+        const data = await response.json();
+        throw new Error(data.message || "Er is een probleem met het verzoek.");
       }
 
       const data = await response.json();
       console.log("Success:", data);
+      alert("Uitgifte succesvol geregistreerd!");
     } catch (error) {
       console.error("Error submitting form:", error);
+      alert("Er is een fout opgetreden bij het verzenden van het formulier.");
     }
   };
 
@@ -55,8 +66,8 @@ const VoertuigUitgifteForm = () => {
           <label className="block mb-2 font-semibold">Voertuig ID</label>
           <input
             type="text"
-            name="vehicleId"
-            value={formData.vehicleId}
+            name="VoertuigId"
+            value={formData.VoertuigId}
             onChange={handleChange}
             required
             className="w-full p-2 border rounded"
@@ -75,7 +86,7 @@ const VoertuigUitgifteForm = () => {
           type="submit"
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          Registreren
+          Accepteren
         </button>
       </form>
     </div>
