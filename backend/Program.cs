@@ -99,23 +99,22 @@ namespace backend
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // Seed Roles
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
+            //using (var scope = app.Services.CreateScope())
+            //{
+            //    var services = scope.ServiceProvider;
 
-                try
-                {
-                    await SeedRoles.Seed(services);
-                    await SeedAutos.Seed(services);
-                    await SeedCampers.Seed(services);
-                    await SeedCaravans.Seed(services);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error while seeding roles: {ex.Message}");
-                }
-            } 
+            //    try
+            //    {
+            //        await SeedRoles.Seed(services);
+            //        await SeedAutos.Seed(services);
+            //        await SeedCampers.Seed(services);
+            //        await SeedCaravans.Seed(services);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        Console.WriteLine($"Error while seeding : {ex.Message}");
+            //    }
+            //} 
 
             app.MapControllers();
             await app.RunAsync();
