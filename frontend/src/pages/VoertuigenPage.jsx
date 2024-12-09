@@ -1,4 +1,5 @@
 import VoertuigCard from "../components/VoertuigCard";
+import autoplaceholder from "./../assets/autoplaceholder.png";
 
 function VoertuigenPage() {
   return (
@@ -9,16 +10,51 @@ function VoertuigenPage() {
         <option value="caravan">Caravan</option>
       </select>
       <div className="grid grid-cols-3">
-        <VoertuigCard />
-        <VoertuigCard />
-        <VoertuigCard />
-        <VoertuigCard />
-        <VoertuigCard />
-        <VoertuigCard />
-        <VoertuigCard />
-        <VoertuigCard />
-        <VoertuigCard />
-        <VoertuigCard />
+        <VoertuigCard
+          merk="Toyota"
+          type="Corolla"
+          kenteken="AB-123-CD"
+          kleur="Rood"
+          aanschafjaar={2018}
+          prijs="250,-"
+          imageUrl={autoplaceholder}
+        />
+        <VoertuigCard
+          merk="Toyota"
+          type="Corolla"
+          kenteken="AB-123-CD"
+          kleur="Rood"
+          aanschafjaar={2018}
+          prijs="250,-"
+          imageUrl={autoplaceholder}
+        />
+        <VoertuigCard
+          merk="Toyota"
+          type="Corolla"
+          kenteken="AB-123-CD"
+          kleur="Rood"
+          aanschafjaar={2018}
+          prijs="250,-"
+          imageUrl={autoplaceholder}
+        />
+        <VoertuigCard
+          merk="Toyota"
+          type="Corolla"
+          kenteken="AB-123-CD"
+          kleur="Rood"
+          aanschafjaar={2018}
+          prijs="250,-"
+          imageUrl={autoplaceholder}
+        />
+        <VoertuigCard
+          merk="Toyota"
+          type="Corolla"
+          kenteken="AB-123-CD"
+          kleur="Rood"
+          aanschafjaar={2018}
+          prijs="250,-"
+          imageUrl={autoplaceholder}
+        />
       </div>
     </>
   );
