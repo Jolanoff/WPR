@@ -6,8 +6,12 @@ import RegisterRouter from "./routes/RegisterRouter";
 import DashboardRouter from "./routes/DashboardRouter";
 import VerifyEmailRoute from "./routes/VerifyEmailRoute";
 import ProfielRouter from "./routes/ProfielRouter";
-import FactuurRouter from "./routes/FactuurRoute";
-import AbonnementRouter from "./routes/AbonnementRouter";
+import FactuurRouter from "./routes/bedrijf/FactuurRoute";
+import AbonnementRouter from "./routes/bedrijf/AbonnementRouter";
+import BedrijfMedewerkerBeheerRouter from "./routes/bedrijf/BedrijfMedewerkerBeheerRouter";
+import SetPasswordRoute from "./routes/Auth/SetPasswordRoute";
+
+
 
 
 
@@ -16,8 +20,12 @@ const routes = [
         path: "/",
         element: <App />,
         children: [
-            ...LoginRouter, ...RegisterRouter, ...DashboardRouter, ...VerifyEmailRoute, ...ProfielRouter, ...FactuurRouter, ...AbonnementRouter,
-            
+            //auth
+            ...LoginRouter, ...RegisterRouter,...SetPasswordRoute, ...VerifyEmailRoute,
+            //Iedereen
+            ...DashboardRouter,  ...ProfielRouter,
+            //bedrijf
+            ...FactuurRouter, ...AbonnementRouter, ...BedrijfMedewerkerBeheerRouter,
         ]
     }
 ];

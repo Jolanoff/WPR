@@ -1,5 +1,5 @@
-import AbonnementPage from '../pages/AbonnementPage';
-import ProtectedRoute from './ProtectedRoute'
+import AbonnementPage from '../../pages/AbonnementPage';
+import ProtectedRoute from '../ProtectedRoute'
 
 
 const AbonnementRouter = [

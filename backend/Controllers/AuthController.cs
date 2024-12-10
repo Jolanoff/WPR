@@ -46,5 +46,21 @@ namespace backend.Controllers
             await _authService.LogoutAsync();
             return Ok(new { message = "Logout successful" });
         }
+
+
+        [HttpPost("set-password")]
+        public async Task<IActionResult> SetPassword([FromBody] SetPasswordDto model)
+        {
+            try
+            {
+                var (success, message) = await _authService.SetPasswordAsync(model.UserId, model.Token, model.Password);
+                return success ? Ok(new { message }) : BadRequest(new { message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
     }
 }

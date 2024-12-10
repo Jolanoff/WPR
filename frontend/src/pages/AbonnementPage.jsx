@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
 import { CheckRole } from "../utils/CheckRole";
-import AbonnementForm from "../components/abonnement/AbonnementForm";
-import AbonnementList from "../components/abonnement/AbonnementList";
+import AbonnementForm from "../components/bedrijf/abonnement/AbonnementForm";
+import AbonnementList from "../components/bedrijf/abonnement/AbonnementList";
 
 const AbonnementPage = () => {
     const [isAuthorized, setIsAuthorized] = useState(null);
