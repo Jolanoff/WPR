@@ -1,8 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using backend.Models.Voertuigen;  // Zorg ervoor dat de juiste namespaces worden geïmporteerd
-using System;
-using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using backend.DbContext;
 

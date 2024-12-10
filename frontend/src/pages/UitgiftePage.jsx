@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import UitgifteForm from "../components/Uitgifte/VoertuigUitgifteForm";
+import UitgifteForm from "../components/Uitgifte,Inname/VoertuigUitgifteForm";
 
 const UitgiftePage = () => {
   const [vehicles, setVehicles] = useState([

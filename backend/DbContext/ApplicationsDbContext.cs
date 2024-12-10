@@ -31,6 +31,7 @@ namespace backend.DbContext
 
         public DbSet<Abonnement> Abonnementen { get; set; }
         public DbSet<Uitgifte> Uitgiften { get; set; }
+        public DbSet<Inname> Innames { get; set; }
 
 
 
@@ -137,6 +138,13 @@ namespace backend.DbContext
                 .HasForeignKey(u => u.VoertuigId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            builder.Entity<Inname>()
+                .HasOne( q => q.Voertuig)
+                .WithMany()
+                .HasForeignKey(q => q.VoertuigId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Inname>().ToTable("Innames");
             // Configure de tabelnaam (optioneel)
             builder.Entity<Uitgifte>().ToTable("Uitgiften");
 
