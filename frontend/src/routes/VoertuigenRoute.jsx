@@ -1,9 +1,14 @@
 import VoertuigenPage from "../pages/VoertuigenPage";
+import ProtectedRoute from ".//ProtectedRoute";
 
 const VerifyEmailRoute = [
   {
     path: "/voertuigen",
-    element: <VoertuigenPage />,
+    element: (
+      <ProtectedRoute>
+        <VoertuigenPage />,
+      </ProtectedRoute>
+    ),
   },
 ];
 

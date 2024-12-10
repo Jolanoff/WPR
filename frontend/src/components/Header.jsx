@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import eventEmitter from "../utils/EventEmitter";
-import { Login } from './buttons/Login';
+import { Login } from "./buttons/Login";
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(
@@ -56,6 +56,9 @@ export default function Header() {
           <a href="/abonnementen" className="hover:text-blue-500">
             Abonnementbeheer
           </a>
+          <a href="/voertuigen" className="hover:text-blue-500">
+            Huren
+          </a>
         </nav>
 
         <div className="flex items-center space-x-4">
@@ -83,23 +86,6 @@ export default function Header() {
             </div>
           )}
         </div>
-      </div>
-
-      <div className="block md:hidden px-4 py-2">
-        <nav className="flex flex-col space-y-2 font-Alata text-lg">
-          <a href="/" className="hover:text-blue-500">
-            Home
-          </a>
-          <a href="/contact" className="hover:text-blue-500">
-            Contact
-          </a>
-          <a href="/aanbod" className="hover:text-blue-500">
-            Aanbod
-          </a>
-          <a href="/abonnementbeheer" className="hover:text-blue-500">
-            Abonnementbeheer
-          </a>
-        </nav>
       </div>
     </header>
   );
