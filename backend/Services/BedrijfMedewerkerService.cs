@@ -145,6 +145,43 @@ namespace backend.Services
             Console.WriteLine($"Verificatie-e-mail verzonden naar {email} met link: {link}");
         }
 
+        public async Task<List<object>> GetAllMedewerkersAsync(string userId)
+        {
+
+            var bedrijfId = await GetBedrijfIdFromUser(userId);
+            if (bedrijfId == null)
+                throw new ArgumentException("Geen bedrijf gevonden voor deze gebruiker.");
+
+
+            var wagenparkbeheerders = await _context.WagenparkBeheerders
+                .Where(w => w.BedrijfId == bedrijfId)
+                .Select(w => new
+                {
+                    Id = w.Id,
+                    Email = w.Klant.User.Email,
+                    Role = "Wagenparkbeheerder",
+                    Straatnaam = w.Klant.Straatnaam,
+                    Huisnummer = w.Klant.Huisnummer
+                })
+                .ToListAsync();
+
+            var zakelijkeHuurders = await _context.ZakelijkeHuurders
+                .Where(z => z.BedrijfId == bedrijfId)
+                .Select(z => new
+                {
+                    Id = z.Id,
+                    Email = z.Klant.User.Email,
+                    Role = "ZakelijkeHuurder",
+                    Straatnaam = z.Klant.Straatnaam,
+                    Huisnummer = z.Klant.Huisnummer
+                })
+                .ToListAsync();
+
+            var medewerkers = wagenparkbeheerders.Concat<object>(zakelijkeHuurders).ToList();
+            return medewerkers;
+        }
+
+
 
     }
 }

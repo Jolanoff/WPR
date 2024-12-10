@@ -154,5 +154,26 @@ namespace backend.Controllers
             }
         }
 
+        [HttpGet("medewerkers")]
+        [Authorize(Roles = "Bedrijf,Wagenparkbeheerder")]
+
+        public async Task<IActionResult> GetAllMedewerkers()
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                    return Unauthorized(new { message = "Gebruiker niet geauthenticeerd." });
+
+                var medewerkers = await _bedrijfMedewerkerService.GetAllMedewerkersAsync(userId);
+                return Ok(medewerkers);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+
     }
 }

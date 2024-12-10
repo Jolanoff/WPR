@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import api from "../../../api";
 
-const MedewerkersForm = () => {
+const MedewerkersForm = ({ userRole }) => {
     const [email, setEmail] = useState("");
-    const [role, setRole] = useState("Wagenparkbeheerder");
+    const [role, setRole] = useState(userRole === "Bedrijf" ? "Wagenparkbeheerder" : "ZakelijkeHuurder");
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -31,17 +31,19 @@ const MedewerkersForm = () => {
                 />
             </div>
 
-            <div className="mb-4">
-                <label className="block font-medium mb-2">Rol</label>
-                <select
-                    value={role}
-                    onChange={(e) => setRole(e.target.value)}
-                    className="border px-3 py-2 rounded w-full"
-                >
-                    <option value="Wagenparkbeheerder">Wagenparkbeheerder</option>
-                    <option value="ZakelijkeHuurder">ZakelijkeHuurder</option>
-                </select>
-            </div>
+            {userRole === "Bedrijf" && (
+                <div className="mb-4">
+                    <label className="block font-medium mb-2">Rol</label>
+                    <select
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
+                        className="border px-3 py-2 rounded w-full"
+                    >
+                        <option value="Wagenparkbeheerder">Wagenparkbeheerder</option>
+                        <option value="ZakelijkeHuurder">ZakelijkeHuurder</option>
+                    </select>
+                </div>
+            )}
 
             <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">
                 Toevoegen

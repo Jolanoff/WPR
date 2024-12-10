@@ -1,24 +1,36 @@
-import React, { useEffect, useState } from "react";
-import MedewerkersForm from '../../components/bedrijf/medewerkers/MedewerkersForm'
-import { CheckRole } from "../../utils/CheckRole";
+import React, { useState, useEffect } from "react";
+import MedewerkersForm from "../../components/bedrijf/medewerkers/MedewerkersForm";
+import { CheckRole } from '../../utils/CheckRole'
+import { MedewerkersList } from "../../components/bedrijf/medewerkers/MedewerkersList";
 
 export const MedewerkersPage = () => {
-  const [isAuthorized, setIsAuthorized] = useState(null);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [userRole, setUserRole] = useState("");
 
   useEffect(() => {
-    const verifyAuthorization = async () => {
-        const isAuthorized = await CheckRole(["Bedrijf", "Wagenparkbeheerder"]);
-        setIsAuthorized(isAuthorized);
-    };
-    verifyAuthorization();
-}, []);
+    const fetchUserRole = async () => {
+      try {
+        const allowedRoles = ["Bedrijf", "Wagenparkbeheerder"];
+        const roles = await CheckRole(allowedRoles);
 
-if (isAuthorized === null) return <div>Bezig met laden...</div>;
-if (!isAuthorized) return <div>U bent geen bedrijf.</div>;
+        if (roles) {
+          setUserRole(roles);
+          setIsAuthorized(true);
+        }
+      } catch (error) {
+        console.error("Error checking roles:", error);
+      }
+    };
+
+    fetchUserRole();
+  }, []);
+
+  if (!isAuthorized) return <div>U bent niet bevoegd om deze pagina te bekijken.</div>;
 
   return (
     <div>
-        <MedewerkersForm/>
+      <MedewerkersForm userRole={userRole} />
+      <MedewerkersList/>
     </div>
-  )
-}
+  );
+};
