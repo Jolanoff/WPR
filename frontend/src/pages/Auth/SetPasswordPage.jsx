@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import api from "../../api";
+import { RedirectIfLoggedIn } from "../../utils/RedirectIfLoggedIn";
 
 const SetPasswordPage = () => {
     const [password, setPassword] = useState("");
@@ -11,12 +12,16 @@ const SetPasswordPage = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
+    RedirectIfLoggedIn()
+
     const userId = searchParams.get("userId");
     const token = searchParams.get("token");
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError(null);
+
+        
 
         if (!userId || !token) {
             setError("Ongeldige link.");

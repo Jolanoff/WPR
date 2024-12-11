@@ -20,19 +20,25 @@ namespace backend.Services
             _userManager = userManager;
         }
 
-        private async Task<int?> GetBedrijfIdFromUser(string userId)
+        private async Task<int?> GetBedrijfIdFromUser(string userNameOrId)
         {
+            // Resolve the UserId if a UserName is provided
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.Id == userNameOrId || u.UserName == userNameOrId);
+
+            if (user == null)
+                return null;
+
             // Check if the user is directly associated with a bedrijf
             var klant = await _context.Klanten
                 .Include(k => k.Bedrijf)
-                .FirstOrDefaultAsync(k => k.UserId == userId);
+                .FirstOrDefaultAsync(k => k.UserId == user.Id);
 
             if (klant?.Bedrijf != null)
                 return klant.Bedrijf.Id;
 
             // Check if the user is a Wagenparkbeheerder
             var beheerder = await _context.WagenparkBeheerders
-                .FirstOrDefaultAsync(w => w.Klant.UserId == userId);
+                .FirstOrDefaultAsync(w => w.Klant.UserId == user.Id);
 
             if (beheerder != null)
                 return beheerder.BedrijfId;
@@ -40,7 +46,8 @@ namespace backend.Services
             return null;
         }
 
-        public async Task<string> AddBedrijfMedewerkerAsync(string userId, string medewerkerEmail, string role)
+
+        public async Task<string> AddBedrijfMedewerkerAsync(string userId, string medewerkerGebruikersnaam, string medewerkerVoornaam, string medewerkerAchternaam, string medewerkerEmail, string role)
         {
             // Fetch Bedrijf based on the user's role
             var bedrijfId = await GetBedrijfIdFromUser(userId);
@@ -50,8 +57,10 @@ namespace backend.Services
             // Create a new User for the medewerker
             var newUser = new User
             {
+                Voornaam = medewerkerVoornaam,
+                Achternaam = medewerkerAchternaam,
                 Email = medewerkerEmail,
-                UserName = medewerkerEmail,
+                UserName = medewerkerGebruikersnaam,
                 EmailConfirmed = false
             };
 
@@ -67,8 +76,8 @@ namespace backend.Services
             var newKlant = new Klant
             {
                 User = newUser,
-                Straatnaam = "Onbekend", // Default value
-                Huisnummer = 0,          // Default value
+                Straatnaam = "Onbekend",
+                Huisnummer = 0,          
                 KlantType = role
             };
             _context.Klanten.Add(newKlant);
@@ -109,35 +118,58 @@ namespace backend.Services
 
         public async Task<string> RemoveBedrijfMedewerkerAsync(string userId, int medewerkerId)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentException("Gebruikers-ID is niet opgegeven.");
+            }
+
             // Fetch Bedrijf based on the user's role
             var bedrijfId = await GetBedrijfIdFromUser(userId);
             if (bedrijfId == null)
-                throw new ArgumentException("Geen bedrijf gevonden voor deze gebruiker.");
+            {
+                throw new ArgumentException($"Geen bedrijf gevonden voor gebruiker met ID: {userId}");
+            }
 
-            // Check if the medewerker is a WagenparkBeheerder
+            // Attempt to find the medewerker as WagenparkBeheerder
             var beheerder = await _context.WagenparkBeheerders
+                .Include(w => w.Klant)
+                .ThenInclude(k => k.User)
                 .FirstOrDefaultAsync(w => w.Id == medewerkerId && w.BedrijfId == bedrijfId.Value);
 
             if (beheerder != null)
             {
+                var userToRemove = beheerder.Klant.User;
                 _context.WagenparkBeheerders.Remove(beheerder);
+                if (userToRemove != null)
+                {
+                    _context.Users.Remove(userToRemove);
+                }
                 await _context.SaveChangesAsync();
                 return $"Wagenparkbeheerder succesvol verwijderd.";
             }
 
-            // Check if the medewerker is a ZakelijkeHuurder
+            // Attempt to find the medewerker as ZakelijkeHuurder
             var huurder = await _context.ZakelijkeHuurders
+                .Include(z => z.Klant)
+                .ThenInclude(k => k.User)
                 .FirstOrDefaultAsync(z => z.Id == medewerkerId && z.BedrijfId == bedrijfId.Value);
 
             if (huurder != null)
             {
+                var userToRemove = huurder.Klant.User;
                 _context.ZakelijkeHuurders.Remove(huurder);
+                if (userToRemove != null)
+                {
+                    _context.Users.Remove(userToRemove);
+                }
                 await _context.SaveChangesAsync();
                 return $"ZakelijkeHuurder succesvol verwijderd.";
             }
 
-            throw new ArgumentException("Medewerker niet gevonden onder dit bedrijf.");
+            throw new ArgumentException($"Medewerker met ID: {medewerkerId} niet gevonden onder bedrijf met ID: {bedrijfId}");
         }
+
+
 
         private async Task SendVerificationEmailAsync(string email, string link)
         {
@@ -158,6 +190,8 @@ namespace backend.Services
                 .Select(w => new
                 {
                     Id = w.Id,
+                    Voornaam = w.Klant.User.Voornaam,
+                    Achternaam = w.Klant.User.Achternaam,
                     Email = w.Klant.User.Email,
                     Role = "Wagenparkbeheerder",
                     Straatnaam = w.Klant.Straatnaam,
@@ -170,6 +204,8 @@ namespace backend.Services
                 .Select(z => new
                 {
                     Id = z.Id,
+                    Voornaam = z.Klant.User.Voornaam,
+                    Achternaam = z.Klant.User.Achternaam,
                     Email = z.Klant.User.Email,
                     Role = "ZakelijkeHuurder",
                     Straatnaam = z.Klant.Straatnaam,

@@ -120,14 +120,28 @@ namespace backend.Controllers
                 // Allow only "Bedrijf" to add any role
                 if (userRoles.Contains("Bedrijf"))
                 {
-                    var result = await _bedrijfMedewerkerService.AddBedrijfMedewerkerAsync(userId, dto.Email, dto.Role);
+                    var result = await _bedrijfMedewerkerService.AddBedrijfMedewerkerAsync(
+                        userId,
+                        dto.Gebruikersnaam,
+                        dto.Voornaam,
+                        dto.Achternaam,
+                        dto.Email,
+                        dto.Role
+                    );
                     return Ok(new { message = result });
                 }
 
                 // Allow "Wagenparkbeheerder" to add only ZakelijkeHuurder
                 if (userRoles.Contains("Wagenparkbeheerder") && dto.Role == "ZakelijkeHuurder")
                 {
-                    var result = await _bedrijfMedewerkerService.AddBedrijfMedewerkerAsync(userId, dto.Email, "ZakelijkeHuurder");
+                    var result = await _bedrijfMedewerkerService.AddBedrijfMedewerkerAsync(
+                        userId,
+                        dto.Gebruikersnaam,
+                        dto.Voornaam,
+                        dto.Achternaam,
+                        dto.Email,
+                        "ZakelijkeHuurder"
+                    );
                     return Ok(new { message = result });
                 }
 
