@@ -8,23 +8,23 @@ import VerifyEmailRoute from "./routes/VerifyEmailRoute";
 import ProfielRouter from "./routes/ProfielRouter";
 import FactuurRouter from "./routes/FactuurRoute";
 import AbonnementRouter from "./routes/AbonnementRouter";
-import VoertuigenRouter from "./routes/VoertuigenRoute";
+import HurenRoute from "./routes/HurenRoute";
 
 const routes = [
-  {
-    path: "/",
-    element: <App />,
-    children: [
-      ...LoginRouter,
-      ...RegisterRouter,
-      ...DashboardRouter,
-      ...VerifyEmailRoute,
-      ...ProfielRouter,
-      ...FactuurRouter,
-      ...AbonnementRouter,
-      ...VoertuigenRouter,
-    ],
-  },
+    {
+        path: "/",
+        element: <App />,
+        children: [
+            ...LoginRouter,
+            ...RegisterRouter,
+            ...DashboardRouter,
+            ...VerifyEmailRoute,
+            ...ProfielRouter,
+            ...FactuurRouter,
+            ...AbonnementRouter,
+            ...HurenRoute,
+        ],
+    },
 ];
 
 const router = createBrowserRouter(routes);

@@ -13,7 +13,9 @@ const useUserInfo = () => {
                 console.log("User Info Response:", response.data); // Log the response to verify
                 setUserInfo(response.data);
             } catch (err) {
-                setError(err.response?.data?.message || "Failed to fetch user info");
+                setError(
+                    err.response?.data?.message || "Failed to fetch user info"
+                );
             } finally {
                 setLoading(false);
             }
