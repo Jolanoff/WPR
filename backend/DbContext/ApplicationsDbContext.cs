@@ -126,6 +126,7 @@ namespace backend.DbContext
            .HasOne(a => a.Bedrijf)
            .WithMany(b => b.Abonnementen)
            .HasForeignKey(a => a.BedrijfId);
+            //vraag aan docent of als bedrijf verwijdered wordt. moet de abonnoment ook verwijderd worden of moet dat blijven
 
 
 

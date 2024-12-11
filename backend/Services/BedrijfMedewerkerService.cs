@@ -186,7 +186,7 @@ namespace backend.Services
 
 
             var wagenparkbeheerders = await _context.WagenparkBeheerders
-                .Where(w => w.BedrijfId == bedrijfId)
+                .Where(w => w.BedrijfId == bedrijfId && w.Klant.UserId != userId)
                 .Select(w => new
                 {
                     Id = w.Id,

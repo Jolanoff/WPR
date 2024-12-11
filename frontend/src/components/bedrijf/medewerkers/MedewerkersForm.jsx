@@ -1,19 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import api from "../../../api";
 
 import { HandleApiErrors } from "../../../utils/HandleApiError";
 import ErrorMessage from "../../ErrorMessage";
 
-const MedewerkersForm = ({ userRole }) => {
+const MedewerkersForm = ({ userRole = [] }) => {
     const [voornaam, setVoornaam] = useState("");
     const [achternaam, setAchternaam] = useState("");
     const [gebruikersnaam, setGebruikersnaam] = useState("");
     const [email, setEmail] = useState("");
-
+    const [role, setRole] = useState("ZakelijkeHuurder");
     const [error, setError] = useState(null);
-
-
-    const [role, setRole] = useState(userRole === "Bedrijf" ? "Wagenparkbeheerder" : "ZakelijkeHuurder");
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -74,7 +71,7 @@ const MedewerkersForm = ({ userRole }) => {
                 />
             </div>
 
-            {userRole === "Bedrijf" && (
+            {userRole.includes("Bedrijf") && (
                 <div className="mb-4">
                     <label className="block font-medium mb-2">Rol</label>
                     <select
