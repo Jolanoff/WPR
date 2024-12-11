@@ -3,7 +3,7 @@ import ProtectedRoute from ".//ProtectedRoute";
 
 const VerifyEmailRoute = [
   {
-    path: "/voertuigen",
+    path: "/particulier/huren",
     element: (
       <ProtectedRoute>
         <VoertuigenPage />,

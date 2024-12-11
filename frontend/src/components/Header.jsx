@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from "react";
 import eventEmitter from "../utils/EventEmitter";
 import { Login } from "./buttons/Login";
+import CarAndAllLogo from "../assets/carandall.svg";
+import placeholder from "../assets/placeholder.png";
+import useUserInfo from "../hooks/useUserInfo";
 
 export default function Header() {
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("isLoggedIn") === "true"
   );
+  const { userInfo, loading, error } = useUserInfo(); // Always call the hook unconditionally
   const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   useEffect(() => {
@@ -32,15 +36,14 @@ export default function Header() {
     setShowProfileMenu((prev) => !prev);
   };
 
+  if (loading) return <div>Loading...</div>; // Show loading state if needed
+  if (error) return <div>Error: {error.message}</div>; // Handle any errors
+
   return (
     <header className="bg-gray-50 shadow-sm">
       <div className="flex items-center justify-between px-4 py-2">
         <div>
-          <img
-            src="src/assets/carandall.svg"
-            alt="CarAndAll logo"
-            className="w-28"
-          />
+          <img src={CarAndAllLogo} alt="CarAndAll logo" className="w-28" />
         </div>
 
         <nav className="hidden md:flex space-x-6 font-Alata text-lg">
@@ -56,7 +59,17 @@ export default function Header() {
           <a href="/abonnementen" className="hover:text-blue-500">
             Abonnementbeheer
           </a>
-          <a href="/voertuigen" className="hover:text-blue-500">
+
+          <a
+            href={
+              userInfo?.roles?.includes("Bedrijf")
+                ? "/bedrijf/huren"
+                : userInfo?.roles?.includes("ParticuliereHuurder")
+                ? "/particulier/huren"
+                : "#"
+            }
+            className="hover:text-blue-500"
+          >
             Huren
           </a>
         </nav>
@@ -67,7 +80,7 @@ export default function Header() {
           ) : (
             <div className="relative">
               <img
-                src="src/assets/placeholder.png"
+                src={placeholder}
                 alt="User avatar"
                 className="w-10 h-10 rounded-full cursor-pointer"
                 onClick={toggleProfileMenu}
