@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import VoertuigCard from "../components/VoertuigCard";
+import VoertuigenSidebar from "../components/VoertuigenSidebar";
 import autoplaceholder from "./../assets/autoplaceholder.png";
 import camperplaceholder from "./../assets/camperplaceholder.png";
 import caravanplaceholder from "./../assets/caravanplaceholder.png";
@@ -7,39 +8,29 @@ import api from "../api";
 import useUserInfo from "../hooks/useUserInfo";
 
 function VoertuigenPage() {
-    const [voertuigen, setVoertuigen] = useState([]); // To store the vehicles
-    const [loading, setLoading] = useState(true); // To track the loading state
-    const [error, setError] = useState(null); // To store errors if any
-    const [filter, setFilter] = useState("alle"); // To track the selected filter
-    const { userInfo, userLoading, userError } = useUserInfo();
+    const [voertuigen, setVoertuigen] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [typeFilter, setTypeFilter] = useState("alle");
+    const { userInfo } = useUserInfo();
 
-    // Fetch vehicles when the component mounts
     useEffect(() => {
         const fetchVoertuigen = async () => {
             try {
-                const response = await api.get("/Voertuig"); // Assuming "/Voertuig" is the correct endpoint
-                setVoertuigen(response.data); // Axios automatically parses JSON and stores it in `data`
+                const response = await api.get("/Voertuig");
+                setVoertuigen(response.data);
             } catch (error) {
-                setError(error.message || "Error fetching vehicles"); // Handle errors
+                setError(error.message || "Error fetching vehicles");
             } finally {
-                setLoading(false); // Set loading to false when done
+                setLoading(false);
             }
         };
 
         fetchVoertuigen();
-    }, []); // This effect runs once when the component mounts
+    }, []);
 
-    if (loading) {
-        return <div>Loading...</div>; // Display loading message while fetching
-    }
-
-    if (error) {
-        return <div>Error: {error}</div>; // Display error message if fetching fails
-    }
-
-    // Function to get the appropriate placeholder based on voertuigType
     const getPlaceholder = (voertuigType) => {
-        switch (voertuigType.toLowerCase()) {
+        switch (voertuigType?.toLowerCase()) {
             case "camper":
                 return camperplaceholder;
             case "caravan":
@@ -50,39 +41,51 @@ function VoertuigenPage() {
     };
 
     const filteredVoertuigen = voertuigen.filter((voertuig) => {
-        if (filter === "alle") return true; // Show all vehicles
-        return voertuig.voertuigType.toLowerCase() === filter; // Match filter with voertuigType
+        if (userInfo?.roles?.includes("Bedrijf")) {
+            return voertuig.voertuigType?.toLowerCase() === "auto";
+        }
+
+        if (userInfo?.roles?.includes("ParticuliereHuurder")) {
+            return (
+                typeFilter === "alle" ||
+                voertuig.voertuigType?.toLowerCase() === typeFilter
+            );
+        }
+
+        return true;
     });
 
-    return (
-        <>
-            <h1>Huren als {userInfo?.roles}</h1>
-            <select
-                className="ml-12 mt-12 rounded-md p-2 border border-black"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-            >
-                <option value="alle">Alle</option>
-                <option value="auto">Auto</option>
-                <option value="camper">Camper</option>
-                <option value="caravan">Caravan</option>
-            </select>
+    if (loading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error}</div>;
 
-            <div className="grid grid-cols-3">
-                {filteredVoertuigen.map((voertuig) => (
-                    <VoertuigCard
-                        key={voertuig.id}
-                        merk={voertuig.merk}
-                        type={voertuig.type}
-                        kenteken={voertuig.kenteken}
-                        kleur={voertuig.kleur}
-                        aanschafjaar={voertuig.aanschafjaar}
-                        prijs="Prijs is onbekend"
-                        imageUrl={getPlaceholder(voertuig.voertuigType)}
-                    />
-                ))}
+    return (
+        <div className="flex">
+            {(userInfo?.roles?.includes("ParticuliereHuurder") ||
+                userInfo?.roles?.includes("Bedrijf")) && (
+                <VoertuigenSidebar
+                    onFilterChange={setTypeFilter}
+                    currentFilter={typeFilter}
+                    userRole={userInfo?.roles}
+                />
+            )}
+
+            <div className="flex-grow p-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {filteredVoertuigen.map((voertuig) => (
+                        <VoertuigCard
+                            key={voertuig.id}
+                            merk={voertuig.merk}
+                            type={voertuig.type}
+                            kenteken={voertuig.kenteken}
+                            kleur={voertuig.kleur}
+                            aanschafjaar={voertuig.aanschafjaar}
+                            prijs={voertuig.prijs || "Prijs is onbekend"}
+                            imageUrl={getPlaceholder(voertuig.voertuigType)}
+                        />
+                    ))}
+                </div>
             </div>
-        </>
+        </div>
     );
 }
 
