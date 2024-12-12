@@ -73,6 +73,7 @@ namespace backend.DbContext
                 .HasForeignKey<Medewerker>(m => m.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
             // **Relatie Klant -> Bedrijf**
             builder.Entity<Bedrijf>()
                 .HasOne(b => b.Klant)

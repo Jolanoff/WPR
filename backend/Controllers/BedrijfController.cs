@@ -170,7 +170,6 @@ namespace backend.Controllers
 
         [HttpGet("medewerkers")]
         [Authorize(Roles = "Bedrijf,Wagenparkbeheerder")]
-
         public async Task<IActionResult> GetAllMedewerkers()
         {
             try

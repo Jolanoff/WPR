@@ -8,6 +8,8 @@ import PasswordModal from "../components/Profile/PasswordModal";
 import { HandleApiErrors } from "../utils/HandleApiError";
 import ErrorMessage from "../components/ErrorMessage";
 
+import UseAuthorization from "../utils/UseAuthorization";
+
 
 function ProfielPage() {
   const [userData, setUserData] = useState({
@@ -28,8 +30,9 @@ function ProfielPage() {
     currentPassword: "",
     newPassword: "",
   });
-
   const navigate = useNavigate();
+
+  const { userRoles } = UseAuthorization([])
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -63,7 +66,7 @@ function ProfielPage() {
         ...updatedUserData,
         adres: {
           straatnaam: updatedUserData.adres.straatnaam,
-          huisnummer: updatedUserData.adres.huisnummer,
+          huisnummer: parseInt(updatedUserData.adres.huisnummer, 10)
         },
         kvKNummer: updatedUserData.kvKNummer || "",
       };
@@ -113,8 +116,9 @@ function ProfielPage() {
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-xl">
         <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Profielinformatie</h2>
         <ProfileForm
+          userRoles={userRoles}
           userData={userData}
-          setUserData={setUserData}
+          
           onSave={handleSave}
           onDelete={handleDeleteAccount}
           onOpenPasswordModal={() => setIsPasswordModalOpen(true)}
