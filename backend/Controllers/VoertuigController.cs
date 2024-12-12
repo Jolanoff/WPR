@@ -15,12 +15,19 @@ namespace backend.Controllers
             _voertuigService = voertuigService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllVoertuigen()
+
+        public class DateRangeDto
+        {
+            public DateTime StartDatum { get; set; }
+            public DateTime EindDatum { get; set; }
+        }
+        [HttpPost] // Verander van [HttpGet] naar [HttpPost]
+        public async Task<IActionResult> GetAllVoertuigen([FromBody] DateRangeDto dateRange)
         {
             try
             {
-                var voertuigen = await _voertuigService.GetAllVoertuigenAsync();
+                var voertuigen = await _voertuigService.GetAllVoertuigenAsync(dateRange.StartDatum, dateRange.EindDatum);
+
                 if (voertuigen == null || !voertuigen.Any())
                     return NotFound(new { message = "Geen voertuigen gevonden." });
 

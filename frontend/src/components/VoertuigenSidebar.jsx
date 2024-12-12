@@ -1,6 +1,10 @@
 import React from "react";
 
-function VoertuigenSidebar({ onFilterChange, currentFilter, userRole }) {
+function VoertuigenSidebar({
+    onTypeFilterChange,
+    currentTypeFilter,
+    userRole,
+}) {
     const isParticularUser = userRole?.includes("ParticuliereHuurder");
     const isBedrijfUser = userRole?.includes("Bedrijf");
 
@@ -33,8 +37,8 @@ function VoertuigenSidebar({ onFilterChange, currentFilter, userRole }) {
                             ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                             : ""
                     }`}
-                    value={isBedrijfUser ? "auto" : currentFilter}
-                    onChange={(e) => onFilterChange(e.target.value)}
+                    value={isBedrijfUser ? "auto" : currentTypeFilter}
+                    onChange={(e) => onTypeFilterChange(e.target.value)}
                     disabled={isBedrijfUser}
                 >
                     {isParticularUser && (

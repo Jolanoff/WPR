@@ -17,7 +17,14 @@ function VoertuigenPage() {
     useEffect(() => {
         const fetchVoertuigen = async () => {
             try {
-                const response = await api.get("/Voertuig");
+                const today = new Date().toISOString().split("T")[0];
+                console.log(today);
+                const response = await api.post("/Voertuig", {
+                    checkStartDatum: today,
+                    checkEindDatum: today,
+                });
+
+                console.log(response.data);
                 setVoertuigen(response.data);
             } catch (error) {
                 setError(error.message || "Error fetching vehicles");
@@ -63,8 +70,8 @@ function VoertuigenPage() {
             {(userInfo?.roles?.includes("ParticuliereHuurder") ||
                 userInfo?.roles?.includes("Bedrijf")) && (
                 <VoertuigenSidebar
-                    onFilterChange={setTypeFilter}
-                    currentFilter={typeFilter}
+                    onTypeFilterChange={setTypeFilter}
+                    currentTypeFilter={typeFilter}
                     userRole={userInfo?.roles}
                 />
             )}
