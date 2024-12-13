@@ -13,6 +13,7 @@ namespace backend.Dtos.Voertuigen
         public bool Status { get; set; }
         public string VoertuigType { get; set; }
         public List<ReserveringDto> Reserveringen { get; set; } // Voor meerdere reserveringen
+        public string imageUrl { get; set; }
 
     }
 }

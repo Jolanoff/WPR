@@ -13,6 +13,7 @@ namespace backend.Models.Voertuigen
         public int Aanschafjaar { get; set; }
         public bool Status { get; set; }
         public string VoertuigType { get; set; }
+        public string? imageUrl { get; set; }
         public List<Reservering> Reserveringen { get; set; }  // Relatie met reserveringen
 
     }

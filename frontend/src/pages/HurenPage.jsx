@@ -7,34 +7,46 @@ import caravanplaceholder from "./../assets/caravanplaceholder.png";
 import api from "../api";
 import useUserInfo from "../hooks/useUserInfo";
 
-function VoertuigenPage() {
+function HurenPage() {
+    function getLocalDateString() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, "0"); // Maand is 0-indexed
+        const day = String(today.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    }
+
     const [voertuigen, setVoertuigen] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const [startDatum, setStartDatum] = useState(getLocalDateString);
+    const [eindDatum, setEindDatum] = useState(getLocalDateString);
+
     const [typeFilter, setTypeFilter] = useState("alle");
     const { userInfo } = useUserInfo();
 
+    const fetchVoertuigen = async () => {
+        setLoading(true);
+        setError(null);
+        try {
+            const response = await api.post("/Voertuig", {
+                startDatum,
+                eindDatum,
+            });
+
+            console.log(response.data);
+            setVoertuigen(response.data);
+        } catch (error) {
+            setError(error.message || "Error fetching vehicles");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchVoertuigen = async () => {
-            try {
-                const today = new Date().toISOString().split("T")[0];
-                console.log(today);
-                const response = await api.post("/Voertuig", {
-                    checkStartDatum: today,
-                    checkEindDatum: today,
-                });
-
-                console.log(response.data);
-                setVoertuigen(response.data);
-            } catch (error) {
-                setError(error.message || "Error fetching vehicles");
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchVoertuigen();
-    }, []);
+    }, [startDatum, eindDatum]);
 
     const getPlaceholder = (voertuigType) => {
         switch (voertuigType?.toLowerCase()) {
@@ -73,6 +85,10 @@ function VoertuigenPage() {
                     onTypeFilterChange={setTypeFilter}
                     currentTypeFilter={typeFilter}
                     userRole={userInfo?.roles}
+                    startDatum={startDatum}
+                    eindDatum={eindDatum}
+                    onStartDatumChange={setStartDatum}
+                    onEindDatumChange={setEindDatum}
                 />
             )}
 
@@ -87,7 +103,11 @@ function VoertuigenPage() {
                             kleur={voertuig.kleur}
                             aanschafjaar={voertuig.aanschafjaar}
                             prijs={voertuig.prijs || "Prijs is onbekend"}
-                            imageUrl={getPlaceholder(voertuig.voertuigType)}
+                            imageUrl={
+                                voertuig.imageUrl ||
+                                getPlaceholder(voertuig.voertuigType)
+                            }
+                            status={voertuig.status}
                         />
                     ))}
                 </div>
@@ -96,4 +116,4 @@ function VoertuigenPage() {
     );
 }
 
-export default VoertuigenPage;
+export default HurenPage;

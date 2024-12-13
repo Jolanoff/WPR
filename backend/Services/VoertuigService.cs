@@ -25,6 +25,7 @@ public class VoertuigService
                 Kleur = v.Kleur,
                 Aanschafjaar = v.Aanschafjaar,
                 VoertuigType = v.VoertuigType,
+                imageUrl = v.imageUrl,
                 Reserveringen = v.Reserveringen.Select(r => new ReserveringDto
                 {
                     Id = r.Id,

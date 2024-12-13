@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function VoertuigCard({
     merk,
@@ -8,13 +9,18 @@ export default function VoertuigCard({
     aanschafjaar,
     prijs,
     imageUrl,
+    status, // Received as a prop
 }) {
+    const navigate = useNavigate();
+
     return (
         <div className="p-12">
             <form
                 onSubmit={(event) => {
                     event.preventDefault();
-                    console.log("fake gehuurd");
+                    alert(
+                        "TODO: Stuur naar /aanvraag met bijbehorende voertuigdata"
+                    );
                 }}
                 className="bg-white p-8 rounded-lg w-full max-w-md shadow-md"
             >
@@ -27,6 +33,14 @@ export default function VoertuigCard({
                     <p>Kleur: {kleur}</p>
                     <p>Aanschafjaar : {aanschafjaar}</p>
                     <p className="mt-8 text-xl font-bold">{prijs}</p>
+                    {/* Display the status as available/unavailable */}
+                    <p
+                        className={`mt-2 text-lg font-semibold ${
+                            status ? "text-red-500" : "text-green-500"
+                        }`}
+                    >
+                        Status: {status ? "Niet beschikbaar" : "Beschikbaar"}
+                    </p>
                 </div>
                 <button
                     type="submit"
