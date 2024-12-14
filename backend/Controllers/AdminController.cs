@@ -37,5 +37,19 @@ namespace backend.Controllers
             }
 
         }
+
+        [HttpGet("medewerkers")]
+        public async Task<IActionResult> GetAllMedewerkers()
+        {
+            try
+            {
+                var medewerkers = await _adminService.GetAllMedewerkersAsync();
+                return Ok(medewerkers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Error retrieving medewerkers", details = ex.Message });
+            }
+        }
     }
 }

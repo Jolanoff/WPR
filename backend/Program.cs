@@ -37,6 +37,7 @@ namespace backend
 
 
             // Configure Services
+            builder.Services.AddScoped<EmailService>();
             builder.Services.AddScoped<AccountService>();
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<BedrijfService>();

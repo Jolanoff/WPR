@@ -1,8 +1,10 @@
 ﻿using System.Web;
 using backend.DbContext;
+using backend.Dtos.Admin;
 using backend.Models.Gebruiker;
 using backend.Models.Medewerkers;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Services
 {
@@ -10,11 +12,12 @@ namespace backend.Services
     {
         private readonly ApplicationsDbContext _context;
         private readonly UserManager<User> _userManager;
-
-        public AdminService(ApplicationsDbContext context, UserManager<User> userManager)
+        private readonly EmailService _emailService;
+        public AdminService(ApplicationsDbContext context, UserManager<User> userManager, EmailService emailService)
         {
             _context = context;
             _userManager = userManager;
+            _emailService = emailService;
         }
         public async Task<string> AddMedewerkerAsync(string gebruikersnaam, string voornaam, string achternaam, string email, string functie, string role)
         {
@@ -49,9 +52,30 @@ namespace backend.Services
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
             var encodedToken = HttpUtility.UrlEncode(token);
             var confirmationLink = $"http://localhost:5173/set-password?userId={newUser.Id}&token={encodedToken}";
+            var emailBody = $"Hello {voornaam},<br><br>Please confirm your email by clicking the link below:<br>" +
+                        $"<a href='{confirmationLink}'>Confirm Email</a>";
+
+            await _emailService.SendEmailAsync(email, "Confirm your email", emailBody);
+
+
             Console.WriteLine($"Verificatie-e-mail:{confirmationLink} ");
             return $"{functie} medewerker met email {email} succesvol toegevoegd.";
         }
+
         
+        public async Task<List<MedewerkerDto>> GetAllMedewerkersAsync()
+        {
+            return await _context.Set<Medewerker>()
+            .Include(m => m.User)
+            .Select(m => new MedewerkerDto
+            {
+                Gebruikersnaam = m.User.UserName,
+                Voornaam = m.User.Voornaam,
+                Achternaam = m.User.Achternaam,
+                Email = m.User.Email,
+                Functie = m.Functie
+            })
+            .ToListAsync();
+        }
     }
 }

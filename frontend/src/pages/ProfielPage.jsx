@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
-import eventEmitter from "../utils/EventEmitter";
+
 import ProfileForm from "../components/Profile/ProfileForm";
 import PasswordModal from "../components/Profile/PasswordModal";
 
@@ -9,7 +9,7 @@ import { HandleApiErrors } from "../utils/HandleApiError";
 import ErrorMessage from "../components/ErrorMessage";
 
 import UseAuthorization from "../utils/UseAuthorization";
-
+import { useAuthStore } from "../store/authStore";
 
 function ProfielPage() {
   const [userData, setUserData] = useState({
@@ -33,6 +33,7 @@ function ProfielPage() {
   const navigate = useNavigate();
 
   const { userRoles } = UseAuthorization([])
+  const logout = useAuthStore((state) => state.logout);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -79,19 +80,15 @@ function ProfielPage() {
     }
   };
 
-
   const handleDeleteAccount = async () => {
     if (window.confirm("Weet je zeker dat je je account wilt verwijderen?")) {
       try {
         await api.delete("/account/Account");
-
-        localStorage.removeItem("isLoggedIn");
-        eventEmitter.emit("accountDeleted");
+        await logout();
         alert("Account succesvol verwijderd.");
         navigate("/");
       } catch (err) {
         setError(HandleApiErrors(err.response));
-
       }
     }
   };
