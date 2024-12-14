@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from "react";
 import VoertuigCard from "../components/VoertuigCard";
 import VoertuigenSidebar from "../components/VoertuigenSidebar";
-import autoplaceholder from "./../assets/autoplaceholder.png";
-import camperplaceholder from "./../assets/camperplaceholder.png";
-import caravanplaceholder from "./../assets/caravanplaceholder.png";
+import notavailable from "../assets/notavailable.png";
 import api from "../api";
 import useUserInfo from "../hooks/useUserInfo";
 
@@ -11,7 +9,7 @@ function HurenPage() {
     function getLocalDateString() {
         const today = new Date();
         const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, "0"); // Maand is 0-indexed
+        const month = String(today.getMonth() + 1).padStart(2, "0");
         const day = String(today.getDate()).padStart(2, "0");
         return `${year}-${month}-${day}`;
     }
@@ -24,6 +22,8 @@ function HurenPage() {
     const [eindDatum, setEindDatum] = useState(getLocalDateString);
 
     const [typeFilter, setTypeFilter] = useState("alle");
+    const [brandFilter, setBrandFilter] = useState([]);
+
     const { userInfo } = useUserInfo();
 
     const fetchVoertuigen = async () => {
@@ -48,34 +48,32 @@ function HurenPage() {
         fetchVoertuigen();
     }, [startDatum, eindDatum]);
 
-    const getPlaceholder = (voertuigType) => {
-        switch (voertuigType?.toLowerCase()) {
-            case "camper":
-                return camperplaceholder;
-            case "caravan":
-                return caravanplaceholder;
-            default:
-                return autoplaceholder;
-        }
-    };
-
     const filteredVoertuigen = voertuigen.filter((voertuig) => {
-        if (userInfo?.roles?.includes("Bedrijf")) {
-            return voertuig.voertuigType?.toLowerCase() === "auto";
-        }
+        // Type filter
+        const typeCondition = userInfo?.roles?.includes("Bedrijf")
+            ? voertuig.voertuigType?.toLowerCase() === "auto"
+            : typeFilter === "alle" ||
+              voertuig.voertuigType?.toLowerCase() === typeFilter;
 
-        if (userInfo?.roles?.includes("ParticuliereHuurder")) {
-            return (
-                typeFilter === "alle" ||
-                voertuig.voertuigType?.toLowerCase() === typeFilter
-            );
-        }
+        // Brand filter
+        const brandCondition =
+            brandFilter.length === 0 ||
+            (voertuig.merk && brandFilter.includes(voertuig.merk));
 
-        return true;
+        return typeCondition && brandCondition;
     });
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
+
+    const filteredMerken = voertuigen
+        .filter(
+            (voertuig) =>
+                typeFilter === "alle" ||
+                voertuig.voertuigType?.toLowerCase() === typeFilter
+        )
+        .map((voertuig) => voertuig.merk)
+        .filter((merk, index, self) => merk && self.indexOf(merk) === index);
 
     return (
         <div className="flex">
@@ -89,6 +87,9 @@ function HurenPage() {
                     eindDatum={eindDatum}
                     onStartDatumChange={setStartDatum}
                     onEindDatumChange={setEindDatum}
+                    merken={filteredMerken}
+                    brandFilter={brandFilter}
+                    onBrandFilterChange={setBrandFilter}
                 />
             )}
 
@@ -103,11 +104,9 @@ function HurenPage() {
                             kleur={voertuig.kleur}
                             aanschafjaar={voertuig.aanschafjaar}
                             prijs={voertuig.prijs || "Prijs is onbekend"}
-                            imageUrl={
-                                voertuig.imageUrl ||
-                                getPlaceholder(voertuig.voertuigType)
-                            }
+                            imageUrl={voertuig.imageUrl || notavailable}
                             status={voertuig.status}
+                            reserveringen={voertuig.reserveringen}
                         />
                     ))}
                 </div>
