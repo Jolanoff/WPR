@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
-import eventEmitter from "../utils/EventEmitter";
+
 import ProfileForm from "../components/Profile/ProfileForm";
 import PasswordModal from "../components/Profile/PasswordModal";
 
 import { HandleApiErrors } from "../utils/HandleApiError";
 import ErrorMessage from "../components/ErrorMessage";
 
+import UseAuthorization from "../utils/UseAuthorization";
+import { useAuthStore } from "../store/authStore";
 
 function ProfielPage() {
   const [userData, setUserData] = useState({
@@ -28,8 +30,10 @@ function ProfielPage() {
     currentPassword: "",
     newPassword: "",
   });
-
   const navigate = useNavigate();
+
+  const { userRoles } = UseAuthorization([])
+  const logout = useAuthStore((state) => state.logout);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -63,7 +67,7 @@ function ProfielPage() {
         ...updatedUserData,
         adres: {
           straatnaam: updatedUserData.adres.straatnaam,
-          huisnummer: updatedUserData.adres.huisnummer,
+          huisnummer: parseInt(updatedUserData.adres.huisnummer, 10)
         },
         kvKNummer: updatedUserData.kvKNummer || "",
       };
@@ -76,19 +80,15 @@ function ProfielPage() {
     }
   };
 
-
   const handleDeleteAccount = async () => {
     if (window.confirm("Weet je zeker dat je je account wilt verwijderen?")) {
       try {
         await api.delete("/account/Account");
-
-        localStorage.removeItem("isLoggedIn");
-        eventEmitter.emit("accountDeleted");
+        await logout();
         alert("Account succesvol verwijderd.");
         navigate("/");
       } catch (err) {
         setError(HandleApiErrors(err.response));
-
       }
     }
   };
@@ -113,8 +113,9 @@ function ProfielPage() {
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-xl">
         <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">Profielinformatie</h2>
         <ProfileForm
+          userRoles={userRoles}
           userData={userData}
-          setUserData={setUserData}
+          
           onSave={handleSave}
           onDelete={handleDeleteAccount}
           onOpenPasswordModal={() => setIsPasswordModalOpen(true)}

@@ -37,9 +37,13 @@ namespace backend
 
 
             // Configure Services
+            builder.Services.AddScoped<EmailService>();
             builder.Services.AddScoped<AccountService>();
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<BedrijfService>();
+            builder.Services.AddScoped<BedrijfMedewerkerService>();
+            builder.Services.AddScoped<AdminService>();
+
 
 
             builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -106,10 +110,15 @@ namespace backend
 
                 try
                 {
+                    Console.WriteLine("seeding database");
+
                     await SeedRoles.Seed(services);
                     await SeedAutos.Seed(services);
                     await SeedCampers.Seed(services);
                     await SeedCaravans.Seed(services);
+                    await SeedAdmin.Seed(services);
+                    Console.WriteLine("completed seeding");
+
                 }
                 catch (Exception ex)
                 {

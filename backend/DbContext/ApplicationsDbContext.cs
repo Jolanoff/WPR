@@ -73,6 +73,7 @@ namespace backend.DbContext
                 .HasForeignKey<Medewerker>(m => m.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+
             // **Relatie Klant -> Bedrijf**
             builder.Entity<Bedrijf>()
                 .HasOne(b => b.Klant)
@@ -126,6 +127,7 @@ namespace backend.DbContext
            .HasOne(a => a.Bedrijf)
            .WithMany(b => b.Abonnementen)
            .HasForeignKey(a => a.BedrijfId);
+            //vraag aan docent of als bedrijf verwijdered wordt. moet de abonnoment ook verwijderd worden of moet dat blijven
 
 
 
