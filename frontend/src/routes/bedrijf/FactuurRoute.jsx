@@ -1,4 +1,4 @@
-import FactuurPage from "../pages/FactuurPage";
+import FactuurPage from '../../pages/FactuurPage'
 
 
 const FactuurRouter = [

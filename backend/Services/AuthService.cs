@@ -118,5 +118,23 @@ namespace backend.Services
         {
             await _signInManager.SignOutAsync();
         }
+
+        public async Task<(bool Success, string Message)> SetPasswordAsync(string userId, string token, string password)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return (false, "Gebruiker niet gevonden.");
+
+            var emailConfirmResult = await _userManager.ConfirmEmailAsync(user, token);
+            if (!emailConfirmResult.Succeeded)
+                return (false, "E-mailverificatie mislukt.");
+
+            var setPasswordResult = await _userManager.AddPasswordAsync(user, password);
+            if (!setPasswordResult.Succeeded)
+                return (false, string.Join(", ", setPasswordResult.Errors.Select(e => e.Description)));
+
+            return (true, "Wachtwoord succesvol ingesteld.");
+        }
+
     }
 }

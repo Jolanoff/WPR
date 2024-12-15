@@ -13,6 +13,9 @@ namespace backend.Models.Aanvragen
         private string AardVanReis { get; set; }
 
         private int VerwachteKilometers { get; set; }
+
+        //Klant 
+        private Klant Klant { get; set; }
         private Factuur Factuur { get; set; }
         private Voertuig Voertuig { get; set; }
 
