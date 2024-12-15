@@ -1,10 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace backend.Models.Voertuigen
+﻿namespace backend.Dtos
 {
-    public class Voertuig
+    public class VoertuigDto
     {
-        [Key]
         public int Id { get; set; }
         public string Merk { get; set; }
         public string Type { get; set; }
@@ -13,8 +10,6 @@ namespace backend.Models.Voertuigen
         public int Aanschafjaar { get; set; }
         public bool Status { get; set; }
         public string VoertuigType { get; set; }
-        public string? imageUrl { get; set; }
-        public List<Reservering> Reserveringen { get; set; }  // Relatie met reserveringen
-
+        public string? ImageUrl { get; set; }
     }
 }
