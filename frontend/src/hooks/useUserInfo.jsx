@@ -1,28 +1,16 @@
-import { useEffect, useState } from "react";
-import api from "../api";
+import { useEffect } from "react";
+import { useAuthStore } from "../store/authStore";
 
 const useUserInfo = () => {
-    const [userInfo, setUserInfo] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+  const { userInfo, loading, error, fetchUserInfo } = useAuthStore();
 
-    useEffect(() => {
-        const fetchUserInfo = async () => {
-            try {
-                const response = await api.get("/account/Account");
-                console.log("User Info Response:", response.data); // Log the response to verify
-                setUserInfo(response.data);
-            } catch (err) {
-                setError(err.response?.data?.message || "Failed to fetch user info");
-            } finally {
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    if (!userInfo) {
+      fetchUserInfo(); 
+    }
+  }, [userInfo, fetchUserInfo]);
 
-        fetchUserInfo();
-    }, []);
-
-    return { userInfo, loading, error };
+  return { userInfo, loading, error };
 };
 
 export default useUserInfo;

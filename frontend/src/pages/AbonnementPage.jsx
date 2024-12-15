@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
-import { CheckRole } from "../utils/CheckRole";
 import AbonnementForm from "../components/bedrijf/abonnement/AbonnementForm";
 import AbonnementList from "../components/bedrijf/abonnement/AbonnementList";
 
+import UseAuthorization from "../utils/UseAuthorization";
+
 const AbonnementPage = () => {
-    const [isAuthorized, setIsAuthorized] = useState(null);
+    const { isAuthorized } = UseAuthorization(["Bedrijf"]);
+
     const [abonnementen, setAbonnementen] = useState([]);
     const [formData, setFormData] = useState({
         abonnementType: "pay-as-you-go",
@@ -15,14 +17,8 @@ const AbonnementPage = () => {
     const [kosten, setKosten] = useState(0);
 
     useEffect(() => {
-        const verifyAuthorization = async () => {
-            const isAuthorized = await CheckRole("Bedrijf");
-            setIsAuthorized(isAuthorized);
-        };
-        verifyAuthorization();
-    }, []);
+        if (!isAuthorized) return;
 
-    useEffect(() => {
         const fetchAbonnementen = async () => {
             try {
                 const response = await api.get("/bedrijf");
@@ -32,9 +28,7 @@ const AbonnementPage = () => {
             }
         };
 
-        if (isAuthorized) {
-            fetchAbonnementen();
-        }
+        fetchAbonnementen();
     }, [isAuthorized]);
 
     useEffect(() => {
@@ -67,8 +61,7 @@ const AbonnementPage = () => {
         }
     };
 
-    if (isAuthorized === null) return <div>Bezig met laden...</div>;
-    if (!isAuthorized) return <div>U bent geen bedrijf.</div>;
+    if (!isAuthorized) return <div>U bent niet bevoegd om deze pagina te bekijken.</div>;
 
     const hasValidSubscription = abonnementen.some((abonnement) => {
         const today = new Date();

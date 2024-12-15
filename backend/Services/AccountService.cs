@@ -83,13 +83,21 @@ namespace backend.Services
             var klant = await _context.Klanten.FirstOrDefaultAsync(k => k.UserId == userId);
             if (klant != null)
             {
-                klant.Straatnaam = dto.Adres.Straatnaam;
-                klant.Huisnummer = dto.Adres.Huisnummer;
+                if (dto.Adres != null)
+                {
+                    klant.Straatnaam = dto.Adres.Straatnaam ?? klant.Straatnaam;
+                    klant.Huisnummer = dto.Adres.Huisnummer ?? klant.Huisnummer;
+                }
 
                 if (klant.Bedrijf != null)
                 {
                     klant.Bedrijf.KvkNummer = dto.KvKNummer;
                 }
+                _context.Klanten.Update(klant);
+            }
+            else
+            {
+                Console.WriteLine($"User {userId} is not a Klant. Skipping Klant-related updates.");
             }
 
             // Save changes
@@ -99,8 +107,11 @@ namespace backend.Services
                 return (false, "Failed to update user profile.");
             }
 
-            _context.Klanten.Update(klant);
-            await _context.SaveChangesAsync();
+            // Save changes to Klant if applicable
+            if (klant != null)
+            {
+                await _context.SaveChangesAsync();
+            }
 
             return (true, "Profile updated successfully.");
         }

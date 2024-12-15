@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const ProfileForm = ({ userData, setUserData, onSave, onDelete, onOpenPasswordModal }) => {
+const ProfileForm = ({ userData, onSave, onDelete, onOpenPasswordModal, userRoles }) => {
   const [localData, setLocalData] = useState(userData);
 
   const handleChange = (e) => {
@@ -25,9 +25,10 @@ const ProfileForm = ({ userData, setUserData, onSave, onDelete, onOpenPasswordMo
   };
 
   const handleSubmit = (e) => {
-   e.preventDefault()
+    e.preventDefault()
     onSave(localData);
   };
+  const isKlant = userRoles && !userRoles.some((role) => ["FrontOfficeMedewerker", "BackOfficeMedewerker", "Admin"].includes(role));
 
   return (
     <div className="space-y-6">
@@ -92,53 +93,55 @@ const ProfileForm = ({ userData, setUserData, onSave, onDelete, onOpenPasswordMo
           />
         </div>
       </div>
+      {isKlant && (
+        <>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="telefoonnummer" className="block text-gray-700 font-medium">
+                Telefoonnummer
+              </label>
+              <input
+                type="text"
+                id="telefoonnummer"
+                name="telefoonnummer"
+                value={localData.telefoonnummer}
+                onChange={handleChange}
+                className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
+          </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="telefoonnummer" className="block text-gray-700 font-medium">
-            Telefoonnummer
-          </label>
-          <input
-            type="text"
-            id="telefoonnummer"
-            name="telefoonnummer"
-            value={localData.telefoonnummer}
-            onChange={handleChange}
-            className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
-          />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label htmlFor="adres.straatnaam" className="block text-gray-700 font-medium">
-            Straatnaam
-          </label>
-          <input
-            type="text"
-            id="adres.straatnaam"
-            name="adres.straatnaam"
-            value={localData.adres.straatnaam}
-            onChange={handleChange}
-            className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
-          />
-        </div>
-        <div>
-          <label htmlFor="adres.huisnummer" className="block text-gray-700 font-medium">
-            Huisnummer
-          </label>
-          <input
-            type="number"
-            id="adres.huisnummer"
-            name="adres.huisnummer"
-            value={localData.adres.huisnummer}
-            onChange={handleChange}
-            className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
-          />
-        </div>
-      </div>
-
-      {localData.roles.includes("Bedrijf") && (
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="adres.straatnaam" className="block text-gray-700 font-medium">
+                Straatnaam
+              </label>
+              <input
+                type="text"
+                id="adres.straatnaam"
+                name="adres.straatnaam"
+                value={localData.adres.straatnaam}
+                onChange={handleChange}
+                className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor="adres.huisnummer" className="block text-gray-700 font-medium">
+                Huisnummer
+              </label>
+              <input
+                type="number"
+                id="adres.huisnummer"
+                name="adres.huisnummer"
+                value={localData.adres.huisnummer}
+                onChange={handleChange}
+                className="mt-2 p-2 w-full border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
+              />
+            </div>
+          </div>
+        </>
+      )}
+      {userRoles.includes("Bedrijf") && (
         <div>
           <label htmlFor="kvKNummer" className="block text-gray-700 font-medium">
             KvK Nummer
@@ -157,7 +160,7 @@ const ProfileForm = ({ userData, setUserData, onSave, onDelete, onOpenPasswordMo
       <div className="flex items-center justify-between">
         <button
           type="button"
-        onClick={handleSubmit}
+          onClick={handleSubmit}
 
           className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none"
         >

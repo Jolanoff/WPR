@@ -46,8 +46,6 @@ namespace backend.Controllers
             await _authService.LogoutAsync();
             return Ok(new { message = "Logout successful" });
         }
-
-
         [HttpPost("set-password")]
         public async Task<IActionResult> SetPassword([FromBody] SetPasswordDto model)
         {
