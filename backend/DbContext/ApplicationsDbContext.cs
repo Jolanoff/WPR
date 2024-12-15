@@ -1,4 +1,5 @@
-﻿using backend.Models.Gebruiker;
+﻿using backend.Models.Aanvragen;
+using backend.Models.Gebruiker;
 using backend.Models.Klanten;
 using backend.Models.Klanten.Bedrijven;
 using backend.Models.Medewerkers;
@@ -29,6 +30,11 @@ namespace backend.DbContext
         public DbSet<Camper> Campers { get; set; }
 
         public DbSet<Abonnement> Abonnementen { get; set; }
+
+
+        public DbSet<Schade> Schades { get; set; }
+        public DbSet<HuurAanvraag> HuurAanvragen { get; set; }
+
 
 
 
@@ -130,6 +136,26 @@ namespace backend.DbContext
             //vraag aan docent of als bedrijf verwijdered wordt. moet de abonnoment ook verwijderd worden of moet dat blijven
 
 
+            //Schade
+            builder.Entity<Schade>()
+                .HasOne(s => s.HuurAanvraag)
+                .WithMany(h => h.Schades)
+                .HasForeignKey(s => s.HuurAanvraagId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //Huuraanvraag
+            builder.Entity<HuurAanvraag>()
+            .HasOne(h => h.Klant) 
+            .WithMany(k => k.HuurAanvragen) 
+            .HasForeignKey(h => h.KlantId) 
+            .OnDelete(DeleteBehavior.Cascade); 
+
+            // Relatie tussen HuurAanvraag en Voertuig (One-to-Many)
+            builder.Entity<HuurAanvraag>()
+                .HasOne(h => h.Voertuig)
+                .WithMany(v => v.HuurAanvragen) 
+                .HasForeignKey(h => h.VoertuigId) 
+                .OnDelete(DeleteBehavior.Restrict); 
 
             // **Configure Medewerker-tabel**
             builder.Entity<Medewerker>().ToTable("Medewerkers");

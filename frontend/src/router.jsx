@@ -11,6 +11,7 @@ import AbonnementRouter from "./routes/bedrijf/AbonnementRouter";
 import BedrijfMedewerkerBeheerRouter from "./routes/bedrijf/BedrijfMedewerkerBeheerRouter";
 import SetPasswordRoute from "./routes/Auth/SetPasswordRoute";
 import AdminRoute from "./routes/Admin/AdminRoute";
+import SchademeldingenRouter from "./routes/SchademeldingenRouter";
 
 
 
@@ -26,7 +27,7 @@ const routes = [
             //auth
             ...LoginRouter, ...RegisterRouter,...SetPasswordRoute, ...VerifyEmailRoute,
             //Iedereen
-            ...DashboardRouter,  ...ProfielRouter,
+            ...DashboardRouter,  ...ProfielRouter, ...SchademeldingenRouter,
             //bedrijf
             ...FactuurRouter, ...AbonnementRouter, ...BedrijfMedewerkerBeheerRouter,
         ]
