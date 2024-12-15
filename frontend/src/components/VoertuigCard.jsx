@@ -17,15 +17,16 @@ export default function VoertuigCard({
 
     const handleRent = () => {
         navigate("/aanvraag", {
-            state: {
-                merk,
-                type,
-                kenteken,
-                kleur,
-                aanschafjaar,
-                prijs,
-                imageUrl,
-            },
+            // state: {
+            //     merk,
+            //     type,
+            //     kenteken,
+            //     kleur,
+            //     aanschafjaar,
+            //     prijs,
+            //     imageUrl,
+            // +data?
+            // },
         });
     };
 

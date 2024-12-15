@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { CheckRole } from "../utils/CheckRole.jsx"; // Adjust the import path as needed
 
 function VoertuigenSidebar({
     onTypeFilterChange,
@@ -16,6 +17,22 @@ function VoertuigenSidebar({
     const [eindDatum, setEindDatum] = useState(parentEindDatum);
     const [errorMessage, setErrorMessage] = useState("");
     const [showAllBrands, setShowAllBrands] = useState(false);
+    const [isRoleBedrijf, setIsRoleBedrijf] = useState(false);
+
+    // Check user role on component mount
+    useEffect(() => {
+        const checkUserRole = async () => {
+            const isBedrijf = await CheckRole("Bedrijf");
+            setIsRoleBedrijf(isBedrijf);
+
+            // If user is Bedrijf, force type filter to Auto
+            if (isBedrijf) {
+                onTypeFilterChange("auto");
+            }
+        };
+
+        checkUserRole();
+    }, []);
 
     const toggleMerk = (merk) => {
         const newBrandFilter = brandFilter.includes(merk)
@@ -26,6 +43,18 @@ function VoertuigenSidebar({
 
     const clearAllBrands = () => {
         onBrandFilterChange([]);
+    };
+
+    // Handle start date change
+    const handleStartDatumChange = (newStartDatum) => {
+        setStartDatum(newStartDatum);
+        onStartDatumChange(newStartDatum);
+    };
+
+    // Handle end date change
+    const handleEindDatumChange = (newEindDatum) => {
+        setEindDatum(newEindDatum);
+        onEindDatumChange(newEindDatum);
     };
 
     useEffect(() => {
@@ -54,23 +83,31 @@ function VoertuigenSidebar({
                     type="date"
                     id="start-date-picker"
                     value={startDatum}
-                    onChange={(e) => onStartDatumChange(e.target.value)}
+                    onChange={(e) => handleStartDatumChange(e.target.value)}
                     className="w-full rounded-md p-2 border border-black mb-4"
                 />
+                {errorMessage && (
+                    <p className="text-red-500 text-sm mb-2">{errorMessage}</p>
+                )}
                 <h4>Eind datum</h4>
                 <input
                     type="date"
                     id="end-date-picker"
                     value={eindDatum}
-                    onChange={(e) => onEindDatumChange(e.target.value)}
+                    onChange={(e) => handleEindDatumChange(e.target.value)}
                     className="w-full rounded-md p-2 border border-black mb-4"
                 />
 
                 <h3 className="font-semibold mb-2">Voertuig Type</h3>
                 <select
-                    className={`w-full rounded-md p-2 border border-black mb-4`}
+                    className={`w-full rounded-md p-2 border border-black mb-4 ${
+                        isRoleBedrijf ? "bg-gray-200 cursor-not-allowed" : ""
+                    }`}
                     value={currentTypeFilter}
-                    onChange={(e) => onTypeFilterChange(e.target.value)}
+                    onChange={(e) =>
+                        !isRoleBedrijf && onTypeFilterChange(e.target.value)
+                    }
+                    disabled={isRoleBedrijf}
                 >
                     <option value="alle">Alle</option>
                     <option value="auto">Auto</option>
@@ -78,6 +115,7 @@ function VoertuigenSidebar({
                     <option value="caravan">Caravan</option>
                 </select>
 
+                {/* Rest of the component remains the same */}
                 <h3 className="font-semibold mb-2 flex justify-between items-center">
                     Merken
                     {brandFilter.length > 0 && (
@@ -117,6 +155,15 @@ function VoertuigenSidebar({
                         {showAllBrands ? "Minder tonen" : "Meer tonen"}
                     </button>
                 )}
+
+                <h3 className="font-semibold mb-2 mt-4">Prijs</h3>
+                <select
+                    className={`w-full rounded-md p-2 border border-black mb-4 bg-gray-200 cursor-not-allowed`}
+                    value="alle"
+                    disabled
+                >
+                    <option value="alle">Geen prijzen bekend</option>
+                </select>
             </div>
         </div>
     );
