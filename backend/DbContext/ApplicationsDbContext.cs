@@ -37,9 +37,6 @@ namespace backend.DbContext
         {
             base.OnModelCreating(builder);
 
-            // Gebruik standaard schema
-            builder.HasDefaultSchema("applicationdb");
-
             // Configureer Voertuig als de basisentiteit
             builder.Entity<Voertuig>()
                 .ToTable("Voertuigen");  // De tabel voor de gemeenschappelijke velden
