@@ -25,6 +25,7 @@ namespace backend.DbContext
 
 
         public DbSet<Voertuig> Voertuigen { get; set; }
+
         public DbSet<Auto> Autos { get; set; }
         public DbSet<Caravan> Caravans { get; set; }
         public DbSet<Camper> Campers { get; set; }
@@ -34,6 +35,7 @@ namespace backend.DbContext
 
         public DbSet<Schade> Schades { get; set; }
         public DbSet<HuurAanvraag> HuurAanvragen { get; set; }
+
 
 
 
