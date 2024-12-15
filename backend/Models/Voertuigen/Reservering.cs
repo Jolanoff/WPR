@@ -1,11 +1,12 @@
-﻿namespace backend.Dtos
+﻿namespace backend.Models.Voertuigen
 {
-    public class ReserveringDto
+    public class Reservering
     {
         public int Id { get; set; }
-        public int VoertuigId { get; set; }  // Verwijzing naar het voertuig
+        public int VoertuigId { get; set; }  // Foreign key naar Voertuig
         public DateTime StartDatum { get; set; }
         public DateTime EindDatum { get; set; }
-        public VoertuigDto? Voertuig { get; set; }  // Optioneel: Beperkte data van het voertuig
+        public Voertuig Voertuig { get; set; }  // Navigatie eigenschap naar Voertuig
     }
+
 }

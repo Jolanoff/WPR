@@ -1,4 +1,6 @@
-﻿namespace backend.Dtos
+﻿using backend.Dtos.Voertuig;
+
+namespace backend.Dtos.Voertuigen
 {
     public class VoertuigDto
     {
@@ -10,6 +12,8 @@
         public int Aanschafjaar { get; set; }
         public bool Status { get; set; }
         public string VoertuigType { get; set; }
-        public string? ImageUrl { get; set; }
+        public List<ReserveringDto> Reserveringen { get; set; } // Voor meerdere reserveringen
+        public string imageUrl { get; set; }
+
     }
 }

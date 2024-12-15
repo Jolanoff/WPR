@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using backend.Models.Aanvragen;
+using System.ComponentModel.DataAnnotations;
 
 namespace backend.Models.Voertuigen
 {
@@ -15,6 +16,8 @@ namespace backend.Models.Voertuigen
         public string VoertuigType { get; set; }
         public string? imageUrl { get; set; }
         public List<Reservering> Reserveringen { get; set; }  // Relatie met reserveringen
+        public List<HuurAanvraag> HuurAanvragen { get; set; } = new List<HuurAanvraag>();
+
 
     }
 }
