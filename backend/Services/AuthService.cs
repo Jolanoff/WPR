@@ -125,12 +125,10 @@ namespace backend.Services
             if (user == null)
                 return (false, "Gebruiker niet gevonden.");
 
-            // Verify email token
             var emailConfirmResult = await _userManager.ConfirmEmailAsync(user, token);
             if (!emailConfirmResult.Succeeded)
                 return (false, "E-mailverificatie mislukt.");
 
-            // Set the password
             var setPasswordResult = await _userManager.AddPasswordAsync(user, password);
             if (!setPasswordResult.Succeeded)
                 return (false, string.Join(", ", setPasswordResult.Errors.Select(e => e.Description)));
