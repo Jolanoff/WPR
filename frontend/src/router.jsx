@@ -6,14 +6,15 @@ import RegisterRouter from "./routes/RegisterRouter";
 import DashboardRouter from "./routes/DashboardRouter";
 import VerifyEmailRoute from "./routes/VerifyEmailRoute";
 import ProfielRouter from "./routes/ProfielRouter";
-import FactuurRouter from "./routes/FactuurRoute";
-import AbonnementRouter from "./routes/AbonnementRouter";
-import HurenRoute from "./routes/HurenRoute";
 import FactuurRouter from "./routes/bedrijf/FactuurRoute";
 import AbonnementRouter from "./routes/bedrijf/AbonnementRouter";
 import BedrijfMedewerkerBeheerRouter from "./routes/bedrijf/BedrijfMedewerkerBeheerRouter";
 import SetPasswordRoute from "./routes/Auth/SetPasswordRoute";
 import AdminRoute from "./routes/Admin/AdminRoute";
+
+
+
+
 
 const routes = [
     {
@@ -23,20 +24,13 @@ const routes = [
             //admin
             ...AdminRoute,
             //auth
-            ...LoginRouter,
-            ...RegisterRouter,
-            ...SetPasswordRoute,
-            ...VerifyEmailRoute,
+            ...LoginRouter, ...RegisterRouter,...SetPasswordRoute, ...VerifyEmailRoute,
             //Iedereen
-            ...DashboardRouter,
-            ...ProfielRouter,
-            ...HurenRoute,
+            ...DashboardRouter,  ...ProfielRouter,
             //bedrijf
-            ...FactuurRouter,
-            ...AbonnementRouter,
-            ...BedrijfMedewerkerBeheerRouter,
-        ],
-    },
+            ...FactuurRouter, ...AbonnementRouter, ...BedrijfMedewerkerBeheerRouter,
+        ]
+    }
 ];
 
 const router = createBrowserRouter(routes);

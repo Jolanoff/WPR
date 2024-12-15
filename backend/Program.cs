@@ -41,7 +41,6 @@ namespace backend
             builder.Services.AddScoped<AccountService>();
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<BedrijfService>();
-            builder.Services.AddScoped<VoertuigService>();
             builder.Services.AddScoped<BedrijfMedewerkerService>();
             builder.Services.AddScoped<AdminService>();
 
@@ -104,6 +103,7 @@ namespace backend
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // Seed Roles
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
@@ -122,9 +122,9 @@ namespace backend
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error while seeding : {ex.Message}");
+                    Console.WriteLine($"Error while seeding roles: {ex.Message}");
                 }
-            }
+            } 
 
             app.MapControllers();
             await app.RunAsync();
