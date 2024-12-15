@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
-import { CheckRole } from "../utils/CheckRole.jsx"; // Adjust the import path as needed
 
 function VoertuigenSidebar({
     onTypeFilterChange,
     currentTypeFilter,
-    userRole,
     startDatum: parentStartDatum,
     eindDatum: parentEindDatum,
     onStartDatumChange,
@@ -17,22 +15,6 @@ function VoertuigenSidebar({
     const [eindDatum, setEindDatum] = useState(parentEindDatum);
     const [errorMessage, setErrorMessage] = useState("");
     const [showAllBrands, setShowAllBrands] = useState(false);
-    const [isRoleBedrijf, setIsRoleBedrijf] = useState(false);
-
-    // Check user role on component mount
-    useEffect(() => {
-        const checkUserRole = async () => {
-            const isBedrijf = await CheckRole("Bedrijf");
-            setIsRoleBedrijf(isBedrijf);
-
-            // If user is Bedrijf, force type filter to Auto
-            if (isBedrijf) {
-                onTypeFilterChange("auto");
-            }
-        };
-
-        checkUserRole();
-    }, []);
 
     const toggleMerk = (merk) => {
         const newBrandFilter = brandFilter.includes(merk)
@@ -45,13 +27,11 @@ function VoertuigenSidebar({
         onBrandFilterChange([]);
     };
 
-    // Handle start date change
     const handleStartDatumChange = (newStartDatum) => {
         setStartDatum(newStartDatum);
         onStartDatumChange(newStartDatum);
     };
 
-    // Handle end date change
     const handleEindDatumChange = (newEindDatum) => {
         setEindDatum(newEindDatum);
         onEindDatumChange(newEindDatum);
@@ -69,7 +49,6 @@ function VoertuigenSidebar({
         }
     }, [startDatum, eindDatum]);
 
-    // Show first 12 brands initially
     const displayedMerken = showAllBrands ? merken : merken.slice(0, 12);
 
     return (
@@ -100,14 +79,9 @@ function VoertuigenSidebar({
 
                 <h3 className="font-semibold mb-2">Voertuig Type</h3>
                 <select
-                    className={`w-full rounded-md p-2 border border-black mb-4 ${
-                        isRoleBedrijf ? "bg-gray-200 cursor-not-allowed" : ""
-                    }`}
+                    className="w-full rounded-md p-2 border border-black mb-4"
                     value={currentTypeFilter}
-                    onChange={(e) =>
-                        !isRoleBedrijf && onTypeFilterChange(e.target.value)
-                    }
-                    disabled={isRoleBedrijf}
+                    onChange={(e) => onTypeFilterChange(e.target.value)}
                 >
                     <option value="alle">Alle</option>
                     <option value="auto">Auto</option>
@@ -115,7 +89,6 @@ function VoertuigenSidebar({
                     <option value="caravan">Caravan</option>
                 </select>
 
-                {/* Rest of the component remains the same */}
                 <h3 className="font-semibold mb-2 flex justify-between items-center">
                     Merken
                     {brandFilter.length > 0 && (
@@ -158,7 +131,7 @@ function VoertuigenSidebar({
 
                 <h3 className="font-semibold mb-2 mt-4">Prijs</h3>
                 <select
-                    className={`w-full rounded-md p-2 border border-black mb-4 bg-gray-200 cursor-not-allowed`}
+                    className="w-full rounded-md p-2 border border-black mb-4 bg-gray-200 cursor-not-allowed"
                     value="alle"
                     disabled
                 >

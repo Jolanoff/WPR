@@ -16,6 +16,7 @@ export default function VoertuigCard({
     const [showReservations, setShowReservations] = useState(false);
 
     const handleRent = () => {
+        alert("todo: aanvraag proces (geef voertuig data mee)");
         navigate("/aanvraag", {
             // state: {
             //     merk,

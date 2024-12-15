@@ -3,7 +3,6 @@ import VoertuigCard from "../components/VoertuigCard";
 import VoertuigenSidebar from "../components/VoertuigenSideBar.jsx";
 import notavailable from "../assets/notavailable.png";
 import api from "../api";
-import useUserInfo from "../hooks/useUserInfo";
 
 function HurenPage() {
     function getLocalDateString() {
@@ -23,8 +22,6 @@ function HurenPage() {
 
     const [typeFilter, setTypeFilter] = useState("alle");
     const [brandFilter, setBrandFilter] = useState([]);
-
-    const { userInfo } = useUserInfo();
 
     const fetchVoertuigen = async () => {
         setLoading(true);
@@ -50,10 +47,9 @@ function HurenPage() {
 
     const filteredVoertuigen = voertuigen.filter((voertuig) => {
         // Type filter
-        const typeCondition = userInfo?.roles?.includes("Bedrijf")
-            ? voertuig.voertuigType?.toLowerCase() === "auto"
-            : typeFilter === "alle" ||
-              voertuig.voertuigType?.toLowerCase() === typeFilter;
+        const typeCondition =
+            typeFilter === "alle" ||
+            voertuig.voertuigType?.toLowerCase() === typeFilter;
 
         // Brand filter
         const brandCondition =
@@ -77,21 +73,17 @@ function HurenPage() {
 
     return (
         <div className="flex">
-            {(userInfo?.roles?.includes("ParticuliereHuurder") ||
-                userInfo?.roles?.includes("Bedrijf")) && (
-                <VoertuigenSidebar
-                    onTypeFilterChange={setTypeFilter}
-                    currentTypeFilter={typeFilter}
-                    userRole={userInfo?.roles}
-                    startDatum={startDatum}
-                    eindDatum={eindDatum}
-                    onStartDatumChange={setStartDatum}
-                    onEindDatumChange={setEindDatum}
-                    merken={filteredMerken}
-                    brandFilter={brandFilter}
-                    onBrandFilterChange={setBrandFilter}
-                />
-            )}
+            <VoertuigenSidebar
+                onTypeFilterChange={setTypeFilter}
+                currentTypeFilter={typeFilter}
+                startDatum={startDatum}
+                eindDatum={eindDatum}
+                onStartDatumChange={setStartDatum}
+                onEindDatumChange={setEindDatum}
+                merken={filteredMerken}
+                brandFilter={brandFilter}
+                onBrandFilterChange={setBrandFilter}
+            />
 
             <div className="flex-grow p-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
