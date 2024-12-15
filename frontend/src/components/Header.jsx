@@ -22,6 +22,9 @@ export default function Header() {
       { href: "/abonnementen", label: "Abonnementen" },
       { href: "/bedrijf-medewerkers", label: "Beheer Medewerkers" },
     ];
+    const BackofficeLinks = [
+      { href: "/schade", label: "Schademeldingen" },
+    ];
 
     // Combine links based on roles
     let links = [...commonLinks];
@@ -29,7 +32,9 @@ export default function Header() {
     if (userRoles.includes("Admin")) {
       links = [...links, ...adminLinks];
     }
-
+    if (userRoles.includes("BackOfficeMedewerker")) {
+      links = [...links, ...BackofficeLinks];
+    }
     if (userRoles.some((role) => ["Bedrijf", "Wagenparkbeheerder"].includes(role))) {
       links = [...links, ...bedrijfLinks];
     }

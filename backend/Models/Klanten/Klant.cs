@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using backend.Models.Aanvragen;
 using backend.Models.Gebruiker;
 using backend.Models.Klanten.Bedrijven;
 
@@ -22,6 +23,7 @@ namespace backend.Models.Klanten
 
         public WagenparkBeheerder? WagenparkBeheerder { get; set; }
 
+        public List<HuurAanvraag> HuurAanvragen { get; set; } = new List<HuurAanvraag>();
 
     }
 }
