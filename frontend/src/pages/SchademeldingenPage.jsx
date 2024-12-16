@@ -6,6 +6,8 @@ const SchademeldingenPage = () => {
   const [schademeldingData, setSchademeldingData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedDescription, setSelectedDescription] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { isAuthorized } = UseAuthorization(["BackOfficeMedewerker"]);
 
@@ -27,6 +29,7 @@ const SchademeldingenPage = () => {
       alert("Failed to update status.");
     }
   };
+
   const fetchSchademeldingData = async () => {
     try {
       const response = await api.get("/Schademeldingen/get_all");
@@ -38,6 +41,16 @@ const SchademeldingenPage = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const openModal = (description) => {
+    setSelectedDescription(description);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setSelectedDescription(null);
+    setIsModalOpen(false);
   };
 
   useEffect(() => {
@@ -76,7 +89,14 @@ const SchademeldingenPage = () => {
                   <td className="py-2 px-4 border-b">
                     {new Date(item.datum).toLocaleDateString()}
                   </td>
-                  <td className="py-2 px-4 border-b">{item.beschrijving}</td>
+                  <td className="py-2 px-4 border-b">
+                    <button
+                      onClick={() => openModal(item.beschrijving)}
+                      className="text-blue-500 underline hover:text-blue-700"
+                    >
+                      Beschrijving
+                    </button>
+                  </td>
                   <td className="py-2 px-4 border-b">{item.voertuigId}</td>
                   <td className="py-2 px-4 border-b">{item.merk}</td>
                   <td className="py-2 px-4 border-b">{item.type}</td>
@@ -117,6 +137,22 @@ const SchademeldingenPage = () => {
           <p>Geen schademeldingen gevonden of onjuiste data.</p>
         )}
       </div>
+
+      {/* Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg w-3/4 max-w-lg">
+            <h2 className="text-xl font-bold mb-4">Volledige Beschrijving</h2>
+            <p className="text-gray-700 mb-4">{selectedDescription}</p>
+            <button
+              onClick={closeModal}
+              className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            >
+              Sluiten
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
