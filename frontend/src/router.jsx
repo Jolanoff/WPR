@@ -12,10 +12,7 @@ import BedrijfMedewerkerBeheerRouter from "./routes/bedrijf/BedrijfMedewerkerBeh
 import SetPasswordRoute from "./routes/Auth/SetPasswordRoute";
 import AdminRoute from "./routes/Admin/AdminRoute";
 import SchademeldingenRouter from "./routes/SchademeldingenRouter";
-
-
-
-
+import HurenRoute from "./routes/HurenRoute";
 
 const routes = [
     {
@@ -25,13 +22,21 @@ const routes = [
             //admin
             ...AdminRoute,
             //auth
-            ...LoginRouter, ...RegisterRouter,...SetPasswordRoute, ...VerifyEmailRoute,
+            ...LoginRouter,
+            ...RegisterRouter,
+            ...SetPasswordRoute,
+            ...VerifyEmailRoute,
             //Iedereen
-            ...DashboardRouter,  ...ProfielRouter, ...SchademeldingenRouter,
+            ...DashboardRouter,
+            ...ProfielRouter,
+            ...SchademeldingenRouter,
+            ...HurenRoute,
             //bedrijf
-            ...FactuurRouter, ...AbonnementRouter, ...BedrijfMedewerkerBeheerRouter,
-        ]
-    }
+            ...FactuurRouter,
+            ...AbonnementRouter,
+            ...BedrijfMedewerkerBeheerRouter,
+        ],
+    },
 ];
 
 const router = createBrowserRouter(routes);

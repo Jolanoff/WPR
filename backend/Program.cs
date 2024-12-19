@@ -45,6 +45,8 @@ namespace backend
             builder.Services.AddScoped<BedrijfMedewerkerService>();
             builder.Services.AddScoped<AdminService>();
             builder.Services.AddScoped<SchademeldingenService>();
+            builder.Services.AddScoped<VoertuigService>();
+
 
 
             builder.Services.AddIdentity<User, IdentityRole>(options =>
