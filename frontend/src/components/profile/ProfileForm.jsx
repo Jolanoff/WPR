@@ -28,7 +28,8 @@ const ProfileForm = ({ userData, onSave, onDelete, onOpenPasswordModal, userRole
     e.preventDefault()
     onSave(localData);
   };
-  const isKlant = userRoles && !userRoles.some((role) => ["FrontOfficeMedewerker", "BackOfficeMedewerker", "Admin"].includes(role));
+  const isKlant = userRoles && Array.isArray(userRoles) && !userRoles.some((role) => ["FrontOfficeMedewerker", "BackOfficeMedewerker", "Admin"].includes(role));
+  
 
   return (
     <div className="space-y-6">
