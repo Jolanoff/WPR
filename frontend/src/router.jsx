@@ -13,12 +13,15 @@ import SetPasswordRoute from "./routes/Auth/SetPasswordRoute";
 import AdminRoute from "./routes/Admin/AdminRoute";
 import SchademeldingenRouter from "./routes/SchademeldingenRouter";
 import HurenRoute from "./routes/HurenRoute";
+import AanvraagRouter from "./routes/Huren/AanvraagRouter";
+import HomeRouter from "./routes/HomeRouter";
 
 const routes = [
     {
         path: "/",
         element: <App />,
         children: [
+
             //admin
             ...AdminRoute,
             //auth
@@ -27,14 +30,17 @@ const routes = [
             ...SetPasswordRoute,
             ...VerifyEmailRoute,
             //Iedereen
+            ...HomeRouter,
             ...DashboardRouter,
             ...ProfielRouter,
             ...SchademeldingenRouter,
-            ...HurenRoute,
             //bedrijf
             ...FactuurRouter,
             ...AbonnementRouter,
             ...BedrijfMedewerkerBeheerRouter,
+            //huren
+            ...AanvraagRouter,
+            ...HurenRoute,
         ],
     },
 ];

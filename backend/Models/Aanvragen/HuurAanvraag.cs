@@ -23,7 +23,7 @@ namespace backend.Models.Aanvragen
         //private Factuur Factuur { get; set; }
         public int VoertuigId { get; set; }
         public Voertuig Voertuig { get; set; }
-
+         
         [JsonIgnore]
         public List<Schade> Schades { get; set; } = new List<Schade>();
 

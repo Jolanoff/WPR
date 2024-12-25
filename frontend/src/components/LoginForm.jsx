@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import api from "../api";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import ErrorMessage from "./ErrorMessage";
 
@@ -72,6 +72,7 @@ function LoginForm() {
         >
           Inloggen
         </button>
+        <Link to="/register" className="text-blue-500">Maak een Account</Link>
       </form>
       <ErrorMessage error={error} />
     </div>

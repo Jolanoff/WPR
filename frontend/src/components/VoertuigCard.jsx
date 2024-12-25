@@ -11,25 +11,29 @@ export default function VoertuigCard({
     imageUrl,
     status,
     reserveringen,
+    startDatum,
+    eindDatum
 }) {
     const navigate = useNavigate();
     const [showReservations, setShowReservations] = useState(false);
 
     const handleRent = () => {
-        alert("todo: aanvraag proces (geef voertuig data mee)");
         navigate("/aanvraag", {
-            // state: {
-            //     merk,
-            //     type,
-            //     kenteken,
-            //     kleur,
-            //     aanschafjaar,
-            //     prijs,
-            //     imageUrl,
-            // +data?
-            // },
+            state: {
+                merk,
+                type,
+                kenteken,
+                kleur,
+                aanschafjaar,
+                prijs,
+                imageUrl,
+                status,
+                startDatum,
+                eindDatum
+            },
         });
     };
+    
 
     return (
         <div className="p-4 md:p-12">

@@ -99,6 +99,8 @@ function HurenPage() {
                             imageUrl={voertuig.imageUrl || notavailable}
                             status={voertuig.status}
                             reserveringen={voertuig.reserveringen}
+                            startDatum={startDatum}
+                            eindDatum={eindDatum}
                         />
                     ))}
                 </div>

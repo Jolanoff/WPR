@@ -28,7 +28,7 @@ const RegisterForm = ({ formData, setFormData, onSubmit, responsePayload }) => {
         e.preventDefault();
         onSubmit();
       }}
-      className="bg-white p-6 rounded-lg shadow-md w-full max-w-md"
+      className="bg-white p-10 m-10 rounded-lg shadow-md w-full max-w-md "
     >
       <h2 className="text-2xl font-bold mb-6 text-gray-800 text-center">
         Registreren
