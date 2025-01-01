@@ -1,37 +1,48 @@
-﻿using backend.Models.Aanvragen;
-using backend.Services;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using backend.Services;
+using backend.Dtos;
 
-namespace backend.Controllers
+[Authorize]
+[ApiController]
+[Route("api/[controller]")]
+public class HuurAanvraagController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class HuurAanvragenController : ControllerBase
-    {
-        private readonly HuurAanvraagService _huurAanvraagService;
+    private readonly HuurAanvraagService _huurAanvraagService;
 
-        public HuurAanvragenController(HuurAanvraagService huurAanvraagService)
+    public HuurAanvraagController(HuurAanvraagService huurAanvraagService)
+    {
+        _huurAanvraagService = huurAanvraagService;
+    }
+
+    [HttpPost("create")]
+    public async Task<IActionResult> CreateHuurAanvraag([FromBody] CreateHuurAanvraagDto aanvraagDto)
+    {
+        if (!ModelState.IsValid)
         {
-            _huurAanvraagService = huurAanvraagService;
+            return BadRequest(ModelState);
         }
 
-        [HttpPost]
-        [Route("create")]
-        public async Task<IActionResult> CreateHuurAanvraag([FromBody] HuurAanvraag huurAanvraag)
+        try
         {
-            try
+            // Extract UserId from the authenticated user
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
             {
-                var createdHuurAanvraag = await _huurAanvraagService.CreateHuurAanvraagAsync(huurAanvraag);
-                return Ok(new { message = "HuurAanvraag succesvol aangemaakt.", aanvraagId = createdHuurAanvraag.Id });
+                return Unauthorized(new { message = "User is not authenticated." });
             }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Er is een fout opgetreden bij het maken van de HuurAanvraag.", details = ex.Message });
-            }
+
+            var createdAanvraag = await _huurAanvraagService.CreateHuurAanvraagAsync(userId, aanvraagDto);
+            return Created("", createdAanvraag); // Return the created HuurAanvraag
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
         }
     }
 }

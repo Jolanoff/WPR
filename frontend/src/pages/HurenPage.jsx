@@ -90,6 +90,7 @@ function HurenPage() {
                     {filteredVoertuigen.map((voertuig) => (
                         <VoertuigCard
                             key={voertuig.id}
+                            voertuigId={voertuig.id}
                             merk={voertuig.merk}
                             type={voertuig.type}
                             kenteken={voertuig.kenteken}

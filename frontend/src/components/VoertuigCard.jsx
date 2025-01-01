@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function VoertuigCard({
+    voertuigId,
     merk,
     type,
     kenteken,
@@ -20,6 +21,7 @@ export default function VoertuigCard({
     const handleRent = () => {
         navigate("/aanvraag", {
             state: {
+                voertuigId,
                 merk,
                 type,
                 kenteken,

@@ -1,13 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import VoertuigDetails from "../../components/Huren/Aanvraag/VoertuigDetails";
 import ActionButtons from "../../components/Huren/Aanvraag/ActionButtons";
 import RequestPeriod from "../../components/Huren/Aanvraag/RequestPeriod";
+import api from "../../api";
 
 function AanvraagPage() {
     const location = useLocation();
     const navigate = useNavigate();
     const voertuigDetails = location.state;
+
+  
 
     if (!voertuigDetails) {
         return (
@@ -19,10 +22,36 @@ function AanvraagPage() {
         );
     }
 
-    const handlePayment = () => {
-        alert("Betalen functionaliteit wordt hier geïmplementeerd.");
-        navigate("/success");
+    const handlePayment = async () => {
+        const aanvraagData = {
+            startDatum: voertuigDetails.startDatum,
+            eindDatum: voertuigDetails.eindDatum,
+            status: false,
+            aardVanReis: voertuigDetails.aardVanReis || "Onbekend", // Default if not provided
+            verwachteKilometers: voertuigDetails.verwachteKilometers || 0,
+            voertuigId: voertuigDetails.voertuigId, // Pass only voertuigId
+        };
+    
+        try {
+            const response = await api.post("/HuurAanvraag/create", aanvraagData, {
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+    
+            if (response.status === 201) {
+                alert("Huuraanvraag succesvol aangemaakt!");
+                navigate("/success");
+            } else {
+                console.error("Unexpected response status:", response.status);
+                alert("Er is een fout opgetreden bij het maken van de aanvraag.");
+            }
+        } catch (error) {
+            console.error("Error during request:", error);
+            alert("Kan geen verbinding maken met de server. Probeer het opnieuw.");
+        }
     };
+    
 
     return (
         <div className="min-h-screen bg-gradient-to-r from-blue-100 via-white to-blue-50 flex justify-center items-center py-12 px-6">

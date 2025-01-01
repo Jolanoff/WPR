@@ -19,9 +19,11 @@ namespace backend.Models.Aanvragen
 
         //Klant 
         public int KlantId { get; set; }
+        [JsonIgnore]
         public Klant Klant { get; set; }
         //private Factuur Factuur { get; set; }
         public int VoertuigId { get; set; }
+        [JsonIgnore]
         public Voertuig Voertuig { get; set; }
          
         [JsonIgnore]

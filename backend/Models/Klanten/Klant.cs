@@ -23,6 +23,7 @@ namespace backend.Models.Klanten
 
         public WagenparkBeheerder? WagenparkBeheerder { get; set; }
 
+        [JsonIgnore]
         public List<HuurAanvraag> HuurAanvragen { get; set; } = new List<HuurAanvraag>();
 
     }
