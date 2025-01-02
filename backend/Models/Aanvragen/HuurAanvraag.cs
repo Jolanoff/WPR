@@ -29,6 +29,9 @@ namespace backend.Models.Aanvragen
         [JsonIgnore]
         public List<Schade> Schades { get; set; } = new List<Schade>();
 
+        [JsonIgnore]
+        public Factuur Factuur { get; set; }
+
 
     }
 }

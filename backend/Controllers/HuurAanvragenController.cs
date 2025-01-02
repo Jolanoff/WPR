@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using backend.Services;
 using backend.Dtos;
 
-[Authorize]
+[Authorize(Roles = "ParticuliereHuurder,ZakelijkeHuurder,Wagenparkbeheerder,Bedrijf")]
 [ApiController]
 [Route("api/[controller]")]
 public class HuurAanvraagController : ControllerBase
@@ -34,7 +34,7 @@ public class HuurAanvraagController : ControllerBase
             }
 
             var createdAanvraag = await _huurAanvraagService.CreateHuurAanvraagAsync(userId, aanvraagDto);
-            return Created("", createdAanvraag); // Return the created HuurAanvraag
+            return Created("", createdAanvraag);
         }
         catch (KeyNotFoundException ex)
         {

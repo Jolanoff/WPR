@@ -7,14 +7,14 @@ namespace backend.Models.Klanten
     {
         public int Id { get; set; }
 
-        public int KlantId { get; set; } // Buitenlandse sleutel naar Klant
-        public Klant Klant { get; set; } // Navigatie-eigenschap
+        public int KlantId { get; set; }
+        public Klant Klant { get; set; } 
 
 
-        public int BedrijfId { get; set; } // Buitenlandse sleutel naar Bedrijf
+        public int BedrijfId { get; set; } 
         public Bedrijf Bedrijf { get; set; }
 
-        public int? WagenparkBeheerderId { get; set; } // Optionele koppeling naar WagenparkBeheerder
+        public int? WagenparkBeheerderId { get; set; } 
         public WagenparkBeheerder? WagenparkBeheerder { get; set; }
     }
 }

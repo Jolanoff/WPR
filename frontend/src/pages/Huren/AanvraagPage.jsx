@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import VoertuigDetails from "../../components/Huren/Aanvraag/VoertuigDetails";
 import ActionButtons from "../../components/Huren/Aanvraag/ActionButtons";
 import RequestPeriod from "../../components/Huren/Aanvraag/RequestPeriod";
 import api from "../../api";
 
+import ErrorMessage from "../../components/ErrorMessage";
+
+
 function AanvraagPage() {
     const location = useLocation();
     const navigate = useNavigate();
+    const [error, setError] = useState(null)
     const voertuigDetails = location.state;
 
     const [aardVanReis, setAardVanReis] = useState(""); 
@@ -48,14 +52,14 @@ function AanvraagPage() {
                 alert("Er is een fout opgetreden bij het maken van de aanvraag.");
             }
         } catch (error) {
-            console.error("Error during request:", error);
-            alert("Kan geen verbinding maken met de server. Probeer het opnieuw.");
+            setError(error.response.data.error);
         }
     };
     
 
     return (
         <div className="min-h-screen bg-gradient-to-r from-blue-100 via-white to-blue-50 flex justify-center items-center py-12 px-6">
+            <ErrorMessage error={error} />
             <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-2xl border-t-4 border-blue-500">
                 <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">
                     Bevestig je Aanvraag
@@ -76,6 +80,7 @@ function AanvraagPage() {
                         value={aardVanReis}
                         onChange={(e) => setAardVanReis(e.target.value)}
                         placeholder="Bijvoorbeeld: Werk, Vakantie"
+                        required
                     />
                 </div>
                 <div className="mb-6">
