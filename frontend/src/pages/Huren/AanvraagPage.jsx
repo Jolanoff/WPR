@@ -10,6 +10,8 @@ function AanvraagPage() {
     const navigate = useNavigate();
     const voertuigDetails = location.state;
 
+    const [aardVanReis, setAardVanReis] = useState(""); 
+    const [aantalKm, setAantalKm] = useState(0);
   
 
     if (!voertuigDetails) {
@@ -26,10 +28,9 @@ function AanvraagPage() {
         const aanvraagData = {
             startDatum: voertuigDetails.startDatum,
             eindDatum: voertuigDetails.eindDatum,
-            status: false,
-            aardVanReis: voertuigDetails.aardVanReis || "Onbekend", // Default if not provided
-            verwachteKilometers: voertuigDetails.verwachteKilometers || 0,
-            voertuigId: voertuigDetails.voertuigId, // Pass only voertuigId
+            aardVanReis: aardVanReis || "Onbekend", 
+            verwachteKilometers: aantalKm,
+            voertuigId: voertuigDetails.voertuigId,
         };
     
         try {
@@ -64,6 +65,38 @@ function AanvraagPage() {
                     startDatum={voertuigDetails.startDatum}
                     eindDatum={voertuigDetails.eindDatum}
                 />
+                <div className="mb-4">
+                    <label htmlFor="aardVanReis" className="block text-gray-700 font-medium mb-2 mt-5">
+                        Aard van Reis:
+                    </label>
+                    <input
+                        type="text"
+                        id="aardVanReis"
+                        className="w-full border rounded-md p-2"
+                        value={aardVanReis}
+                        onChange={(e) => setAardVanReis(e.target.value)}
+                        placeholder="Bijvoorbeeld: Werk, Vakantie"
+                    />
+                </div>
+                <div className="mb-6">
+                    <label htmlFor="aantalKm" className="block text-gray-700 font-medium mb-2">
+                        Aantal KM:
+                    </label>
+                    <select
+                        id="aantalKm"
+                        className="w-full border rounded-md p-2"
+                        value={aantalKm}
+                        onChange={(e) => setAantalKm(parseInt(e.target.value))}
+                    >
+                        <option value={0}>Selecteer aantal kilometers</option>
+                        <option value={50}>50 KM</option>
+                        <option value={100}>100 KM</option>
+                        <option value={150}>150 KM</option>
+                        <option value={200}>200 KM</option>
+                        <option value={250}>250 KM</option>
+                        <option value={300}>300+ KM</option>
+                    </select>
+                </div>
                 <ActionButtons
                     onConfirm={handlePayment}
                     onCancel={() => navigate(-1)}

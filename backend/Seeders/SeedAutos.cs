@@ -18,7 +18,7 @@ namespace backend.Seeders
 
             var autos = new List<Auto>
     {
-                new Auto{Merk = "Toyota", Type = "Corolla", Kenteken = "AB-123-CD", Kleur = "Rood", Aanschafjaar = 2018, Status = false, VoertuigType = "Auto", imageUrl = "https://daisypstrg.blob.core.windows.net/vehicles-media/6fc4059d-a75f-4515-ab25-b217c62302c3/media.0029-1920w.jpg"},
+                new Auto{Merk = "Toyota", Type = "Corolla", Kenteken = "AB-123-CD", Kleur = "Rood", Aanschafjaar = 2018, Status = false, VoertuigType = "Auto", imageUrl = "https://daisypstrg.blob.core.windows.net/vehicles-media/6fc4059d-a75f-4515-ab25-b217c62302c3/media.0029-1920w.jpg" , Prijs=50.00},
 new Auto{Merk = "Ford", Type = "Focus", Kenteken = "EF-456-GH", Kleur = "Blauw", Aanschafjaar = 2019, Status = false, VoertuigType = "Auto", imageUrl = "https://www.ford.nl/content/dam/guxeu/rhd/central/cars/2021-focus/launch/gallery/exterior/ford-focusc519-eu-205334561_STL_01_C519_Focus_Ext_Front_3_4_Dynamic__V_MY23-9x8-1200x1066-gt3.jpg.renditions.original.png"},
 new Auto{Merk = "Volkswagen", Type = "Golf", Kenteken = "IJ-789-KL", Kleur = "Zwart", Aanschafjaar = 2020, Status = false, VoertuigType = "Auto", imageUrl = "https://i.ytimg.com/vi/PlTfuBdwe5I/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAGTNABo9jvpvmwgHJobNoUbv7zKg"},
 new Auto{Merk = "Honda", Type = "Civic", Kenteken = "MN-012-OP", Kleur = "Wit", Aanschafjaar = 2017, Status = false, VoertuigType = "Auto", imageUrl = "https://img.autovisie.nl/images/RTbu7SMgo84WjFgg9K0U66Wl_xM=/1280x0/filters:quality(80):format(jpeg):background_color(fff)/https%3A%2F%2Fwww.autovisie.nl%2Fwp-content%2Fuploads%2F2022%2F08%2FDuik-in-de-Prijslijst-Honda-Civic-4.jpg"},

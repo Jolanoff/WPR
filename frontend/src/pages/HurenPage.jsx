@@ -96,7 +96,11 @@ function HurenPage() {
                             kenteken={voertuig.kenteken}
                             kleur={voertuig.kleur}
                             aanschafjaar={voertuig.aanschafjaar}
-                            prijs={voertuig.prijs || "Prijs is onbekend"}
+                            prijs={
+                                typeof voertuig.prijs === "number" && voertuig.prijs > 0
+                                    ? voertuig.prijs.toFixed(2)
+                                    : "Prijs is onbekend"
+                            }
                             imageUrl={voertuig.imageUrl || notavailable}
                             status={voertuig.status}
                             reserveringen={voertuig.reserveringen}

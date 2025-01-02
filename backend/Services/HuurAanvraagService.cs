@@ -15,7 +15,7 @@ public class HuurAanvraagService
 
     public async Task<HuurAanvraag> CreateHuurAanvraagAsync(string userId, CreateHuurAanvraagDto aanvraagDto)
     {
-        // Find the Klant linked to the UserId
+
         var klant = await _context.Klanten
             .Include(k => k.User)
             .FirstOrDefaultAsync(k => k.UserId == userId);
@@ -23,24 +23,22 @@ public class HuurAanvraagService
         if (klant == null)
             throw new KeyNotFoundException("Klant not found for the authenticated user.");
 
-        // Validate the Voertuig
+
         var voertuig = await _context.Voertuigen.FindAsync(aanvraagDto.VoertuigId);
         if (voertuig == null)
             throw new KeyNotFoundException("Voertuig not found.");
 
-        // Create a new HuurAanvraag
         var huurAanvraag = new HuurAanvraag
         {
             StartDatum = aanvraagDto.StartDatum,
             EindDatum = aanvraagDto.EindDatum,
-            Status = aanvraagDto.Status,
+            Status = false,
             AardVanReis = aanvraagDto.AardVanReis,
             VerwachteKilometers = aanvraagDto.VerwachteKilometers,
-            Klant = klant, // Attach the Klant object
-            Voertuig = voertuig // Attach the Voertuig object
+            Klant = klant, 
+            Voertuig = voertuig 
         };
 
-        // Save the HuurAanvraag
         _context.HuurAanvragen.Add(huurAanvraag);
         await _context.SaveChangesAsync();
 
