@@ -21,7 +21,12 @@ export default function Header() {
             { href: "/abonnementen", label: "Abonnementen" },
             { href: "/bedrijf-medewerkers", label: "Beheer Medewerkers" },
         ];
-        const BackofficeLinks = [{ href: "/schade", label: "Schademeldingen" }];
+        const BackofficeLinks = [
+            { href: "/schade", label: "Schademeldingen" },
+            { href: "/huuraanvragen", label: "Huuraanvragen" },
+
+        
+        ];
 
         // Combine links based on roles
         let links = [...commonLinks];

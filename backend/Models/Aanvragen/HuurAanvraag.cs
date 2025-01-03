@@ -17,6 +17,9 @@ namespace backend.Models.Aanvragen
 
         public int VerwachteKilometers { get; set; }
 
+        public string ApprovalStatus { get; set; } = "Pending";
+        public string? RejectionReason { get; set; }
+
         //Klant 
         public int KlantId { get; set; }
         [JsonIgnore]

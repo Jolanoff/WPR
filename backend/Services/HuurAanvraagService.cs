@@ -1,7 +1,9 @@
 ﻿using backend.DbContext;
+using backend.Dtos.HuurAanvraag;
 using backend.Models.Aanvragen;
 using backend.Models.Gebruiker;
 using backend.Models.Klanten;
+using backend.Models.Voertuigen;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -93,8 +95,85 @@ public class HuurAanvraagService
         return huurAanvraag;
     }
 
+    public async Task<List<HuurAanvraagDto>> GetAllHuurAanvragenAsync()
+    {
+        return await _context.HuurAanvragen
+            .Include(h => h.Klant)
+            .ThenInclude(k => k.User)
+            .Include(h => h.Voertuig)
+            .Select(h => new HuurAanvraagDto
+            {
+                Id = h.Id,
+                StartDatum = h.StartDatum,
+                EindDatum = h.EindDatum,
+                Status = h.Status,
+                ApprovalStatus = h.ApprovalStatus,
+                AardVanReis = h.AardVanReis,
+                VerwachteKilometers = h.VerwachteKilometers,
+                KlantNaam = $"{h.Klant.User.Voornaam} {h.Klant.User.Achternaam}",
+                VoertuigNaam = $"{h.Voertuig.Merk} {h.Voertuig.Type}"
+            })
+            .ToListAsync();
+    }
 
+    public async Task<HuurAanvraag> ApproveHuurAanvraagAsync(int id)
+    {
+        // Fetch the HuurAanvraag with related entities
+        var huurAanvraag = await _context.HuurAanvragen
+            .Include(h => h.Klant)
+            .Include(h => h.Voertuig)
+            .FirstOrDefaultAsync(h => h.Id == id);
 
+        if (huurAanvraag == null)
+            throw new KeyNotFoundException("HuurAanvraag not found.");
 
+        if (huurAanvraag.ApprovalStatus == "Approved")
+            throw new InvalidOperationException("This HuurAanvraag is already approved.");
 
+        // Update the HuurAanvraag status
+        huurAanvraag.ApprovalStatus = "Approved";
+        huurAanvraag.Status = true;
+
+        // Create a new Reservering
+        var reservering = new Reservering
+        {
+            StartDatum = huurAanvraag.StartDatum,
+            EindDatum = huurAanvraag.EindDatum,
+            KlantId = huurAanvraag.KlantId,
+            VoertuigId = huurAanvraag.VoertuigId,
+            HuurAanvraagId = huurAanvraag.Id
+        };
+
+        // Add the Reservering to the database
+        _context.Reserveringen.Add(reservering);
+
+        // Save changes
+        _context.HuurAanvragen.Update(huurAanvraag);
+        await _context.SaveChangesAsync();
+
+        return huurAanvraag;
+    }
+
+    public async Task<HuurAanvraag> RefuseHuurAanvraagAsync(int id, string reason)
+    {
+        // Fetch the HuurAanvraag
+        var huurAanvraag = await _context.HuurAanvragen.FindAsync(id);
+
+        if (huurAanvraag == null)
+            throw new KeyNotFoundException("HuurAanvraag not found.");
+
+        if (string.IsNullOrWhiteSpace(reason))
+            throw new ArgumentException("Rejection reason cannot be empty.");
+
+        // Update the rejection status
+        huurAanvraag.ApprovalStatus = "Rejected";
+        huurAanvraag.RejectionReason = reason;
+        huurAanvraag.Status = false;
+
+        // Save changes
+        _context.HuurAanvragen.Update(huurAanvraag);
+        await _context.SaveChangesAsync();
+
+        return huurAanvraag;
+    }
 }

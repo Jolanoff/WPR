@@ -1,10 +1,17 @@
-﻿
-public class CreateHuurAanvraagDto
+﻿namespace backend.Dtos.HuurAanvraag
 {
-    public DateTime StartDatum { get; set; }
-    public DateTime EindDatum { get; set; }
-    public bool Status { get; set; } = false;
-    public string AardVanReis { get; set; }
-    public int VerwachteKilometers { get; set; }
-    public int VoertuigId { get; set; }
+    public class HuurAanvraagDto
+    {
+        public int Id { get; set; }
+        public DateTime StartDatum { get; set; }
+        public DateTime EindDatum { get; set; }
+        public bool Status { get; set; }
+        public string AardVanReis { get; set; }
+        public int VerwachteKilometers { get; set; }
+        public string KlantNaam { get; set; }
+        public string VoertuigNaam { get; set; }
+
+        public string ApprovalStatus { get; set; }
+    }
+
 }

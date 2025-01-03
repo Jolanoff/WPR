@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from "react";
 import MedewerkersForm from "../../components/bedrijf/medewerkers/MedewerkersForm";
 import { MedewerkersList } from "../../components/bedrijf/medewerkers/MedewerkersList";
 import UseAuthorization from "../../utils/UseAuthorization";

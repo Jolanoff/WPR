@@ -2,6 +2,7 @@
 using backend.Models.Aanvragen;
 using backend.Models.Gebruiker;
 using backend.Models.Klanten.Bedrijven;
+using backend.Models.Voertuigen;
 
 namespace backend.Models.Klanten
 {
@@ -25,6 +26,9 @@ namespace backend.Models.Klanten
 
         [JsonIgnore]
         public List<HuurAanvraag> HuurAanvragen { get; set; } = new List<HuurAanvraag>();
+
+        public List<Reservering>? Reserveringen { get; set; }
+
 
     }
 }

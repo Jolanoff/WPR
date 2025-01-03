@@ -35,6 +35,7 @@ namespace backend.DbContext
 
         public DbSet<Schade> Schades { get; set; }
         public DbSet<HuurAanvraag> HuurAanvragen { get; set; }
+        public DbSet<Reservering> Reserveringen { get; set; }
         public DbSet<Factuur> Facturen { get; set; }
 
 
@@ -163,6 +164,24 @@ namespace backend.DbContext
               .WithOne(f => f.HuurAanvraag)
               .HasForeignKey<Factuur>(f => f.HuurAanvraagId)
               .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Reservering>()
+            .HasOne(r => r.HuurAanvraag)
+            .WithMany()
+            .HasForeignKey(r => r.HuurAanvraagId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Reservering>()
+            .HasOne(r => r.Klant)
+            .WithMany(k => k.Reserveringen) 
+            .HasForeignKey(r => r.KlantId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Reservering>()
+                .HasOne(r => r.Voertuig)
+                .WithMany(v => v.Reserveringen) 
+                .HasForeignKey(r => r.VoertuigId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // **Configure Medewerker-tabel**
             builder.Entity<Medewerker>().ToTable("Medewerkers");
