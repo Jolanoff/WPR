@@ -36,10 +36,19 @@ namespace backend
                 options.UseSqlite("Data Source=database.db"));
 
 
+
             // Configure Services
+            builder.Services.AddScoped<EmailService>();
             builder.Services.AddScoped<AccountService>();
             builder.Services.AddScoped<AuthService>();
             builder.Services.AddScoped<BedrijfService>();
+            builder.Services.AddScoped<BedrijfMedewerkerService>();
+            builder.Services.AddScoped<AdminService>();
+            builder.Services.AddScoped<SchademeldingenService>();
+            builder.Services.AddScoped<VoertuigService>();
+            builder.Services.AddScoped<HuurAanvraagService>();
+
+
 
 
             builder.Services.AddIdentity<User, IdentityRole>(options =>
@@ -103,19 +112,27 @@ namespace backend
             using (var scope = app.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+                var context = services.GetRequiredService<ApplicationsDbContext>();
 
                 try
                 {
+                    Console.WriteLine("seeding database");
+
+
                     await SeedRoles.Seed(services);
                     await SeedAutos.Seed(services);
                     await SeedCampers.Seed(services);
                     await SeedCaravans.Seed(services);
+                    await SeedAdmin.Seed(services);
+
+                    Console.WriteLine("completed seeding");
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Error while seeding roles: {ex.Message}");
                 }
-            } 
+            }
+
 
             app.MapControllers();
             await app.RunAsync();

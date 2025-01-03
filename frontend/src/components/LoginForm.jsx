@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import api from "../api";
-import { useNavigate } from "react-router-dom";
-import eventEmitter from "../utils/EventEmitter";
-import { HandleApiErrors } from "../utils/HandleApiError";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuthStore } from "../store/authStore";
 import ErrorMessage from "./ErrorMessage";
 
 function LoginForm() {
@@ -11,20 +10,24 @@ function LoginForm() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  const fetchUserInfo = useAuthStore((state) => state.fetchUserInfo);
+
   const handleLogin = async (e) => {
     e.preventDefault();
     setError(null);
 
     try {
+      // Log in the user
       await api.post("/auth/login", { email, password });
 
-      localStorage.setItem("isLoggedIn", "true");
-      eventEmitter.emit("login", true);
+      // Fetch user info and store in Zustand
+      await fetchUserInfo();
 
-      navigate("/Dashboard");
+      // Navigate to the dashboard
+      navigate("/dashboard");
     } catch (err) {
-      console.log(err.response.data.message)
-      setError(HandleApiErrors(err.response));
+      console.error(err.response?.data?.message || "Login failed");
+      setError(err.response?.data?.message || "Login failed");
     }
   };
 
@@ -69,6 +72,7 @@ function LoginForm() {
         >
           Inloggen
         </button>
+        <Link to="/register" className="text-blue-500">Maak een Account</Link>
       </form>
       <ErrorMessage error={error} />
     </div>

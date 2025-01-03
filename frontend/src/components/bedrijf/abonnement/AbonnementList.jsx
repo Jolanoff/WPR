@@ -13,11 +13,11 @@ const AbonnementList = ({ abonnementen, handleCancel }) => {
                     if (stopDatum < startDatum) {
                         statusLabel = "Geannuleerd";
                     } else if (today >= startDatum && today <= eindDatum) {
-                        statusLabel = `Uw abonnement wordt stopgezet op: ${stopDatum.toLocaleDateString()}`;
+                        statusLabel = `Uw abonnement wordt stopgezet op: ${eindDatum.toLocaleDateString()}`;
                     }
                 } else {
                     if (today < startDatum) {
-                        statusLabel = "Uw abonnement begint over aantal dagen";
+                        statusLabel = `Uw abonnement begint: ${startDatum.toLocaleDateString()}`;
                     } else if (today <= eindDatum) {
                         statusLabel = "Actief";
                     } else {

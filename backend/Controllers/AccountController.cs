@@ -105,7 +105,7 @@ namespace backend.Controllers
                     return NotFound(new { message = "User not found." });
 
                 var roles = await _userManager.GetRolesAsync(user);
-                return Ok(roles); 
+                return Ok(new {roles}); 
             }
             catch (Exception ex)
             {

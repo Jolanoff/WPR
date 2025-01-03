@@ -25,6 +25,7 @@ namespace backend.DbContext
 
 
         public DbSet<Voertuig> Voertuigen { get; set; }
+
         public DbSet<Auto> Autos { get; set; }
         public DbSet<Caravan> Caravans { get; set; }
         public DbSet<Camper> Campers { get; set; }
@@ -32,6 +33,12 @@ namespace backend.DbContext
         public DbSet<Abonnement> Abonnementen { get; set; }
         public DbSet<Uitgifte> Uitgiften { get; set; }
         public DbSet<Inname> Innames { get; set; }
+
+
+
+        public DbSet<Schade> Schades { get; set; }
+        public DbSet<HuurAanvraag> HuurAanvragen { get; set; }
+
 
 
 
@@ -76,6 +83,7 @@ namespace backend.DbContext
                 .WithOne(m => m.User)
                 .HasForeignKey<Medewerker>(m => m.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
 
             // **Relatie Klant -> Bedrijf**
             builder.Entity<Bedrijf>()
@@ -130,6 +138,7 @@ namespace backend.DbContext
            .HasOne(a => a.Bedrijf)
            .WithMany(b => b.Abonnementen)
            .HasForeignKey(a => a.BedrijfId);
+            //vraag aan docent of als bedrijf verwijdered wordt. moet de abonnoment ook verwijderd worden of moet dat blijven
 
              // **Relatie Uitgifte -> Voertuig**
             builder.Entity<Uitgifte>()
@@ -150,6 +159,26 @@ namespace backend.DbContext
 
 
 
+            //Schade
+            builder.Entity<Schade>()
+                .HasOne(s => s.HuurAanvraag)
+                .WithMany(h => h.Schades)
+                .HasForeignKey(s => s.HuurAanvraagId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            //Huuraanvraag
+            builder.Entity<HuurAanvraag>()
+            .HasOne(h => h.Klant) 
+            .WithMany(k => k.HuurAanvragen) 
+            .HasForeignKey(h => h.KlantId) 
+            .OnDelete(DeleteBehavior.Cascade); 
+
+            // Relatie tussen HuurAanvraag en Voertuig (One-to-Many)
+            builder.Entity<HuurAanvraag>()
+                .HasOne(h => h.Voertuig)
+                .WithMany(v => v.HuurAanvragen) 
+                .HasForeignKey(h => h.VoertuigId) 
+                .OnDelete(DeleteBehavior.Restrict); 
 
             // **Configure Medewerker-tabel**
             builder.Entity<Medewerker>().ToTable("Medewerkers");
