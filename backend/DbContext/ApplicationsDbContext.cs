@@ -31,6 +31,9 @@ namespace backend.DbContext
         public DbSet<Camper> Campers { get; set; }
 
         public DbSet<Abonnement> Abonnementen { get; set; }
+        public DbSet<Uitgifte> Uitgiften { get; set; }
+        public DbSet<Inname> Innames { get; set; }
+
 
 
         public DbSet<Schade> Schades { get; set; }
@@ -136,6 +139,24 @@ namespace backend.DbContext
            .WithMany(b => b.Abonnementen)
            .HasForeignKey(a => a.BedrijfId);
             //vraag aan docent of als bedrijf verwijdered wordt. moet de abonnoment ook verwijderd worden of moet dat blijven
+
+             // **Relatie Uitgifte -> Voertuig**
+            builder.Entity<Uitgifte>()
+                .HasOne(u => u.Voertuig)
+                .WithMany()
+                .HasForeignKey(u => u.VoertuigId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Inname>()
+                .HasOne( q => q.Voertuig)
+                .WithMany()
+                .HasForeignKey(q => q.VoertuigId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Inname>().ToTable("Innames");
+            // Configure de tabelnaam (optioneel)
+            builder.Entity<Uitgifte>().ToTable("Uitgiften");
+
 
 
             //Schade

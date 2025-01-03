@@ -6,6 +6,10 @@ import RegisterRouter from "./routes/RegisterRouter";
 import DashboardRouter from "./routes/DashboardRouter";
 import VerifyEmailRoute from "./routes/VerifyEmailRoute";
 import ProfielRouter from "./routes/ProfielRouter";
+
+import UitgifteRouter from "./routes/UitgifteRouter";
+import InnameRouter from "./routes/InnameRouter";
+
 import FactuurRouter from "./routes/bedrijf/FactuurRoute";
 import AbonnementRouter from "./routes/bedrijf/AbonnementRouter";
 import BedrijfMedewerkerBeheerRouter from "./routes/bedrijf/BedrijfMedewerkerBeheerRouter";
@@ -41,6 +45,9 @@ const routes = [
             //huren
             ...AanvraagRouter,
             ...HurenRoute,
+            //medewerkers
+            ...UitgifteRouter,
+            ...InnameRouter
         ],
     },
 ];
