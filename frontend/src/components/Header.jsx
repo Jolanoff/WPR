@@ -3,7 +3,7 @@ import { useAuthStore } from "../store/authStore";
 import { useNavigate } from "react-router-dom";
 
 export default function Header() {
-    const { isLoggedIn, userRoles, logout } = useAuthStore();
+    const { isLoggedIn, userRoles, logout, userInfo } = useAuthStore();
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const navigate = useNavigate();
     const toggleProfileMenu = () => setShowProfileMenu((prev) => !prev);

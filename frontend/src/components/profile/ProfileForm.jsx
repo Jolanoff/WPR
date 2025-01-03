@@ -6,7 +6,6 @@ const ProfileForm = ({ userData, onSave, onDelete, onOpenPasswordModal, userRole
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Handle nested adres fields
     if (name.startsWith("adres.")) {
       const field = name.split(".")[1];
       setLocalData((prev) => ({
@@ -142,7 +141,7 @@ const ProfileForm = ({ userData, onSave, onDelete, onOpenPasswordModal, userRole
           </div>
         </>
       )}
-      {userRoles.includes("Bedrijf") && (
+      {Array.isArray(userRoles) && userRoles.includes("Bedrijf")  && (
         <div>
           <label htmlFor="kvKNummer" className="block text-gray-700 font-medium">
             KvK Nummer
