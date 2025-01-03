@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function VoertuigCard({
+    voertuigId,
     merk,
     type,
     kenteken,
@@ -20,6 +21,7 @@ export default function VoertuigCard({
     const handleRent = () => {
         navigate("/aanvraag", {
             state: {
+                voertuigId,
                 merk,
                 type,
                 kenteken,
@@ -33,7 +35,7 @@ export default function VoertuigCard({
             },
         });
     };
-    
+
 
     return (
         <div className="p-4 md:p-12">
@@ -50,11 +52,12 @@ export default function VoertuigCard({
                     <p>Kenteken: {kenteken}</p>
                     <p>Kleur: {kleur}</p>
                     <p>Aanschafjaar: {aanschafjaar}</p>
-                    <p className="mt-8 text-xl font-bold">{prijs}</p>
+                    <p className="mt-8 text-xl font-bold">{prijs > 0
+                        ?"€" + prijs + " Per Dag"
+                        : "Prijs is onbekend"}</p>
                     <p
-                        className={`mt-2 text-lg font-semibold ${
-                            !status ? "text-green-500" : "text-red-500"
-                        }`}
+                        className={`mt-2 text-lg font-semibold ${!status ? "text-green-500" : "text-red-500"
+                            }`}
                     >
                         Status: {status ? "Niet beschikbaar" : "Beschikbaar"}
                     </p>
@@ -62,11 +65,10 @@ export default function VoertuigCard({
                 <button
                     onClick={handleRent}
                     disabled={status}
-                    className={`w-full py-3 text-white font-semibold rounded-md transition duration-300 ${
-                        status
+                    className={`w-full py-3 text-white font-semibold rounded-md transition duration-300 ${status
                             ? "bg-gray-400 cursor-not-allowed"
                             : "bg-blue-500 hover:bg-blue-600"
-                    }`}
+                        }`}
                 >
                     Huren
                 </button>

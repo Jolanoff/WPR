@@ -12,7 +12,9 @@ namespace backend.Dtos.Voertuigen
         public int Aanschafjaar { get; set; }
         public bool Status { get; set; }
         public string VoertuigType { get; set; }
-        public List<ReserveringDto> Reserveringen { get; set; } // Voor meerdere reserveringen
+
+        public double Prijs {  get; set; }
+        public List<ReserveringDto> Reserveringen { get; set; } 
         public string imageUrl { get; set; }
 
     }

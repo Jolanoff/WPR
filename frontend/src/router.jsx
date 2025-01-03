@@ -19,6 +19,7 @@ import SchademeldingenRouter from "./routes/SchademeldingenRouter";
 import HurenRoute from "./routes/HurenRoute";
 import AanvraagRouter from "./routes/Huren/AanvraagRouter";
 import HomeRouter from "./routes/HomeRouter";
+import HuurAanvragenRouter from "./routes/BackOfficeMedewerker/HuurAanvragenRouter";
 
 const routes = [
     {
@@ -45,9 +46,12 @@ const routes = [
             //huren
             ...AanvraagRouter,
             ...HurenRoute,
-            //medewerkers
+
+            //BackofficeMedewerker
+            ...HuurAanvragenRouter
             ...UitgifteRouter,
             ...InnameRouter
+
         ],
     },
 ];

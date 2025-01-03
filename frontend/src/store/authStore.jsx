@@ -29,7 +29,10 @@ export const useAuthStore = create(
             error: err.response?.data?.message || "Failed to fetch user info",
             loading: false,
             isLoggedIn: false,
-          });
+            userInfo: null,
+            userRoles: [],
+        });
+        Cookies.remove("auth-cookie");
         }
       },
 

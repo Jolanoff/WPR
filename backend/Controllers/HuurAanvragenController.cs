@@ -1,37 +1,108 @@
-﻿using backend.Models.Aanvragen;
-using backend.Services;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using backend.Services;
+using backend.Dtos;
 
-namespace backend.Controllers
+[ApiController]
+[Route("api/[controller]")]
+public class HuurAanvraagController : ControllerBase
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class HuurAanvragenController : ControllerBase
-    {
-        private readonly HuurAanvraagService _huurAanvraagService;
+    private readonly HuurAanvraagService _huurAanvraagService;
 
-        public HuurAanvragenController(HuurAanvraagService huurAanvraagService)
+    public HuurAanvraagController(HuurAanvraagService huurAanvraagService)
+    {
+        _huurAanvraagService = huurAanvraagService;
+    }
+    [Authorize(Roles = "ParticuliereHuurder,ZakelijkeHuurder,Wagenparkbeheerder,Bedrijf")]
+    [HttpPost("create")]
+    public async Task<IActionResult> CreateHuurAanvraag([FromBody] CreateHuurAanvraagDto aanvraagDto)
+    {
+        if (!ModelState.IsValid)
         {
-            _huurAanvraagService = huurAanvraagService;
+            return BadRequest(ModelState);
         }
 
-        [HttpPost]
-        [Route("create")]
-        public async Task<IActionResult> CreateHuurAanvraag([FromBody] HuurAanvraag huurAanvraag)
+        try
         {
-            try
+            // Extract UserId from the authenticated user
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
             {
-                var createdHuurAanvraag = await _huurAanvraagService.CreateHuurAanvraagAsync(huurAanvraag);
-                return Ok(new { message = "HuurAanvraag succesvol aangemaakt.", aanvraagId = createdHuurAanvraag.Id });
+                return Unauthorized(new { message = "User is not authenticated." });
             }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "Er is een fout opgetreden bij het maken van de HuurAanvraag.", details = ex.Message });
-            }
+
+            var createdAanvraag = await _huurAanvraagService.CreateHuurAanvraagAsync(userId, aanvraagDto);
+            return Created("", createdAanvraag);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
         }
     }
+
+    [Authorize(Roles = "BackOfficeMedewerker,Admin")]
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAllHuurAanvragen()
+    {
+        try
+        {
+            var huuraanvragen = await _huurAanvraagService.GetAllHuurAanvragenAsync();
+            return Ok(huuraanvragen);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
+        }
+    }
+
+    [Authorize(Roles = "BackOfficeMedewerker,Admin")]
+    [HttpPatch("{id}/approve")]
+    public async Task<IActionResult> ApproveHuurAanvraag(int id)
+    {
+        try
+        {
+            var updatedAanvraag = await _huurAanvraagService.ApproveHuurAanvraagAsync(id);
+            return Ok(updatedAanvraag);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
+        }
+    }
+    [Authorize(Roles = "BackOfficeMedewerker,Admin")]
+    [HttpPatch("{id}/refuse")]
+    public async Task<IActionResult> RefuseHuurAanvraag(int id, [FromBody] string reason)
+    {
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            return BadRequest(new { message = "The reason field is required." });
+        }
+
+        try
+        {
+            var updatedAanvraag = await _huurAanvraagService.RefuseHuurAanvraagAsync(id, reason);
+            return Ok(updatedAanvraag);
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
+        }
+    }
+
+
+
+
 }

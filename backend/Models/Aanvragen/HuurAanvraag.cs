@@ -17,15 +17,23 @@ namespace backend.Models.Aanvragen
 
         public int VerwachteKilometers { get; set; }
 
+        public string ApprovalStatus { get; set; } = "Pending";
+        public string? RejectionReason { get; set; }
+
         //Klant 
         public int KlantId { get; set; }
+        [JsonIgnore]
         public Klant Klant { get; set; }
         //private Factuur Factuur { get; set; }
         public int VoertuigId { get; set; }
+        [JsonIgnore]
         public Voertuig Voertuig { get; set; }
          
         [JsonIgnore]
         public List<Schade> Schades { get; set; } = new List<Schade>();
+
+        [JsonIgnore]
+        public Factuur Factuur { get; set; }
 
 
     }

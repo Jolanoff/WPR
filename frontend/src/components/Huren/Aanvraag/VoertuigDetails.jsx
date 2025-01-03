@@ -1,6 +1,26 @@
-import React from "react";
+import { useState, useEffect } from "react";
 
 function VoertuigDetails({ voertuigDetails }) {
+    const [totalPrice, setTotalPrice] = useState("Prijs is onbekend");
+    const [totalDays, setTotalDays] = useState(0);
+
+    useEffect(() => {
+        if (voertuigDetails?.startDatum && voertuigDetails?.eindDatum && voertuigDetails?.prijs) {
+            const start = new Date(voertuigDetails.startDatum);
+            const end = new Date(voertuigDetails.eindDatum);
+            const differenceInMilliseconds = end - start;
+            const days = Math.ceil(differenceInMilliseconds / (1000 * 60 * 60 * 24));
+
+            const adjustedDays = days > 0 ? days : 1;
+            setTotalDays(adjustedDays);
+            if (adjustedDays > 0 && voertuigDetails.prijs > 0) {
+                setTotalPrice(`€${(adjustedDays * voertuigDetails.prijs).toFixed(2)}`);
+            } else {
+                setTotalPrice("Prijs is onbekend");
+            }
+        }
+    }, [voertuigDetails]);
+
     return (
         <div className="grid grid-cols-2 gap-6">
             <img
@@ -31,7 +51,10 @@ function VoertuigDetails({ voertuigDetails }) {
                         {voertuigDetails.aanschafjaar}
                     </p>
                     <p className="text-gray-600 text-lg font-bold mt-2">
-                        <span className="font-medium">Prijs:</span> {voertuigDetails.prijs}
+                        <span className="font-medium">Totale Dagen:</span> {totalDays} dag{totalDays > 1 ? "en" : ""}
+                    </p>
+                    <p className="text-gray-600 text-lg font-bold mt-2">
+                        <span className="font-medium">Prijs:</span> {totalPrice}
                     </p>
                 </div>
             </div>
