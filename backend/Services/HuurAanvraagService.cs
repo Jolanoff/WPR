@@ -193,4 +193,21 @@ public class HuurAanvraagService
 
         return huurAanvraag;
     }
+
+    public async Task<List<HuurAanvraag>> GetHuurAanvragenForUserAsync(string userId)
+    {
+        var klant = await _context.Klanten
+            .Include(k => k.User)
+            .FirstOrDefaultAsync(k => k.UserId == userId);
+
+        if (klant == null)
+            throw new KeyNotFoundException("klant niet gevonden!");
+
+        var huuraanvragen = await _context.HuurAanvragen
+            .Include(h => h.Voertuig)
+            .Where(h => h.Klant.Id == klant.Id)
+            .ToListAsync();
+
+        return huuraanvragen;
+    }
 }
