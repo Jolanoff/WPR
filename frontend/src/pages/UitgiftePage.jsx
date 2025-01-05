@@ -36,7 +36,7 @@ const UitgiftePage = () => {
       ...formData,
       voertuigId: uitgifte.voertuigId, // Vul voertuigId automatisch in
       customerName: uitgifte.customerName, // Vul klantnaam in
-      klantId: uitgifte.klantId || "", // Vul KlantId in (optie)
+      klantId: uitgifte.klantId 
     });
   };
 
@@ -147,7 +147,8 @@ const UitgiftePage = () => {
                 value={formData.klantId}
                 onChange={handleInputChange}
                 required
-                className="p-2 border rounded"
+                disabled
+                className="p-2 border rounded bg-gray-200"
               />
             </div>
             <div className="mb-4">

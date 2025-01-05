@@ -3,6 +3,8 @@ using backend.Models.Voertuigen;  // Zorg ervoor dat de juiste namespaces worden
 using System.ComponentModel.DataAnnotations;
 using backend.DbContext;
 using backend.Models.Aanvragen;
+using backend.Dtos.Aanvragen;
+
 
 [ApiController]
 [Route("api/vehicle")]
@@ -26,6 +28,7 @@ public class VoertuigUitgiftenController : ControllerBase
                 u.Id,
                 u.CustomerName,
                 u.VoertuigId,
+                u.KlantId,
                 u.Remarks
             })
             .ToList();
@@ -87,7 +90,7 @@ public IActionResult AcceptUitgifte(int id, [FromBody] AcceptUitgifteRequest req
         IntakeDate = request.FromDate,
         ToDate = request.ToDate,
         KlantId = request.KlantId, // Dit moet later worden ingevuld, mogelijk met een klant-ID
-        VoertuigNaam = "Onbekend Voertuig" // Dit kan later worden ingevuld, bijvoorbeeld door op de VoertuigId te zoeken
+        
     };
 
     // Voeg de inname toe aan de database
@@ -122,41 +125,4 @@ public class VehicleIssueRequest
     public string Remarks { get; set; }
 }
 
-// Uitgifte class (model)
-public class Uitgifte
-{
-    public int Id { get; set; }
-    public string CustomerName { get; set; }
-    public int KlantId{get; set;}
-    public int VoertuigId { get; set; }
-    public string Remarks { get; set; }
-    public DateTime IssueDate { get; set; }
-    public string Status { get; set; }
-    public DateTime ToDate {get; set;}
-
-    // Relatie met Voertuig
-    public Voertuig Voertuig { get; set; }  // Relatie naar Voertuig
-}
-
-public class AcceptUitgifteRequest //DTO voor de uitgifte model
-{
-    [Required]
-    [StringLength(100)]
-    public string CustomerName { get; set; }
-
-    [Required]
-    public int KlantId {get; set;} 
-
-    [Required]
-    public int VoertuigId { get; set; }
-
-    [Required]
-    public DateTime FromDate { get; set; }
-
-    [Required]
-    public DateTime ToDate { get; set; }
-
-    [StringLength(500)]
-    public string Remarks { get; set; }
-}
 

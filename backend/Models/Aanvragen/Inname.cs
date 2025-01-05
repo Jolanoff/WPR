@@ -1,6 +1,8 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
+using backend.Models.Klanten;
 using backend.Models.Voertuigen;
 
 namespace backend.Models.Aanvragen
@@ -17,10 +19,14 @@ namespace backend.Models.Aanvragen
 
         
         public int VoertuigId { get; set; } // Verwijzing naar Voertuig
-        public string VoertuigNaam { get; set; } // Naam van het voertuig
+        // Naam van het voertuig
 
         [ForeignKey(nameof(VoertuigId))]
+        [JsonIgnore]
         public Voertuig Voertuig { get; set; } // Relatie naar Voertuig
+
+        [JsonIgnore]
+        public Klant Klant { get; set; }
 
         public string Remarks { get; set; } // Opmerkingen over de inname
 
