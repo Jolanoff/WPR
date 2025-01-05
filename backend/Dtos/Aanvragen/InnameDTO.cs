@@ -6,6 +6,12 @@ namespace backend.Dtos.Aanvragen
     public class InnameDTO
     {
         [Required]
+        [StringLength(100)]
+        public string KlantNaam { get; set; } // Naam van de klant
+
+        [Required]
+        public int KlantId {get; set;} 
+        [Required]
         public int VoertuigId { get; set; }
 
         [Required]
@@ -13,6 +19,6 @@ namespace backend.Dtos.Aanvragen
 
         public string Remarks { get; set; }
 
-        public DateTime IntakeDate {get; set;} // Foto's als bestanden
+        public DateTime IntakeDate {get; set;} 
     }
 }

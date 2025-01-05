@@ -39,5 +39,7 @@ namespace backend.Models.Aanvragen
         
         [StringLength(50)] // Maximaal 50 tekens voor status
         public string Status { get; set; } // Status van het voertuig ("Met schade" of "Weer beschikbaar")
+         public List<string>? PhotoPaths { get; set; } // Sla bestandslocaties op
+
     }
 }

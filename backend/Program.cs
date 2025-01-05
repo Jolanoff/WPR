@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using backend.Services;
+using Microsoft.Extensions.FileProviders;
 
 namespace backend
 {
@@ -107,6 +108,20 @@ namespace backend
             app.UseCors("AllowReactApp");
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseStaticFiles();
+
+            string uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+
+            if (!Directory.Exists(uploadsPath)) 
+            {
+                Directory.CreateDirectory(uploadsPath);
+            }
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(uploadsPath),
+                RequestPath = "/uploads"
+            });
 
             // Seed Roles
             using (var scope = app.Services.CreateScope())
