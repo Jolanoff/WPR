@@ -116,43 +116,60 @@ public class HuurAanvraagService
             .ToListAsync();
     }
 
-    public async Task<HuurAanvraag> ApproveHuurAanvraagAsync(int id)
+    public async Task<HuurAanvraag> ApproveHuurAanvraagAsync(int id, string remarks = "")
+{
+    // Fetch the HuurAanvraag with related entities
+    var huurAanvraag = await _context.HuurAanvragen
+        .Include(h => h.Klant)
+        .ThenInclude(k => k.User)
+        .Include(h => h.Voertuig)
+        .FirstOrDefaultAsync(h => h.Id == id);
+
+    if (huurAanvraag == null)
+        throw new KeyNotFoundException("HuurAanvraag not found.");
+
+    if (huurAanvraag.ApprovalStatus == "Approved")
+        throw new InvalidOperationException("This HuurAanvraag is already approved.");
+
+    // Update the HuurAanvraag status
+    huurAanvraag.ApprovalStatus = "Approved";
+    huurAanvraag.Status = true;
+
+    // Create a new Reservering
+    var reservering = new Reservering
     {
-        // Fetch the HuurAanvraag with related entities
-        var huurAanvraag = await _context.HuurAanvragen
-            .Include(h => h.Klant)
-            .Include(h => h.Voertuig)
-            .FirstOrDefaultAsync(h => h.Id == id);
+        StartDatum = huurAanvraag.StartDatum,
+        EindDatum = huurAanvraag.EindDatum,
+        KlantId = huurAanvraag.KlantId,
+        VoertuigId = huurAanvraag.VoertuigId,
+        HuurAanvraagId = huurAanvraag.Id
+    };
 
-        if (huurAanvraag == null)
-            throw new KeyNotFoundException("HuurAanvraag not found.");
+    // Add the Reservering to the database
+    _context.Reserveringen.Add(reservering);
 
-        if (huurAanvraag.ApprovalStatus == "Approved")
-            throw new InvalidOperationException("This HuurAanvraag is already approved.");
+    // Create a new Uitgifte
+    var uitgifte = new Uitgifte
+    {
+        CustomerName = $"{huurAanvraag.Klant.User.Voornaam} {huurAanvraag.Klant.User.Achternaam}",
+        VoertuigId = huurAanvraag.VoertuigId,
+        KlantId = huurAanvraag.KlantId,
+        Voertuig = huurAanvraag.Voertuig, // Include the related Voertuig entity
+        Remarks = remarks,
+        IssueDate = DateTime.Now,
+        Status = "Klaar om opgehaald te worden"
+    };
 
-        // Update the HuurAanvraag status
-        huurAanvraag.ApprovalStatus = "Approved";
-        huurAanvraag.Status = true;
+    // Add the Uitgifte to the database
+    _context.Uitgiften.Add(uitgifte);
 
-        // Create a new Reservering
-        var reservering = new Reservering
-        {
-            StartDatum = huurAanvraag.StartDatum,
-            EindDatum = huurAanvraag.EindDatum,
-            KlantId = huurAanvraag.KlantId,
-            VoertuigId = huurAanvraag.VoertuigId,
-            HuurAanvraagId = huurAanvraag.Id
-        };
+    // Save all changes
+    _context.HuurAanvragen.Update(huurAanvraag);
+    await _context.SaveChangesAsync();
 
-        // Add the Reservering to the database
-        _context.Reserveringen.Add(reservering);
+    return huurAanvraag;
+}
 
-        // Save changes
-        _context.HuurAanvragen.Update(huurAanvraag);
-        await _context.SaveChangesAsync();
-
-        return huurAanvraag;
-    }
 
     public async Task<HuurAanvraag> RefuseHuurAanvraagAsync(int id, string reason)
     {

@@ -13,6 +13,6 @@ namespace backend.Dtos.Aanvragen
 
         public string Remarks { get; set; }
 
-        public List<IFormFile> Photos { get; set; } // Foto's als bestanden
+        public DateTime IntakeDate {get; set;} // Foto's als bestanden
     }
 }

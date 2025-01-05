@@ -48,7 +48,7 @@ const routes = [
             ...HurenRoute,
 
             //BackofficeMedewerker
-            ...HuurAanvragenRouter
+            ...HuurAanvragenRouter,
             ...UitgifteRouter,
             ...InnameRouter
 
