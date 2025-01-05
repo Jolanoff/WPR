@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using backend.Services;
-using backend.Dtos;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -101,8 +99,31 @@ public class HuurAanvraagController : ControllerBase
             return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
         }
     }
+    [Authorize(Roles = "ParticuliereHuurder,ZakelijkeHuurder,Wagenparkbeheerder,Bedrijf")]
+    [HttpGet("UserHuuraanvragen")]
+    public async Task<IActionResult> GetHuurAanvragenForUser()
+    {
+        try
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized(new { message = "Gebruiker niet gevonden" });
+            }
+            var huuraanvragen = await _huurAanvraagService.GetHuurAanvragenForUserAsync(userId);
 
+            if (huuraanvragen == null)
+            {
+                return NotFound(new { message = "geen huuraanvragen gevonden" });
+            }
+            return Ok(huuraanvragen);
 
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
+        }
+    }
 
 
 }
