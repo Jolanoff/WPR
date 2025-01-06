@@ -18,52 +18,33 @@ public class VoertuigInnameController : ControllerBase
         _context = context;
     }
     
-[HttpGet("pending")]
-public IActionResult GetPendingIntakes()
-{
-    var pendingIntakes = _context.Innames
-        .Where(i => i.Status == "Pending")
-        .Include(i => i.Voertuig) // Voeg voertuig details toe
-        .Select(i => new
-        {
-            i.Id,
-            i.VoertuigId,
-            i.Remarks,
-            
-            i.IntakeDate,
-            i.Status,
-            i.KlantId,
-             
-            i.IssueDate,
-            i.ToDate
-        })
-        .ToList();
-
-    if (pendingIntakes == null || pendingIntakes.Count == 0)
+// GET /vehicle/pending: Fetch vehicles with "Pending" status
+    [HttpGet("innamen")]
+    public IActionResult GetInnamen()
     {
-        return NotFound(new { message = "Geen voertuigen in behandeling." });
-    }
-
-    return Ok(pendingIntakes);
-}
-
-
-    // GET /vehicle/returned: Haal voertuigen op die moeten worden ingeleverd
-    [HttpGet("returned")]
-    public IActionResult GetReturnedVehicles()
-    {
-        var returnedVehicles = _context.Innames
-            .Where(i => i.Status == "Teruggebracht")
-            .Include(i => i.Voertuig) // Voeg voertuig details toe
+        var innamen = _context.Innames
+            .Where(i => i.Status == "Pending")
+            .Select(i => new
+            {
+                i.Id,
+                i.VoertuigId,
+                i.Remarks,
+                i.IntakeDate,
+                i.Status,
+                i.KlantId,
+                i.IssueDate,
+                i.ToDate
+            })
             .ToList();
 
-        if (returnedVehicles == null || returnedVehicles.Count == 0)
+        if (innamen == null || innamen.Count == 0)
         {
-            return NotFound(new { message = "Geen voertuigen om in te nemen." });
+            return NotFound(new { message = "Geen voertuigen in behandeling." });
         }
 
-        return Ok(returnedVehicles);
+        return Ok(innamen);
     }
+
 
     // POST /vehicle/intake: Registreer een voertuig inname
     [HttpPost("intake")]
@@ -96,29 +77,94 @@ public IActionResult GetPendingIntakes()
         }
     }
 
-    // PATCH /vehicle/intake/{id}: Werk de status van de inname bij en voeg opmerkingen toe
-    [HttpPatch("intake/{id}")]
-    public IActionResult UpdateIntakeStatus(int id, [FromBody] UpdateInnameDTO request)
+[HttpPatch("intake/update/{id}")]
+public IActionResult UpdateVehicleIntake(int id, [FromForm] UpdateInnameDTO request)
+{
+    try
     {
-        try
+        var intake = _context.Innames.Include(i => i.Voertuig).FirstOrDefault(i => i.Id == id);
+        if (intake == null)
         {
-            var intake = _context.Innames.FirstOrDefault(i => i.Id == id);
-            if (intake == null)
+            return NotFound(new { message = "Inname niet gevonden." });
+        }
+
+        // Update de issueDate naar de huidige tijd als deze niet wordt meegegeven in de request
+        intake.IssueDate = request.IssueDate ?? DateTime.Now;
+
+        if (request.ToDate.HasValue)
+        {
+            intake.ToDate = request.ToDate.Value;  // Wijzig toDate
+        }
+
+        // Update de status en opmerkingen
+        intake.Status = request.Status ?? intake.Status;
+        intake.Remarks = request.Remarks ?? intake.Remarks;
+
+        // Foto's verwerken
+        if (request.Photos != null && request.Photos.Any())
+        {
+            string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+            if (!Directory.Exists(uploadPath))
             {
-                return NotFound(new { message = "Inname niet gevonden." });
+                Directory.CreateDirectory(uploadPath);
             }
 
-            intake.Status = request.Status ?? intake.Status; // Als geen nieuwe status wordt gegeven, blijft de oude
-            intake.Remarks = request.Remarks ?? intake.Remarks; // Zelfde voor opmerkingen
+            intake.PhotoPaths = new List<string>();
+            foreach (var photo in request.Photos)
+            {
+                string fileName = $"{Guid.NewGuid()}_{photo.FileName}";
+                string filePath = Path.Combine(uploadPath, fileName);
 
-            _context.Innames.Update(intake);
-            _context.SaveChanges();
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    photo.CopyTo(stream);
+                }
 
-            return Ok(new { message = "Inname succesvol bijgewerkt.", data = intake });
+                intake.PhotoPaths.Add($"/uploads/{fileName}");
+            }
         }
-        catch (Exception ex)
-        {
-            return StatusCode(500, new { message = "Er is een fout opgetreden.", error = ex.Message });
-        }
+
+        _context.Innames.Update(intake);
+        _context.SaveChanges();
+
+        return Ok(new { message = "Inname succesvol bijgewerkt.", data = intake });
     }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { message = "Er is een fout opgetreden.", error = ex.Message });
+    }
+}
+
+
+[HttpGet("intake/{id}")]
+public IActionResult GetVehicleIntake(int id)
+{
+    try
+    {
+        var intake = _context.Innames
+            .Include(i => i.Voertuig)
+            .FirstOrDefault(i => i.Id == id);
+
+        if (intake == null)
+        {
+            return NotFound(new { message = "Inname niet gevonden." });
+        }
+
+        // Return intake details, including intakeDate and toDate
+        return Ok(new 
+        { 
+            intake.IntakeDate, 
+            intake.ToDate, 
+            intake.Status, 
+            intake.Remarks, 
+            intake.PhotoPaths 
+        });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { message = "Er is een fout opgetreden.", error = ex.Message });
+    }
+}
+
+
 }
