@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../api"; // Zorg ervoor dat de api is geïmporteerd
 
 const UitgiftePage = () => {
   const [uitgiften, setUitgiften] = useState([]);
@@ -16,9 +17,8 @@ const UitgiftePage = () => {
   useEffect(() => {
     const fetchUitgiften = async () => {
       try {
-        const response = await fetch("http://localhost:5039/api/vehicle/uitgiften");
-        const data = await response.json();
-        setUitgiften(data);
+        const response = await api.get("/vehicle/uitgiften");
+        setUitgiften(response.data);
       } catch (error) {
         console.error("Fout bij het ophalen van uitgiften:", error);
       } finally {
@@ -36,7 +36,7 @@ const UitgiftePage = () => {
       ...formData,
       voertuigId: uitgifte.voertuigId, // Vul voertuigId automatisch in
       customerName: uitgifte.customerName, // Vul klantnaam in
-      klantId: uitgifte.klantId 
+      klantId: uitgifte.klantId,
     });
   };
 
@@ -47,25 +47,19 @@ const UitgiftePage = () => {
 
   const handleSubmitForm = async () => {
     try {
-      const response = await fetch(
-        `http://localhost:5039/api/vehicle/accept/${selectedUitgifte.id}`,
+      const response = await api.post(
+        `/vehicle/accept/${selectedUitgifte.id}`,
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            customerName: formData.customerName,
-            voertuigId: formData.voertuigId,
-            klantId: formData.klantId,  // Voeg KlantId toe
-            fromDate: formData.fromDate,
-            toDate: formData.toDate,
-            remarks: formData.remarks,
-          }),
+          customerName: formData.customerName,
+          voertuigId: formData.voertuigId,
+          klantId: formData.klantId, // Voeg KlantId toe
+          fromDate: formData.fromDate,
+          toDate: formData.toDate,
+          remarks: formData.remarks,
         }
       );
-  
-      if (response.ok) {
+
+      if (response.status === 200) {
         setUitgiften((prev) =>
           prev.filter((uitgifte) => uitgifte.id !== selectedUitgifte.id)
         );
