@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import api from "../api"; // Zorg ervoor dat de api geïmporteerd is
 
 const InnamePage = () => {
   const [Innamen, setInnamen] = useState([]);
@@ -6,37 +7,27 @@ const InnamePage = () => {
   const [remarksMap, setRemarksMap] = useState({});
   const [editingStatusId, setEditingStatusId] = useState(null);
   const [statusMap, setStatusMap] = useState({});
-  
-  // Ref voor het dropdownmenu
   const dropdownRef = useRef(null);
 
   useEffect(() => {
     const fetchInnamen = async () => {
       try {
-        const response = await fetch("http://localhost:5039/api/vehicle/innamen");
-        if (response.ok) {
-          const data = await response.json();
-          setInnamen(data);
-        } else {
-          console.error("Fout bij ophalen van data:", response);
-        }
+        const response = await api.get("/vehicle/innamen");
+        setInnamen(response.data);
       } catch (error) {
         console.error("Fout bij ophalen van data:", error);
       }
     };
+
     fetchInnamen();
 
-    // Event listener voor klikken buiten het dropdownmenu
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setEditingStatusId(null);  // Verberg het dropdownmenu
+        setEditingStatusId(null);
       }
     };
 
-    // Toevoegen van de event listener
     document.addEventListener("mousedown", handleClickOutside);
-
-    // Cleanup event listener wanneer component wordt ontkoppeld
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -65,7 +56,7 @@ const InnamePage = () => {
     const formData = new FormData();
     formData.append("Remarks", remarksMap[intakeId] || "");
     formData.append("Status", statusMap[intakeId] || "");
-    formData.append("IssueDate", new Date().toISOString());  // Set IssueDate to current date
+    formData.append("IssueDate", new Date().toISOString());
 
     if (selectedFiles) {
       Array.from(selectedFiles).forEach((file) => {
@@ -74,12 +65,11 @@ const InnamePage = () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5039/api/vehicle/intake/update/${intakeId}`, {
-        method: "PATCH",
-        body: formData,
+      const response = await api.patch(`/vehicle/intake/update/${intakeId}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
         alert("Inname succesvol bijgewerkt!");
         setSelectedFiles(null);
         setRemarksMap((prevState) => {
@@ -88,8 +78,7 @@ const InnamePage = () => {
           return updatedRemarks;
         });
       } else {
-        const errorData = await response.json();
-        alert(`Er ging iets mis: ${errorData.message}`);
+        alert(`Er ging iets mis: ${response.data.message}`);
       }
     } catch (error) {
       console.error("Fout bij het updaten van de inname:", error);
@@ -115,12 +104,14 @@ const InnamePage = () => {
               {editingStatusId === intake.id && (
                 <div className="status-dropdown" ref={dropdownRef}>
                   <button onClick={() => handleStatusChange(intake.id, "Schade")}>Schade</button>
-                  <button onClick={() => handleStatusChange(intake.id, "Ingenomen")}>Ingenomen</button>
+                  <button onClick={() => handleStatusChange(intake.id, "Ingenomen")}>
+                    Ingenomen
+                  </button>
                 </div>
               )}
             </div>
             <p>Vooraf geregistreerde eventuele schade: {intake.remarks}</p>
-            <p>Datum van inlevering: {new Date(intake.toDate).toLocaleDateString()}</p> {/* Changed to IssueDate */}
+            <p>Datum van inlevering: {new Date(intake.toDate).toLocaleDateString()}</p>
             <textarea
               value={remarksMap[intake.id] || ""}
               onChange={(e) => handleRemarksChange(intake.id, e)}
@@ -134,9 +125,7 @@ const InnamePage = () => {
           </div>
         ))}
       </div>
-
-      <style>
-        {`
+      <style>{`
           .inname-container {
             font-family: 'Arial', sans-serif;
             max-width: 1200px;
@@ -261,8 +250,7 @@ const InnamePage = () => {
           .submit-button:hover {
             background-color: #357ABD;
           }
-        `}
-      </style>
+      `}</style>
     </div>
   );
 };
