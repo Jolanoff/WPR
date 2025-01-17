@@ -96,7 +96,7 @@ export default function Header() {
                                 onClick={toggleProfileMenu}
                             />
                             {showProfileMenu && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-md">
+                                <div className="absolute right-0 mt-2 w-48 bg-white border z-50 rounded shadow-md">
                                     <a
                                         href="/profiel"
                                         className="block px-4 py-2 text-gray-700 hover:bg-gray-100"

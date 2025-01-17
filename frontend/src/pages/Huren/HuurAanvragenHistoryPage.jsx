@@ -27,6 +27,20 @@ function HuurAanvragenHistoryPage() {
   if (!isAuthorized)
     return <div>U bent niet bevoegd om deze pagina te bekijken.</div>;
 
+  const handleAddSchademelding = async (aanvraagId) => {
+    try {
+      await api.post(`/Schademeldingen/create`, {
+        voertuigId: aanvraagId,
+        beschrijving: "Schade geconstateerd bij terugkomst.",
+        status: "InAfwachting",
+      });
+      alert("Schademelding succesvol toegevoegd!");
+    } catch (err) {
+      console.error("Error adding schademelding:", err);
+      alert("Er is een fout opgetreden bij het toevoegen van de schademelding.");
+    }
+  };
+  
 
   return (
     <div className="min-h-screen bg-gray-100 py-6">
@@ -65,6 +79,12 @@ function HuurAanvragenHistoryPage() {
                             >
                                 Status: {aanvraag.status ? "Bevestigd" : "In afwachting"}
                             </p>
+
+                            <button
+                                onClick={() => handleAddSchademelding(aanvraag.id)}
+                                className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
+                                Schademelding toevoegen
+                            </button>
                         </div>
                     ))}
                 </div>

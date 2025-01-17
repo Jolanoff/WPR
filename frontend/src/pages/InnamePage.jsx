@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import api from "../api"; // Zorg ervoor dat de api geïmporteerd is
+import api from "../api";
 
 const InnamePage = () => {
   const [Innamen, setInnamen] = useState([]);
