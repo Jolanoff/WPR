@@ -20,12 +20,18 @@ export default function Header() {
         const bedrijfLinks = [
             { href: "/abonnementen", label: "Abonnementen" },
             { href: "/bedrijf-medewerkers", label: "Beheer Medewerkers" },
+            { href: "/huren-history", label: "Mijn Huuraanvragen" },
+
         ];
         const BackofficeLinks = [
             { href: "/schade", label: "Schademeldingen" },
             { href: "/huuraanvragen", label: "Huuraanvragen" },
+            { href: "/huren-history", label: "Mijn Huuraanvragen" },
 
-        
+        ];
+        const KlantenLinks = [
+            { href: "/huren-history", label: "Mijn Huuraanvragen" },
+
         ];
 
         // Combine links based on roles
@@ -37,12 +43,21 @@ export default function Header() {
         if (userRoles.includes("BackOfficeMedewerker")) {
             links = [...links, ...BackofficeLinks];
         }
+
         if (
             userRoles.some((role) =>
                 ["Bedrijf", "Wagenparkbeheerder"].includes(role)
             )
         ) {
             links = [...links, ...bedrijfLinks];
+        }
+
+        if (
+            userRoles.some((role) =>
+                ["ZakelijkeHuurder", "ParticuliereHuurder"].includes(role)
+            )
+        ) {
+            links = [...links, ...KlantenLinks];
         }
 
         return links.map((link, index) => (

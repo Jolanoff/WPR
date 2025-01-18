@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useAuthStore } from "../store/authStore";
 
 function VoertuigenSidebar({
     onTypeFilterChange,
@@ -15,6 +16,29 @@ function VoertuigenSidebar({
     const [eindDatum, setEindDatum] = useState(parentEindDatum);
     const [errorMessage, setErrorMessage] = useState("");
     const [showAllBrands, setShowAllBrands] = useState(false);
+    const [allowedOptions, setAllowedOptions] = useState([]);
+    const { userRoles, fetchUserInfo, loading } = useAuthStore();
+    useEffect(() => {
+        const loadRoles = async () => {
+            if (!userRoles) {
+                await fetchUserInfo();
+            }
+        };
+        loadRoles();
+    }, [userRoles, fetchUserInfo]);
+    useEffect(() => {
+        const restrictedRoles = ["Bedrijf", "ZakelijkeHuurder", "WagenparkBeheerder"];
+        if (userRoles && userRoles.some((role) => restrictedRoles.includes(role))) {
+            setAllowedOptions([{ value: "auto", label: "Auto" }]);
+        } else {
+            setAllowedOptions([
+                { value: "alle", label: "Alle" },
+                { value: "auto", label: "Auto" },
+                { value: "camper", label: "Camper" },
+                { value: "caravan", label: "Caravan" },
+            ]);
+        }
+    }, [userRoles]);
 
     const toggleMerk = (merk) => {
         const newBrandFilter = brandFilter.includes(merk)
@@ -83,10 +107,11 @@ function VoertuigenSidebar({
                     value={currentTypeFilter}
                     onChange={(e) => onTypeFilterChange(e.target.value)}
                 >
-                    <option value="alle">Alle</option>
-                    <option value="auto">Auto</option>
-                    <option value="camper">Camper</option>
-                    <option value="caravan">Caravan</option>
+                    {allowedOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                            {option.label}
+                        </option>
+                    ))}
                 </select>
 
                 <h3 className="font-semibold mb-2 flex justify-between items-center">

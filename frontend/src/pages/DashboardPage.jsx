@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useAuthStore } from "../store/authStore";
-import api from "../api";
-import MedewerkerList from "../components/Admin/MedewerkerList";
+// import api from "../api";
+// import MedewerkerList from "../components/Admin/MedewerkerList";
 
 function DashboardPage() {
   const { userInfo, loading, error } = useAuthStore();
-  const [users, setUsers] = useState([]);
-  const [fetchError, setFetchError] = useState(null);
+  
+  // const [users, setUsers] = useState([]);
+  // const [fetchError, setFetchError] = useState(null);
 
-  const fetchUsers = async () => {
-    try {
-      const response = await api.get("/admin/medewerkers");
-      setUsers(response.data);
-    } catch (err) {
-      setFetchError(err.response?.data?.message || err.message);
-    }
-  };
+  // const fetchUsers = async () => {
+  //   try {
+  //     const response = await api.get("/admin/medewerkers");
+  //     setUsers(response.data);
+  //   } catch (err) {
+  //     setFetchError(err.response?.data?.message || err.message);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  // useEffect(() => {
+  //   fetchUsers();
+  // }, []);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -37,7 +38,7 @@ function DashboardPage() {
   <div className="relative min-h-screen flex flex-col items-start">
   {/* Hoofdinhoud */}
   <h2 className="text-black text-2xl md:text-4xl font-bold text-center mb-1 pl-4 pt-2">
-      Welkom terug
+      Welkom terug {userInfo.userName}
   </h2>
   <p className="text-gray-700 text-lg md:text-2xl text-center pl-4">
   Beheer gemakkelijk al je zaken via het dashboard
@@ -66,7 +67,7 @@ function DashboardPage() {
     </div>
     </div>
 
-    {/* Lijst met medewerkers */}
+    {/* Lijst met medewerkers
     <div className="w-full mt-8 px-6 pl-4">
         <h3 className="text-3xl font-bold pt-4">
           Beheer hier al je medewerkers:
@@ -80,7 +81,7 @@ function DashboardPage() {
           <MedewerkerList users={users} />
           </div>
         )}
-      </div>
+      </div> */}
   </div>
   );
 }

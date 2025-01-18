@@ -21,6 +21,7 @@ import AanvraagRouter from "./routes/Huren/AanvraagRouter";
 import HomeRouter from "./routes/HomeRouter";
 import HuurAanvragenRouter from "./routes/BackOfficeMedewerker/HuurAanvragenRouter";
 import HuurAanvragenHistoryRouter from "./routes/Huren/HuurAanvragenHistoryRouter";
+import SuccessRouter from "./routes/Huren/SuccessRouter";
 
 const routes = [
     {
@@ -48,6 +49,7 @@ const routes = [
             ...AanvraagRouter,
             ...HurenRoute,
             ...HuurAanvragenHistoryRouter,
+            ...SuccessRouter,
 
             //BackofficeMedewerker
             ...HuurAanvragenRouter,

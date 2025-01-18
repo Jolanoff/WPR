@@ -2,7 +2,7 @@ import React from "react";
 
 const MedewerkerList = ({ users }) => {
   return (
-    <div className="max-w-4xl bg-white p-6 shadow rounded">
+    <div className=" bg-white p-6 shadow rounded">
       <h2 className="text-xl font-semibold mb-4">Medewerkerslijst</h2>
       {users.length === 0 ? (
         <p>Geen gebruikers gevonden.</p>

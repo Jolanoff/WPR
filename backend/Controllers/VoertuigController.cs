@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using backend.Services;
+using System.Security.Claims;
+using backend.Models.Gebruiker;
+using Microsoft.AspNetCore.Identity;
 
 namespace backend.Controllers
 {
@@ -9,6 +12,8 @@ namespace backend.Controllers
     public class VoertuigController : ControllerBase
     {
         private readonly VoertuigService _voertuigService;
+    
+
 
         public VoertuigController(VoertuigService voertuigService)
         {
@@ -21,15 +26,25 @@ namespace backend.Controllers
             public DateTime StartDatum { get; set; }
             public DateTime EindDatum { get; set; }
         }
-        [HttpPost] // Verander van [HttpGet] naar [HttpPost]
+        [HttpPost]
         public async Task<IActionResult> GetAllVoertuigen([FromBody] DateRangeDto dateRange)
         {
             try
             {
-                var voertuigen = await _voertuigService.GetAllVoertuigenAsync(dateRange.StartDatum, dateRange.EindDatum);
+                // Get the authenticated user's ID from the claims
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized(new { message = "Gebruiker niet geauthenticeerd." });
+                }
+
+                // Call the service method with the userId and date range
+                var voertuigen = await _voertuigService.GetAllVoertuigenAsync(dateRange.StartDatum, dateRange.EindDatum, userId);
 
                 if (voertuigen == null || !voertuigen.Any())
+                {
                     return NotFound(new { message = "Geen voertuigen gevonden." });
+                }
 
                 return Ok(voertuigen);
             }
