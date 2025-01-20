@@ -92,7 +92,6 @@ const VoertuigenBeheerPage = () => {
           Restore Voertuigen
         </button>
         
-        {error && <p className="text-red-500 mb-4">{error}</p>}
         <RestoreVoertuigenModal
           isOpen={isRestoreModalOpen}
           onClose={() => setIsRestoreModalOpen(false)}
@@ -104,6 +103,7 @@ const VoertuigenBeheerPage = () => {
           setNewVoertuig={setNewVoertuig}
           handleCreate={handleCreate}
         />
+        {error && <p className="text-red-500 mb-4">{error}</p>}
         <VoertuigenList
           voertuigen={filteredVoertuigen}
           loading={loading}

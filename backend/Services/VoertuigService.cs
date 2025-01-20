@@ -191,14 +191,12 @@ public class VoertuigService
         if (voertuig == null)
             throw new KeyNotFoundException("Voertuig not found.");
 
-        // Check if the vehicle has active huur aanvragen or reserveringen
         if (voertuig.HuurAanvragen.Any(ha => ha.Status == true) ||
             voertuig.Reserveringen.Any(r => r.EindDatum > DateTime.UtcNow))
         {
-            throw new InvalidOperationException("Voertuig cannot be deleted as it has active huur aanvragen or reserveringen.");
+            throw new InvalidOperationException("Voertuig kan niet verwijderd worden omdat het een actieve reservering heeft.");
         }
 
-        // Mark the voertuig for deletion instead of removing it
         voertuig.MarkedForDeletion = true;
 
         _context.Voertuigen.Update(voertuig);
@@ -238,6 +236,26 @@ public class VoertuigService
         _context.Voertuigen.Update(voertuig);
         await _context.SaveChangesAsync();
         return true;
+    }
+
+    public async Task<List<ReserveringDto>> GetReserveringenByVoertuigIdAsync(int voertuigId)
+    {
+        var reserveringen = await _context.Reserveringen
+            .Where(r => r.Voertuig.Id == voertuigId)
+            .Include(r => r.Voertuig)
+            .Include(r => r.Klant)
+                .ThenInclude(k => k.User)
+            .Select(r => new ReserveringDto
+            {
+                Id = r.Id,
+                StartDatum = r.StartDatum,
+                EindDatum = r.EindDatum,
+                KlantNaam = r.Klant.User.Voornaam + " " + r.Klant.User.Achternaam,
+                KlantEmail = r.Klant.User.Email,
+            })
+            .ToListAsync();
+
+        return reserveringen;
     }
 
 

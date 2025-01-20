@@ -139,6 +139,7 @@ namespace backend.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
             }
         }
+        [Authorize(Roles = "BackOfficeMedewerker,Admin")]
         [HttpGet("MarkedForDeletion")]
         public async Task<IActionResult> GetMarkedForDeletion()
         {
@@ -157,6 +158,7 @@ namespace backend.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
             }
         }
+        [Authorize(Roles = "BackOfficeMedewerker,Admin")]
         [HttpPut("Restore/{id}")]
         public async Task<IActionResult> RestoreVoertuig(int id)
         {
@@ -176,6 +178,24 @@ namespace backend.Controllers
             catch (InvalidOperationException ex)
             {
                 return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+            }
+        }
+        [Authorize(Roles = "BackOfficeMedewerker,Admin")]
+        [HttpGet("Voertuig/{voertuigId}")]
+        public async Task<IActionResult> GetReserveringenByVoertuigId(int voertuigId)
+        {
+            try
+            {
+                var reserveringen = await _voertuigService.GetReserveringenByVoertuigIdAsync(voertuigId);
+                if (!reserveringen.Any())
+                {
+                    return NotFound(new { message = $"No reserveringen found for voertuig with ID {voertuigId}." });
+                }
+                return Ok(reserveringen);
             }
             catch (Exception ex)
             {
