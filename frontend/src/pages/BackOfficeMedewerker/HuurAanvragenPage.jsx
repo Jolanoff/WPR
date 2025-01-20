@@ -72,6 +72,7 @@ export default function HuurAanvragenPage() {
                         <th className="py-2 px-4 border-b">Kilometers</th>
                         <th className="py-2 px-4 border-b">Klant Naam</th>
                         <th className="py-2 px-4 border-b">Voertuig</th>
+                        <th className="py-2 px-4 border-b">Kenteken</th>
                         <th className="py-2 px-4 border-b">Status</th>
                         <th className="py-2 px-4 border-b">Actions</th>
                     </tr>
@@ -86,6 +87,8 @@ export default function HuurAanvragenPage() {
                             <td className="py-2 px-4 border-b">{aanvraag.verwachteKilometers}</td>
                             <td className="py-2 px-4 border-b">{aanvraag.klantNaam}</td>
                             <td className="py-2 px-4 border-b">{aanvraag.voertuigNaam}</td>
+                            <td className="py-2 px-4 border-b">{aanvraag.kenteken}</td>
+
                             <td className="py-2 px-4 border-b">
                                 {aanvraag.approvalStatus === "Pending" && "Pending"}
                                 {aanvraag.approvalStatus === "Approved" && "Approved"}

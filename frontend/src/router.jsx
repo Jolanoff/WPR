@@ -22,6 +22,7 @@ import HomeRouter from "./routes/HomeRouter";
 import HuurAanvragenRouter from "./routes/BackOfficeMedewerker/HuurAanvragenRouter";
 import HuurAanvragenHistoryRouter from "./routes/Huren/HuurAanvragenHistoryRouter";
 import SuccessRouter from "./routes/Huren/SuccessRouter";
+import VoertuigenBeheerRouter from "./routes/BackOfficeMedewerker/VoertuigenBeheerRouter";
 
 const routes = [
     {
@@ -54,7 +55,8 @@ const routes = [
             //BackofficeMedewerker
             ...HuurAanvragenRouter,
             ...UitgifteRouter,
-            ...InnameRouter
+            ...InnameRouter,
+            ...VoertuigenBeheerRouter
 
         ],
     },

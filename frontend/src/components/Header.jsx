@@ -26,7 +26,9 @@ export default function Header() {
         const BackofficeLinks = [
             { href: "/schade", label: "Schademeldingen" },
             { href: "/huuraanvragen", label: "Huuraanvragen" },
-            { href: "/huren-history", label: "Mijn Huuraanvragen" },
+            { href: "/Voertuigen-beheer", label: "Beheren Voertuigen" },
+
+            
 
         ];
         const KlantenLinks = [

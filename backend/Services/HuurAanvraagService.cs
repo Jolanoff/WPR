@@ -167,9 +167,11 @@ public class HuurAanvraagService
                 Status = h.Status,
                 ApprovalStatus = h.ApprovalStatus,
                 AardVanReis = h.AardVanReis,
+                Kenteken = h.Voertuig.Kenteken,
                 VerwachteKilometers = h.VerwachteKilometers,
                 KlantNaam = $"{h.Klant.User.Voornaam} {h.Klant.User.Achternaam}",
                 VoertuigNaam = $"{h.Voertuig.Merk} {h.Voertuig.Type}"
+                
             })
             .ToListAsync();
     }

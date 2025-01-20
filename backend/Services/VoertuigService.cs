@@ -3,6 +3,7 @@ using backend.DbContext;
 using backend.Dtos.Voertuig;
 using backend.Dtos.Voertuigen;
 using backend.Models.Gebruiker;
+using backend.Models.Voertuigen;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -37,6 +38,7 @@ public class VoertuigService
         // Query voertuigen
         var query = _context.Voertuigen
             .Include(v => v.Reserveringen)
+            .Where(v => !v.MarkedForDeletion)
             .Select(v => new VoertuigDto
             {
                 Id = v.Id,
@@ -75,6 +77,167 @@ public class VoertuigService
         }
 
         return voertuigen;
+    }
+    public async Task<VoertuigDto> CreateVoertuigAsync(CreateVoertuigDto dto)
+    {
+        // Validate required fields
+        if (string.IsNullOrWhiteSpace(dto.Kenteken))
+            throw new ArgumentException("Kenteken is required.");
+
+        if (string.IsNullOrWhiteSpace(dto.VoertuigType) ||
+            !new[] { "Auto", "Caravan", "Camper" }.Contains(dto.VoertuigType.ToLower()))
+        {
+            throw new ArgumentException("VoertuigType must be 'auto', 'caravan', or 'camper'.");
+        }
+
+        // Check if kenteken already exists
+        var existingVoertuig = await _context.Voertuigen
+            .FirstOrDefaultAsync(v => v.Kenteken.ToLower() == dto.Kenteken.ToLower());
+
+        if (existingVoertuig != null)
+            throw new InvalidOperationException($"A voertuig with kenteken '{dto.Kenteken}' already exists.");
+
+        // Map DTO to entity
+        var voertuig = new Voertuig
+        {
+            Merk = dto.Merk,
+            Type = dto.Type,
+            Kenteken = dto.Kenteken,
+            Kleur = dto.Kleur,
+            Aanschafjaar = dto.Aanschafjaar,
+            Status = dto.Status,
+            VoertuigType = dto.VoertuigType,
+            imageUrl = dto.ImageUrl,
+            Prijs = dto.Prijs
+        };
+
+        // Add to database
+        _context.Voertuigen.Add(voertuig);
+        await _context.SaveChangesAsync();
+
+        // Map back to DTO
+        return new VoertuigDto
+        {
+            Id = voertuig.Id,
+            Merk = voertuig.Merk,
+            Type = voertuig.Type,
+            Kenteken = voertuig.Kenteken,
+            Kleur = voertuig.Kleur,
+            Aanschafjaar = voertuig.Aanschafjaar,
+            Status = voertuig.Status,
+            VoertuigType = voertuig.VoertuigType,
+            imageUrl = voertuig.imageUrl,
+            Prijs = voertuig.Prijs,
+            Reserveringen = new List<ReserveringDto>()
+        };
+    }
+
+    public async Task<VoertuigDto> GetVoertuigByIdAsync(int id)
+    {
+        var voertuig = await _context.Voertuigen
+            .Include(v => v.Reserveringen)
+            .FirstOrDefaultAsync(v => v.Id == id);
+
+        if (voertuig == null)
+            throw new KeyNotFoundException("Voertuig not found.");
+
+        return new VoertuigDto
+        {
+            Id = voertuig.Id,
+            Merk = voertuig.Merk,
+            Type = voertuig.Type,
+            Kenteken = voertuig.Kenteken,
+            Kleur = voertuig.Kleur,
+            Aanschafjaar = voertuig.Aanschafjaar,
+            Status = voertuig.Status,
+            VoertuigType = voertuig.VoertuigType,
+            imageUrl = voertuig.imageUrl,
+            Prijs = voertuig.Prijs,
+            Reserveringen = voertuig.Reserveringen.Select(r => new ReserveringDto
+            {
+                Id = r.Id,
+                StartDatum = r.StartDatum,
+                EindDatum = r.EindDatum
+            }).ToList()
+        };
+    }
+
+    public async Task UpdateVoertuigAsync(UpdateVoertuigDto dto)
+    {
+        var voertuig = await _context.Voertuigen.FindAsync(dto.Id);
+        if (voertuig == null)
+            throw new KeyNotFoundException("Voertuig not found.");
+
+        voertuig.Merk = dto.Merk;
+        voertuig.Type = dto.Type;
+        voertuig.Kenteken = dto.Kenteken;
+        voertuig.Kleur = dto.Kleur;
+        voertuig.Aanschafjaar = dto.Aanschafjaar;
+        voertuig.Status = dto.Status;
+        voertuig.VoertuigType = dto.VoertuigType;
+        voertuig.imageUrl = dto.ImageUrl;
+        voertuig.Prijs = dto.Prijs;
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteVoertuigAsync(int id)
+    {
+        var voertuig = await _context.Voertuigen
+            .Include(v => v.HuurAanvragen)
+            .Include(v => v.Reserveringen)
+            .FirstOrDefaultAsync(v => v.Id == id);
+
+        if (voertuig == null)
+            throw new KeyNotFoundException("Voertuig not found.");
+
+        // Check if the vehicle has active huur aanvragen or reserveringen
+        if (voertuig.HuurAanvragen.Any(ha => ha.Status == true) ||
+            voertuig.Reserveringen.Any(r => r.EindDatum > DateTime.UtcNow))
+        {
+            throw new InvalidOperationException("Voertuig cannot be deleted as it has active huur aanvragen or reserveringen.");
+        }
+
+        // Mark the voertuig for deletion instead of removing it
+        voertuig.MarkedForDeletion = true;
+
+        _context.Voertuigen.Update(voertuig);
+        await _context.SaveChangesAsync();
+    }
+    public async Task<List<VoertuigDto>> GetMarkedForDeletionAsync()
+    {
+        var voertuigen = await _context.Voertuigen
+            .Where(v => v.MarkedForDeletion)
+            .Select(v => new VoertuigDto
+            {
+                Id = v.Id,
+                Merk = v.Merk,
+                Type = v.Type,
+                Kenteken = v.Kenteken,
+                VoertuigType = v.VoertuigType
+            })
+            .ToListAsync();
+
+        return voertuigen;
+    }
+    public async Task<bool> RestoreVoertuigAsync(int id)
+    {
+        var voertuig = await _context.Voertuigen.FirstOrDefaultAsync(v => v.Id == id);
+
+        if (voertuig == null)
+        {
+            throw new KeyNotFoundException("Voertuig not found.");
+        }
+
+        if (!voertuig.MarkedForDeletion)
+        {
+            throw new InvalidOperationException("Voertuig is not marked for deletion.");
+        }
+
+        voertuig.MarkedForDeletion = false;
+        _context.Voertuigen.Update(voertuig);
+        await _context.SaveChangesAsync();
+        return true;
     }
 
 
