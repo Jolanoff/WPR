@@ -89,7 +89,7 @@ public IActionResult AcceptUitgifte(int id, [FromBody] AcceptUitgifteRequest req
         Status = "Pending", // Stel een standaard status in
         IntakeDate = request.FromDate,
         ToDate = request.ToDate,
-        KlantId = request.KlantId, // Dit moet later worden ingevuld, mogelijk met een klant-ID
+        KlantId = request.KlantId, 
         
     };
 
@@ -111,18 +111,6 @@ catch (Exception ex)
 }
 }
 
-// Request class voor de API (DTO)
-public class VehicleIssueRequest
-{
-    [Required]
-    [StringLength(100)]
-    public string CustomerName { get; set; }
 
-    [Required]
-    public int VoertuigId { get; set; }  // Verander dit naar int als het voertuigId een integer is
-
-    [StringLength(500)]
-    public string Remarks { get; set; }
-}
 
 
