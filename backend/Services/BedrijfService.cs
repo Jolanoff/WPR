@@ -1,4 +1,5 @@
 ﻿using backend.DbContext;
+using backend.Dtos.Bedrijf;
 using backend.Models;
 using backend.Models.Klanten;
 using Microsoft.EntityFrameworkCore;
@@ -48,7 +49,7 @@ namespace backend.Services
         }
 
 
-        public async Task<Abonnement> CreateAbonnementAsync(string userId, string abonnementType, string betaalmethode, DateOnly startDatum)
+        public async Task<Abonnement> CreateAbonnementAsync(string userId, string abonnementType, string betaalmethode, DateOnly startDatum, double customAmount)
         {
             var klant = await _context.Klanten
                 .Include(k => k.Bedrijf)
@@ -59,28 +60,45 @@ namespace backend.Services
 
             var bedrijfId = klant.Bedrijf.Id;
 
-            // Ensure no conflicting active subscriptions exist
             var today = DateOnly.FromDateTime(DateTime.Now);
-
             var conflictingAbonnement = await _context.Abonnementen
                 .FirstOrDefaultAsync(a =>
                     a.BedrijfId == bedrijfId &&
-                    a.Status && // Still marked as active
+                    a.Status &&
                     (today < a.StartDatum || today <= a.EindDatum || (a.StopDatum.HasValue && today <= a.StopDatum)));
 
             if (conflictingAbonnement != null)
             {
-                throw new InvalidOperationException(
-                    "U kunt geen nieuw abonnement aanmaken, omdat u een actief of geannuleerd abonnement heeft dat nog geldig is."
-                );
+                throw new InvalidOperationException("U kunt geen nieuw abonnement aanmaken, omdat u een actief abonnement heeft.");
             }
 
-            var kosten = abonnementType.ToLower() switch
+            double kosten;
+            if (abonnementType.ToLower() == "pay-as-you-go")
             {
-                "pay-as-you-go" => 50,
-                "prepaid" => 500,
-                _ => throw new ArgumentException("Ongeldig abonnementstype.")
-            };
+                kosten = 50; 
+                customAmount = 50; 
+            }
+            else if (abonnementType.ToLower() == "prepaid")
+            {
+                if (customAmount < 500)
+                {
+                    throw new ArgumentException("Het minimale bedrag voor prepaid abonnementen is €500.");
+                }
+
+                // Apply discount
+                if (customAmount >= 500 && customAmount < 1000)
+                    kosten = customAmount * 0.95;  
+                else if (customAmount >= 1000 && customAmount < 2000)
+                    kosten = customAmount * 0.90; 
+                else if (customAmount >= 2000)
+                    kosten = customAmount * 0.85; 
+                else
+                    kosten = customAmount;
+            }
+            else
+            {
+                throw new ArgumentException("Ongeldig abonnementstype.");
+            }
 
             var eindDatum = startDatum.AddMonths(1);
 
@@ -91,7 +109,8 @@ namespace backend.Services
                 Betaalmethode = betaalmethode,
                 StartDatum = startDatum,
                 EindDatum = eindDatum,
-                Kosten = kosten,
+                Kosten = kosten, 
+                OrigineelBedrag = customAmount,  
                 Status = true
             };
 
@@ -100,8 +119,6 @@ namespace backend.Services
 
             return abonnement;
         }
-
-
         public async Task<bool> CancelAbonnementAsync(string userId)
         {
             var klant = await _context.Klanten
@@ -173,6 +190,39 @@ namespace backend.Services
             await _context.SaveChangesAsync();
 
             return abonnement;
+        }
+        public async Task<List<VerhuurdeVoertuigenDto>> GetVerhuurdeVoertuigenAsync(string userId, int year, int? month)
+        {
+            var klant = await _context.Klanten
+                .Include(k => k.Bedrijf)
+                .FirstOrDefaultAsync(k => k.UserId == userId);
+
+            if (klant?.Bedrijf == null)
+            {
+                throw new UnauthorizedAccessException("U heeft geen toegang tot deze informatie.");
+            }
+
+            var bedrijfId = klant.Bedrijf.Id;
+
+            var verhuurdeVoertuigenQuery = _context.HuurAanvragen
+                .Include(h => h.Klant)
+                    .ThenInclude(k => k.User)  
+                .Include(h => h.Voertuig)
+                .Where(h => h.Klant.Bedrijf != null && h.Klant.Bedrijf.Id == bedrijfId &&
+                            h.StartDatum.Year == year &&
+                            (month == null || h.StartDatum.Month == month))
+                .Select(h => new VerhuurdeVoertuigenDto
+                {
+                    VoertuigMerk = h.Voertuig.Merk,
+                    VoertuigType = h.Voertuig.Type,
+                    Kenteken = h.Voertuig.Kenteken,
+                    StartDatum = h.StartDatum,
+                    EindDatum = h.EindDatum,
+                    HuurderNaam = h.Klant.User.Voornaam + " " + h.Klant.User.Achternaam,
+                    Status = h.Status ? "Actief" : "Inactief"
+                });
+
+            return await verhuurdeVoertuigenQuery.ToListAsync();
         }
 
 

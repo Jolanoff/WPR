@@ -1,5 +1,41 @@
-const AbonnementForm = ({ onSubmit, kosten, formData, setFormData }) => {
+import React, { useState, useEffect } from "react";
+
+const AbonnementForm = ({ onSubmit, formData, setFormData }) => {
     const minDate = new Date().toISOString().split("T")[0];
+
+    const [customAmount, setCustomAmount] = useState(formData.customAmount || "");
+
+    const calculateDiscountedPrice = (amount) => {
+        let numericAmount = parseFloat(amount);
+
+        if (isNaN(numericAmount) || numericAmount < 500) {
+            return 0;
+        }
+
+        if (numericAmount >= 500 && numericAmount < 1000) {
+            numericAmount *= 0.95;  
+        } else if (numericAmount >= 1000 && numericAmount < 2000) {
+            numericAmount *= 0.90;  
+        } else if (numericAmount >= 2000) {
+            numericAmount *= 0.85;  
+        }
+
+        return numericAmount.toFixed(2);
+    };
+
+    useEffect(() => {
+        if (formData.abonnementType === "pay-as-you-go") {
+            setFormData((prev) => ({ ...prev, kosten: 50, customAmount: "" }));
+            setCustomAmount("");
+        } else if (formData.abonnementType === "prepaid" && customAmount) {
+            const discountedPrice = calculateDiscountedPrice(customAmount);
+            setFormData((prev) => ({
+                ...prev,
+                kosten: discountedPrice,
+                customAmount: parseFloat(customAmount) || 0, 
+            }));
+        }
+    }, [formData.abonnementType, customAmount, setFormData]);
 
     return (
         <form onSubmit={onSubmit} className="max-w-lg mx-auto bg-white p-6 shadow rounded mb-6">
@@ -13,15 +49,32 @@ const AbonnementForm = ({ onSubmit, kosten, formData, setFormData }) => {
                     className="w-full border px-3 py-2 rounded"
                 >
                     <option value="pay-as-you-go">Pay-as-you-go (€50)</option>
-                    <option value="prepaid">Prepaid (€500)</option>
+                    <option value="prepaid">Prepaid (Vanaf €500)</option>
                 </select>
             </div>
+
+            {formData.abonnementType === "prepaid" && (
+                <div className="mb-4">
+                    <label className="block font-medium mb-2">Kies uw gewenste bedrag (€)</label>
+                    <input
+                        type="number"
+                        min="500"
+                        step="100"
+                        value={customAmount}
+                        onChange={(e) => {
+                            setCustomAmount(e.target.value);
+                        }}
+                        className="w-full border px-3 py-2 rounded"
+                        required
+                    />
+                </div>
+            )}
 
             <div className="mb-4">
                 <label className="block font-medium mb-2">Kosten</label>
                 <input
                     type="text"
-                    value={`€${kosten}`}
+                    value={`€${formData.kosten}`}
                     className="w-full border px-3 py-2 rounded bg-gray-100"
                     readOnly
                 />

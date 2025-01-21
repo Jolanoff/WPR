@@ -21,6 +21,8 @@ export default function Header() {
             { href: "/abonnementen", label: "Abonnementen" },
             { href: "/bedrijf-medewerkers", label: "Beheer Medewerkers" },
             { href: "/huren-history", label: "Mijn Huuraanvragen" },
+            { href: "/bedrijf/huuraanvragen", label: "Overzicht Aanvragen" },
+
 
         ];
         const BackofficeLinks = [
