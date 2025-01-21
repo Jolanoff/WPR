@@ -36,8 +36,8 @@ const AbonnementPage = () => {
         try {
             const payload = {
                 ...formData,
-                kosten: parseFloat(formData.kosten),  // Ensure correct value type
-                customAmount: parseFloat(formData.customAmount) || 0,  // Store original user-entered amount
+                kosten: parseFloat(formData.kosten),  
+                customAmount: parseFloat(formData.customAmount) || 0,  
             };
 
             await api.post("/bedrijf", payload);

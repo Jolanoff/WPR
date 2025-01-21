@@ -29,8 +29,9 @@ export default function Header() {
             { href: "/schade", label: "Schademeldingen" },
             { href: "/huuraanvragen", label: "Huuraanvragen" },
             { href: "/Voertuigen-beheer", label: "Beheren Voertuigen" },
-
-            
+            { href: "/uitgiften", label: "Uitgiften" },
+            { href: "/innamen", label: "Innamen" },
+            { href: "/schade", label: "Schades" },
 
         ];
         const KlantenLinks = [

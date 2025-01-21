@@ -54,6 +54,33 @@ namespace backend.Services
             return schade;
         }
 
+        //schade melden!!!!!!!!!!!!!!!!!!!!!!!!!!
+        public async Task<bool> ReportSchadeAsync(int huurAanvraagId, string beschrijving, string locatie)
+        {
+            var huurAanvraag = await _context.HuurAanvragen
+                .Include(h => h.Schades)
+                .FirstOrDefaultAsync(h => h.Id == huurAanvraagId);
+
+            if (huurAanvraag == null)
+            {
+                throw new KeyNotFoundException("HuurAanvraag niet gevonden.");
+            }
+
+            var schade = new Schade
+            {
+                Beschrijving = beschrijving,
+                Locatie = locatie,
+                Datum = DateTime.UtcNow,
+                Status = SchadeStatus.InAfwachting,
+                HuurAanvraagId = huurAanvraagId
+            };
+
+            _context.Schades.Add(schade);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
 
     }
 }

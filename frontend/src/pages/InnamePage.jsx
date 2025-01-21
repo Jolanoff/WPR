@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import api from "../api";
 
 const InnamePage = () => {
-  const [Innamen, setInnamen] = useState([]);
+  const [innamen, setInnamen] = useState([]);
   const [selectedFiles, setSelectedFiles] = useState(null);
   const [remarksMap, setRemarksMap] = useState({});
   const [editingStatusId, setEditingStatusId] = useState(null);
   const [statusMap, setStatusMap] = useState({});
+  const [schadeFormMap, setSchadeFormMap] = useState({});
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -49,26 +50,84 @@ const InnamePage = () => {
       ...prevState,
       [intakeId]: newStatus,
     }));
+
+    if (newStatus === "Schade") {
+      setSchadeFormMap((prevState) => ({
+        ...prevState,
+        [intakeId]: { beschrijving: "", locatie: "" },
+      }));
+    } else {
+      setSchadeFormMap((prevState) => {
+        const updatedForm = { ...prevState };
+        delete updatedForm[intakeId];
+        return updatedForm;
+      });
+    }
+
     setEditingStatusId(null);
   };
 
+  const handleSchadeInputChange = (intakeId, field, value) => {
+    setSchadeFormMap((prevState) => ({
+      ...prevState,
+      [intakeId]: {
+        ...prevState[intakeId],
+        [field]: value,
+      },
+    }));
+  };
+
   const handleSubmit = async (intakeId) => {
+    const status = statusMap[intakeId] || innamen.find((i) => i.id === intakeId).status;
+  
     const formData = new FormData();
     formData.append("Remarks", remarksMap[intakeId] || "");
-    formData.append("Status", statusMap[intakeId] || "");
+    formData.append("Status", status);
     formData.append("IssueDate", new Date().toISOString());
-
+  
     if (selectedFiles) {
       Array.from(selectedFiles).forEach((file) => {
         formData.append("Photos", file);
       });
     }
-
+  
     try {
+      if (status === "Schade") {
+        const schadeData = schadeFormMap[intakeId];
+  
+        // Ensure schade fields are filled
+        if (!schadeData?.beschrijving || !schadeData?.locatie) {
+          alert("Vul de beschrijving en locatie in voor schade.");
+          return;
+        }
+  
+        // Send schade report separately
+        const schadeResponse = await api.post(
+          "/schademeldingen/report-schade",
+          {
+            huurAanvraagId: intakeId,
+            beschrijving: schadeData.beschrijving,
+            locatie: schadeData.locatie,
+          },
+          {
+            headers: { "Content-Type": "application/json" },
+          }
+        );
+  
+        if (schadeResponse.status === 200) {
+          alert("Schade succesvol geregistreerd!");
+          setSchadeFormMap((prevState) => ({
+            ...prevState,
+            [intakeId]: { beschrijving: "", locatie: "" },
+          }));
+        }
+      }
+  
+      // Update intake status
       const response = await api.patch(`/vehicle/intake/update/${intakeId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-
+  
       if (response.status === 200) {
         alert("Inname succesvol bijgewerkt!");
         setSelectedFiles(null);
@@ -82,175 +141,96 @@ const InnamePage = () => {
       }
     } catch (error) {
       console.error("Fout bij het updaten van de inname:", error);
-      alert("Kan geen verbinding maken met de server.");
+      alert(error.response?.data?.message || "Kan geen verbinding maken met de server.");
     }
   };
 
   return (
-    <div className="inname-container">
-      <h1>Inname Voertuigen</h1>
-      <div className="intakes-list">
-        {(Innamen || []).map((intake) => (
-          <div key={intake.id} className="intake-card">
-            <h2>Voertuig ID: {intake.voertuigId}</h2>
-            <div className="status-container">
-              <p>Status: {statusMap[intake.id] || intake.status}</p>
+    <div className="container mx-auto p-6">
+      <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
+        Inname Voertuigen
+      </h1>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {innamen.map((intake) => (
+          <div key={intake.id} className="bg-white shadow-lg rounded-lg p-6 transition-all hover:shadow-xl">
+            <h2 className="text-2xl font-semibold text-blue-600">Voertuig ID: {intake.voertuigId}</h2>
+            <div className="flex items-center space-x-4 mt-4">
+              <p className="text-lg text-gray-700">Status: {statusMap[intake.id] || intake.status}</p>
               <button
-                className="status-edit-button"
+                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
                 onClick={() => setEditingStatusId(intake.id)}
               >
                 Wijzig Status
               </button>
               {editingStatusId === intake.id && (
-                <div className="status-dropdown" ref={dropdownRef}>
-                  <button onClick={() => handleStatusChange(intake.id, "Schade")}>Schade</button>
-                  <button onClick={() => handleStatusChange(intake.id, "Ingenomen")}>
+                <div ref={dropdownRef} className="absolute bg-white shadow-lg rounded-md mt-2">
+                  <button
+                    className="block px-4 py-2 text-blue-600 hover:bg-gray-200 w-full"
+                    onClick={() => handleStatusChange(intake.id, "Schade")}
+                  >
+                    Schade
+                  </button>
+                  <button
+                    className="block px-4 py-2 text-blue-600 hover:bg-gray-200 w-full"
+                    onClick={() => handleStatusChange(intake.id, "Ingenomen")}
+                  >
                     Ingenomen
                   </button>
                 </div>
               )}
             </div>
-            <p>Vooraf geregistreerde eventuele schade: {intake.remarks}</p>
-            <p>Datum van inlevering: {new Date(intake.toDate).toLocaleDateString()}</p>
+
+            <p className="text-gray-600 mt-2">
+              Vooraf geregistreerde schade: {intake.remarks}
+            </p>
+            <p className="text-gray-600">
+              Datum van inlevering: {new Date(intake.toDate).toLocaleDateString()}
+            </p>
+
+            {statusMap[intake.id] === "Schade" && (
+              <div className="mt-4">
+                <h3 className="text-lg font-semibold">Schade melden</h3>
+                <input
+                  type="text"
+                  placeholder="Beschrijving"
+                  value={schadeFormMap[intake.id]?.beschrijving || ""}
+                  onChange={(e) => handleSchadeInputChange(intake.id, "beschrijving", e.target.value)}
+                  className="w-full border border-gray-300 rounded-md p-2 mt-2"
+                />
+                <input
+                  type="text"
+                  placeholder="Locatie"
+                  value={schadeFormMap[intake.id]?.locatie || ""}
+                  onChange={(e) => handleSchadeInputChange(intake.id, "locatie", e.target.value)}
+                  className="w-full border border-gray-300 rounded-md p-2 mt-2"
+                />
+              </div>
+            )}
+
             <textarea
               value={remarksMap[intake.id] || ""}
               onChange={(e) => handleRemarksChange(intake.id, e)}
               placeholder="Voeg opmerkingen toe"
-              className="remarks-textarea"
+              className="w-full border border-gray-300 rounded-md p-2 mt-4 focus:ring-2 focus:ring-blue-400"
             />
-            <input type="file" multiple onChange={handleFileChange} className="file-input" />
-            <button onClick={() => handleSubmit(intake.id)} className="submit-button">
+
+            <input
+              type="file"
+              multiple
+              onChange={handleFileChange}
+              className="w-full border border-gray-300 rounded-md p-2 mt-4 focus:ring-2 focus:ring-blue-400"
+            />
+
+            <button
+              onClick={() => handleSubmit(intake.id)}
+              className="mt-4 w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
+            >
               Voltooi Inname
             </button>
           </div>
         ))}
       </div>
-      <style>{`
-          .inname-container {
-            font-family: 'Arial', sans-serif;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-          }
-
-          h1 {
-            text-align: center;
-            font-size: 2.5rem;
-            color: #333;
-            margin-bottom: 20px;
-          }
-
-          .intakes-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: space-between;
-          }
-
-          .intake-card {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 45%;
-            box-sizing: border-box;
-            transition: transform 0.3s ease;
-          }
-
-          .intake-card:hover {
-            transform: translateY(-10px);
-          }
-
-          h2 {
-            font-size: 1.5rem;
-            color: #4A90E2;
-          }
-
-          p {
-            font-size: 1rem;
-            color: #555;
-            margin: 5px 0;
-          }
-
-          .status-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-          }
-
-          .status-edit-button {
-            background-color: #4A90E2;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-          }
-
-          .status-edit-button:hover {
-            background-color: #357ABD;
-          }
-
-          .status-dropdown {
-            position: absolute;
-            background-color: #fff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 5px;
-            z-index: 10;
-            top: 50px;
-          }
-
-          .status-dropdown button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            background-color: #fff;
-            color: #4A90E2;
-            cursor: pointer;
-            text-align: left;
-          }
-
-          .status-dropdown button:hover {
-            background-color: #f1f1f1;
-          }
-
-          .remarks-textarea {
-            width: 100%;
-            height: 100px;
-            margin-top: 10px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            resize: none;
-          }
-
-          .remarks-textarea:focus {
-            outline: none;
-            border-color: #4A90E2;
-          }
-
-          .file-input {
-            margin-top: 10px;
-            padding: 5px;
-          }
-
-          .submit-button {
-            background-color: #4A90E2;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            margin-top: 15px;
-            cursor: pointer;
-            font-size: 1rem;
-          }
-
-          .submit-button:hover {
-            background-color: #357ABD;
-          }
-      `}</style>
     </div>
   );
 };
