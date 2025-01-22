@@ -9,6 +9,10 @@ export default function VoertuigCard({
     kleur,
     aanschafjaar,
     prijs,
+    voertuigType,
+    trekvermogen,
+    aantalDeuren,
+    slaapplaatsen,
     imageUrl,
     status,
     reserveringen,
@@ -28,6 +32,10 @@ export default function VoertuigCard({
                 kleur,
                 aanschafjaar,
                 prijs,
+                voertuigType,
+                trekvermogen,
+                aantalDeuren,
+                slaapplaatsen,
                 imageUrl,
                 status,
                 startDatum,
@@ -35,7 +43,6 @@ export default function VoertuigCard({
             },
         });
     };
-
 
     return (
         <div className="p-4 md:p-12">
@@ -46,15 +53,26 @@ export default function VoertuigCard({
                     alt={`${merk} ${type}`}
                 />
                 <h1 className="text-4xl font-Alata mb-4">
-                    {merk} {type}
+                    {merk} {type} ({voertuigType})
                 </h1>
                 <div className="mb-8 font-Alata">
-                    <p>Kenteken: {kenteken}</p>
-                    <p>Kleur: {kleur}</p>
-                    <p>Aanschafjaar: {aanschafjaar}</p>
-                    <p className="mt-8 text-xl font-bold">{prijs > 0
-                        ?"€" + prijs + " Per Dag"
-                        : "Prijs is onbekend"}</p>
+                    <p><strong>Kenteken:</strong> {kenteken}</p>
+                    <p><strong>Kleur:</strong> {kleur}</p>
+                    <p><strong>Aanschafjaar:</strong> {aanschafjaar}</p>
+
+                    {voertuigType.toLowerCase() === "caravan" && trekvermogen && (
+                        <p><strong>Trekvermogen:</strong> {trekvermogen} kg</p>
+                    )}
+                    {voertuigType.toLowerCase() === "auto" && aantalDeuren && (
+                        <p><strong>Aantal deuren:</strong> {aantalDeuren}</p>
+                    )}
+                    {voertuigType.toLowerCase() === "camper" && slaapplaatsen && (
+                        <p><strong>Slaapplaatsen:</strong> {slaapplaatsen}</p>
+                    )}
+
+                    <p className="mt-8 text-xl font-bold">
+                        {prijs > 0 ? `€${prijs} Per Dag` : "Prijs is onbekend"}
+                    </p>
                     <p
                         className={`mt-2 text-lg font-semibold ${!status ? "text-green-500" : "text-red-500"
                             }`}
@@ -62,6 +80,7 @@ export default function VoertuigCard({
                         Status: {status ? "Niet beschikbaar" : "Beschikbaar"}
                     </p>
                 </div>
+
                 <button
                     onClick={handleRent}
                     disabled={status}
@@ -72,6 +91,7 @@ export default function VoertuigCard({
                 >
                     Huren
                 </button>
+
                 {status && (
                     <button
                         type="button"
@@ -84,6 +104,7 @@ export default function VoertuigCard({
                     </button>
                 )}
             </div>
+
             {showReservations && status && (
                 <div className="mt-4 bg-gray-100 p-4 rounded-md shadow-md max-w-md">
                     <h2 className="text-lg font-bold mb-2">Reserveringen</h2>
