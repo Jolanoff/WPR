@@ -216,8 +216,9 @@ public class HuurAanvraagService
             KlantId = huurAanvraag.KlantId,
             Voertuig = huurAanvraag.Voertuig, // Include the related Voertuig entity
             Remarks = remarks,
-            IssueDate = DateTime.Now,
-            Status = "Klaar om opgehaald te worden"
+            IssueDate = huurAanvraag.StartDatum,
+            Status = "Klaar om opgehaald te worden",
+            ToDate = huurAanvraag.EindDatum
         };
 
         // Add the Uitgifte to the database

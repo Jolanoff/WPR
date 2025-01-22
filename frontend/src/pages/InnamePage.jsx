@@ -10,11 +10,43 @@ const InnamePage = () => {
   const [schadeFormMap, setSchadeFormMap] = useState({});
   const dropdownRef = useRef(null);
 
+  // Aangepaste datumparser
+  const parseDateString = (dateString) => {
+    try {
+      // Converteer server datetime naar ISO formaat
+      const isoString = dateString.replace(' ', 'T') + 'Z';
+      const date = new Date(isoString);
+      
+      // Controleer op geldige datum
+      if (isNaN(date.getTime())) {
+        console.warn("Ongeldige datum:", dateString);
+        return null;
+      }
+      
+      return date;
+    } catch (error) {
+      console.warn("Datum parse fout:", error);
+      return null;
+    }
+  };
+
+  // Datumhelpers
+  const getCurrentDate = () => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return now;
+  };
+
+  const [today] = useState(getCurrentDate());
+
   useEffect(() => {
     const fetchInnamen = async () => {
       try {
         const response = await api.get("/vehicle/innamen");
-        setInnamen(response.data);
+        const sortedData = response.data.sort((a, b) => 
+          new Date(a.toDate) - new Date(b.toDate)
+        );
+        setInnamen(sortedData);
       } catch (error) {
         console.error("Fout bij ophalen van data:", error);
       }
@@ -33,6 +65,42 @@ const InnamePage = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  // Aangepaste categorisering
+  const categorizeInnamen = () => {
+    const todayInnamen = [];
+    const futureInnamen = [];
+
+    innamen.forEach(intake => {
+      const rawDate = intake.toDate;
+      const parsedDate = parseDateString(rawDate);
+      
+      if (!parsedDate) return;
+
+      // Normaliseer datums naar UTC middernacht
+      const toDateUTC = new Date(Date.UTC(
+        parsedDate.getUTCFullYear(),
+        parsedDate.getUTCMonth(),
+        parsedDate.getUTCDate()
+      ));
+      
+      const todayUTC = new Date(Date.UTC(
+        today.getUTCFullYear(),
+        today.getUTCMonth(),
+        today.getUTCDate()
+      ));
+
+      if (toDateUTC.getTime() === todayUTC.getTime()) {
+        todayInnamen.push(intake);
+      } else if (toDateUTC > todayUTC) {
+        futureInnamen.push(intake);
+      }
+    });
+
+    return { todayInnamen, futureInnamen };
+  };
+
+  const { todayInnamen, futureInnamen } = categorizeInnamen();
 
   const handleFileChange = (e) => {
     setSelectedFiles(e.target.files);
@@ -95,13 +163,11 @@ const InnamePage = () => {
       if (status === "Schade") {
         const schadeData = schadeFormMap[intakeId];
   
-        // Ensure schade fields are filled
         if (!schadeData?.beschrijving || !schadeData?.locatie) {
           alert("Vul de beschrijving en locatie in voor schade.");
           return;
         }
   
-        // Send schade report separately
         const schadeResponse = await api.post(
           "/schademeldingen/report-schade",
           {
@@ -123,7 +189,6 @@ const InnamePage = () => {
         }
       }
   
-      // Update intake status
       const response = await api.patch(`/vehicle/intake/update/${intakeId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -145,91 +210,197 @@ const InnamePage = () => {
     }
   };
 
+  // Aangepaste datumweergave
+  const formatDisplayDate = (dateString) => {
+    const parsedDate = parseDateString(dateString);
+    if (!parsedDate) return "Ongeldige datum";
+    
+    return parsedDate.toLocaleDateString("nl-NL", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      timeZone: "UTC" // Toon als UTC-datum
+    });
+  };
+
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">
         Inname Voertuigen
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {innamen.map((intake) => (
-          <div key={intake.id} className="bg-white shadow-lg rounded-lg p-6 transition-all hover:shadow-xl">
-            <h2 className="text-2xl font-semibold text-blue-600">Voertuig ID: {intake.voertuigId}</h2>
-            <div className="flex items-center space-x-4 mt-4">
-              <p className="text-lg text-gray-700">Status: {statusMap[intake.id] || intake.status}</p>
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
-                onClick={() => setEditingStatusId(intake.id)}
-              >
-                Wijzig Status
-              </button>
-              {editingStatusId === intake.id && (
-                <div ref={dropdownRef} className="absolute bg-white shadow-lg rounded-md mt-2">
-                  <button
-                    className="block px-4 py-2 text-blue-600 hover:bg-gray-200 w-full"
-                    onClick={() => handleStatusChange(intake.id, "Schade")}
-                  >
-                    Schade
-                  </button>
-                  <button
-                    className="block px-4 py-2 text-blue-600 hover:bg-gray-200 w-full"
-                    onClick={() => handleStatusChange(intake.id, "Ingenomen")}
-                  >
-                    Ingenomen
-                  </button>
+      {/* Vandaag te innemen */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-semibold mb-4">
+          Vandaag in te leveren ({todayInnamen.length})
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {todayInnamen.map((intake) => (
+            <div key={intake.id} className="bg-white shadow-lg rounded-lg p-6 transition-all hover:shadow-xl">
+              <h2 className="text-2xl font-semibold text-blue-600">Voertuig ID: {intake.voertuigId}</h2>
+              <div className="flex items-center space-x-4 mt-4">
+                <p className="text-lg text-gray-700">Status: {statusMap[intake.id] || intake.status}</p>
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+                  onClick={() => setEditingStatusId(intake.id)}
+                >
+                  Wijzig Status
+                </button>
+                {editingStatusId === intake.id && (
+                  <div ref={dropdownRef} className="absolute bg-white shadow-lg rounded-md mt-2">
+                    <button
+                      className="block px-4 py-2 text-blue-600 hover:bg-gray-200 w-full"
+                      onClick={() => handleStatusChange(intake.id, "Schade")}
+                    >
+                      Schade
+                    </button>
+                    <button
+                      className="block px-4 py-2 text-blue-600 hover:bg-gray-200 w-full"
+                      onClick={() => handleStatusChange(intake.id, "Ingenomen")}
+                    >
+                      Ingenomen
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <p className="text-gray-600 mt-2">
+                Vooraf geregistreerde schade: {intake.remarks}
+              </p>
+              <p className="text-gray-600">
+                Datum van inlevering: {formatDisplayDate(intake.toDate)}
+              </p>
+
+              {statusMap[intake.id] === "Schade" && (
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold">Schade melden</h3>
+                  <input
+                    type="text"
+                    placeholder="Beschrijving"
+                    value={schadeFormMap[intake.id]?.beschrijving || ""}
+                    onChange={(e) => handleSchadeInputChange(intake.id, "beschrijving", e.target.value)}
+                    className="w-full border border-gray-300 rounded-md p-2 mt-2"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Locatie"
+                    value={schadeFormMap[intake.id]?.locatie || ""}
+                    onChange={(e) => handleSchadeInputChange(intake.id, "locatie", e.target.value)}
+                    className="w-full border border-gray-300 rounded-md p-2 mt-2"
+                  />
                 </div>
               )}
+
+              <textarea
+                value={remarksMap[intake.id] || ""}
+                onChange={(e) => handleRemarksChange(intake.id, e)}
+                placeholder="Voeg opmerkingen toe"
+                className="w-full border border-gray-300 rounded-md p-2 mt-4 focus:ring-2 focus:ring-blue-400"
+              />
+
+              <input
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                className="w-full border border-gray-300 rounded-md p-2 mt-4 focus:ring-2 focus:ring-blue-400"
+              />
+
+              <button
+                onClick={() => handleSubmit(intake.id)}
+                className="mt-4 w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
+              >
+                Voltooi Inname
+              </button>
             </div>
+          ))}
+        </div>
+      </div>
 
-            <p className="text-gray-600 mt-2">
-              Vooraf geregistreerde schade: {intake.remarks}
-            </p>
-            <p className="text-gray-600">
-              Datum van inlevering: {new Date(intake.toDate).toLocaleDateString()}
-            </p>
-
-            {statusMap[intake.id] === "Schade" && (
-              <div className="mt-4">
-                <h3 className="text-lg font-semibold">Schade melden</h3>
-                <input
-                  type="text"
-                  placeholder="Beschrijving"
-                  value={schadeFormMap[intake.id]?.beschrijving || ""}
-                  onChange={(e) => handleSchadeInputChange(intake.id, "beschrijving", e.target.value)}
-                  className="w-full border border-gray-300 rounded-md p-2 mt-2"
-                />
-                <input
-                  type="text"
-                  placeholder="Locatie"
-                  value={schadeFormMap[intake.id]?.locatie || ""}
-                  onChange={(e) => handleSchadeInputChange(intake.id, "locatie", e.target.value)}
-                  className="w-full border border-gray-300 rounded-md p-2 mt-2"
-                />
+      {/* Toekomstige innames */}
+      <div className="mb-12">
+        <h2 className="text-2xl font-semibold mb-4">
+          Toekomstige inleveringen ({futureInnamen.length})
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {futureInnamen.map((intake) => (
+            <div key={intake.id} className="bg-white shadow-lg rounded-lg p-6 transition-all hover:shadow-xl">
+              <h2 className="text-2xl font-semibold text-blue-600">Voertuig ID: {intake.voertuigId}</h2>
+              <div className="flex items-center space-x-4 mt-4">
+                <p className="text-lg text-gray-700">Status: {statusMap[intake.id] || intake.status}</p>
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition"
+                  onClick={() => setEditingStatusId(intake.id)}
+                >
+                  Wijzig Status
+                </button>
+                {editingStatusId === intake.id && (
+                  <div ref={dropdownRef} className="absolute bg-white shadow-lg rounded-md mt-2">
+                    <button
+                      className="block px-4 py-2 text-blue-600 hover:bg-gray-200 w-full"
+                      onClick={() => handleStatusChange(intake.id, "Schade")}
+                    >
+                      Schade
+                    </button>
+                    <button
+                      className="block px-4 py-2 text-blue-600 hover:bg-gray-200 w-full"
+                      onClick={() => handleStatusChange(intake.id, "Ingenomen")}
+                    >
+                      Ingenomen
+                    </button>
+                  </div>
+                )}
               </div>
-            )}
 
-            <textarea
-              value={remarksMap[intake.id] || ""}
-              onChange={(e) => handleRemarksChange(intake.id, e)}
-              placeholder="Voeg opmerkingen toe"
-              className="w-full border border-gray-300 rounded-md p-2 mt-4 focus:ring-2 focus:ring-blue-400"
-            />
+              <p className="text-gray-600 mt-2">
+                Vooraf geregistreerde schade: {intake.remarks}
+              </p>
+              <p className="text-gray-600">
+                Datum van inlevering: {formatDisplayDate(intake.toDate)}
+              </p>
 
-            <input
-              type="file"
-              multiple
-              onChange={handleFileChange}
-              className="w-full border border-gray-300 rounded-md p-2 mt-4 focus:ring-2 focus:ring-blue-400"
-            />
+              {statusMap[intake.id] === "Schade" && (
+                <div className="mt-4">
+                  <h3 className="text-lg font-semibold">Schade melden</h3>
+                  <input
+                    type="text"
+                    placeholder="Beschrijving"
+                    value={schadeFormMap[intake.id]?.beschrijving || ""}
+                    onChange={(e) => handleSchadeInputChange(intake.id, "beschrijving", e.target.value)}
+                    className="w-full border border-gray-300 rounded-md p-2 mt-2"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Locatie"
+                    value={schadeFormMap[intake.id]?.locatie || ""}
+                    onChange={(e) => handleSchadeInputChange(intake.id, "locatie", e.target.value)}
+                    className="w-full border border-gray-300 rounded-md p-2 mt-2"
+                  />
+                </div>
+              )}
 
-            <button
-              onClick={() => handleSubmit(intake.id)}
-              className="mt-4 w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
-            >
-              Voltooi Inname
-            </button>
-          </div>
-        ))}
+              <textarea
+                value={remarksMap[intake.id] || ""}
+                onChange={(e) => handleRemarksChange(intake.id, e)}
+                placeholder="Voeg opmerkingen toe"
+                className="w-full border border-gray-300 rounded-md p-2 mt-4 focus:ring-2 focus:ring-blue-400"
+              />
+
+              <input
+                type="file"
+                multiple
+                onChange={handleFileChange}
+                className="w-full border border-gray-300 rounded-md p-2 mt-4 focus:ring-2 focus:ring-blue-400"
+              />
+
+              <button
+                onClick={() => handleSubmit(intake.id)}
+                className="mt-4 w-full bg-green-500 text-white py-2 rounded-md hover:bg-green-600 transition"
+              >
+                Voltooi Inname
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

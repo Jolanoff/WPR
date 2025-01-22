@@ -23,13 +23,16 @@ public class VoertuigUitgiftenController : ControllerBase
     public IActionResult GetUitgiften()
     {
         var uitgiften = _context.Uitgiften
+            .Where(u => u.Status == "Klaar om opgehaald te worden")
             
             .Select(u => new {
                 u.Id,
                 u.CustomerName,
                 u.VoertuigId,
                 u.KlantId,
-                u.Remarks
+                u.Status,
+                IssueDate = u.IssueDate.Date,
+                ToDate = u.ToDate.Date
             })
             .ToList();
 
@@ -92,6 +95,8 @@ public IActionResult AcceptUitgifte(int id, [FromBody] AcceptUitgifteRequest req
         KlantId = request.KlantId, 
         
     };
+    uitgifte.Status = "Geaccepteerd";
+    _context.Uitgiften.Update(uitgifte);
 
     // Voeg de inname toe aan de database
     _context.Innames.Add(newInname);

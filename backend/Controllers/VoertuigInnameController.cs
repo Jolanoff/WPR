@@ -76,6 +76,7 @@ public class VoertuigInnameController : ControllerBase
             return StatusCode(500, new { message = "Er is een fout opgetreden.", error = ex.Message });
         }
     }
+    
 
 [HttpPatch("intake/update/{id}")]
 public IActionResult UpdateVehicleIntake(int id, [FromForm] UpdateInnameDTO request)
