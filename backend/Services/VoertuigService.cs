@@ -55,7 +55,10 @@ public class VoertuigService
                     Id = r.Id,
                     StartDatum = r.StartDatum,
                     EindDatum = r.EindDatum
-                }).ToList()
+                }).ToList(),
+                Trekvermogen = v is Caravan ? ((Caravan)v).Trekvermogen : (int?)null,
+                Slaapplaatsen = v is Camper ? ((Camper)v).Slaapplaatsen : (int?)null,
+                AantalDeuren = v is Auto ? ((Auto)v).AantalDeuren : (int?)null
             });
 
         // Apply filtering for restricted roles

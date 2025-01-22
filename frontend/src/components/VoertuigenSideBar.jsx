@@ -11,6 +11,9 @@ function VoertuigenSidebar({
     merken = [],
     brandFilter,
     onBrandFilterChange,
+    setTrekvermogenFilter,
+    setAantalDeurenFilter,
+    setSlaapplaatsenFilter
 }) {
     const [startDatum, setStartDatum] = useState(parentStartDatum);
     const [eindDatum, setEindDatum] = useState(parentEindDatum);
@@ -18,6 +21,7 @@ function VoertuigenSidebar({
     const [showAllBrands, setShowAllBrands] = useState(false);
     const [allowedOptions, setAllowedOptions] = useState([]);
     const { userRoles, fetchUserInfo, loading } = useAuthStore();
+
     useEffect(() => {
         const loadRoles = async () => {
             if (!userRoles) {
@@ -26,6 +30,7 @@ function VoertuigenSidebar({
         };
         loadRoles();
     }, [userRoles, fetchUserInfo]);
+
     useEffect(() => {
         const restrictedRoles = ["Bedrijf", "ZakelijkeHuurder", "WagenparkBeheerder"];
         if (userRoles && userRoles.some((role) => restrictedRoles.includes(role))) {
@@ -64,9 +69,7 @@ function VoertuigenSidebar({
     useEffect(() => {
         if (startDatum && eindDatum) {
             if (new Date(eindDatum) < new Date(startDatum)) {
-                setErrorMessage(
-                    "Einddatum mag niet eerder zijn dan startdatum."
-                );
+                setErrorMessage("Einddatum mag niet eerder zijn dan startdatum.");
             } else {
                 setErrorMessage("");
             }
@@ -153,6 +156,30 @@ function VoertuigenSidebar({
                         {showAllBrands ? "Minder tonen" : "Meer tonen"}
                     </button>
                 )}
+
+                <h3 className="font-semibold mb-2 mt-4">Trekvermogen (kg)</h3>
+                <input
+                    type="number"
+                    placeholder="Min. Trekvermogen"
+                    onChange={(e) => setTrekvermogenFilter(e.target.value)}
+                    className="w-full rounded-md p-2 border border-black mb-4"
+                />
+
+                <h3 className="font-semibold mb-2">Aantal Deuren</h3>
+                <input
+                    type="number"
+                    placeholder="Aantal Deuren"
+                    onChange={(e) => setAantalDeurenFilter(e.target.value)}
+                    className="w-full rounded-md p-2 border border-black mb-4"
+                />
+
+                <h3 className="font-semibold mb-2">Slaapplaatsen</h3>
+                <input
+                    type="number"
+                    placeholder="Min. Slaapplaatsen"
+                    onChange={(e) => setSlaapplaatsenFilter(e.target.value)}
+                    className="w-full rounded-md p-2 border border-black mb-4"
+                />
 
                 <h3 className="font-semibold mb-2 mt-4">Prijs</h3>
                 <select

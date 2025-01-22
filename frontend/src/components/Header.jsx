@@ -12,7 +12,6 @@ export default function Header() {
         if (!userRoles) return null;
         const commonLinks = [
             { href: "/dashboard", label: "Home" },
-            { href: "/contact", label: "Contact" },
             { href: "/huren", label: "Aanbod" },
         ];
         const adminLinks = [{ href: "/admin", label: "Admin Dashboard" }];
