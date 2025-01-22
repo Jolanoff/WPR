@@ -10,14 +10,11 @@ const InnamePage = () => {
   const [schadeFormMap, setSchadeFormMap] = useState({});
   const dropdownRef = useRef(null);
 
-  // Aangepaste datumparser
   const parseDateString = (dateString) => {
     try {
-      // Converteer server datetime naar ISO formaat
       const isoString = dateString.replace(' ', 'T') + 'Z';
       const date = new Date(isoString);
       
-      // Controleer op geldige datum
       if (isNaN(date.getTime())) {
         console.warn("Ongeldige datum:", dateString);
         return null;
@@ -30,7 +27,6 @@ const InnamePage = () => {
     }
   };
 
-  // Datumhelpers
   const getCurrentDate = () => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
@@ -66,7 +62,6 @@ const InnamePage = () => {
     };
   }, []);
 
-  // Aangepaste categorisering
   const categorizeInnamen = () => {
     const todayInnamen = [];
     const futureInnamen = [];
@@ -77,7 +72,6 @@ const InnamePage = () => {
       
       if (!parsedDate) return;
 
-      // Normaliseer datums naar UTC middernacht
       const toDateUTC = new Date(Date.UTC(
         parsedDate.getUTCFullYear(),
         parsedDate.getUTCMonth(),
@@ -210,7 +204,6 @@ const InnamePage = () => {
     }
   };
 
-  // Aangepaste datumweergave
   const formatDisplayDate = (dateString) => {
     const parsedDate = parseDateString(dateString);
     if (!parsedDate) return "Ongeldige datum";
@@ -219,7 +212,7 @@ const InnamePage = () => {
       day: "2-digit",
       month: "2-digit",
       year: "numeric",
-      timeZone: "UTC" // Toon als UTC-datum
+      timeZone: "UTC"
     });
   };
 
@@ -229,7 +222,6 @@ const InnamePage = () => {
         Inname Voertuigen
       </h1>
 
-      {/* Vandaag te innemen */}
       <div className="mb-12">
         <h2 className="text-2xl font-semibold mb-4">
           Vandaag in te leveren ({todayInnamen.length})
@@ -237,7 +229,10 @@ const InnamePage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {todayInnamen.map((intake) => (
             <div key={intake.id} className="bg-white shadow-lg rounded-lg p-6 transition-all hover:shadow-xl">
-              <h2 className="text-2xl font-semibold text-blue-600">Voertuig ID: {intake.voertuigId}</h2>
+              <div className="mb-4">
+                <h2 className="text-2xl font-semibold text-blue-600">Naam klant: {intake.klantNaam}</h2>
+                <p className="text-lg text-gray-600">Voertuig ID: {intake.voertuigId}</p>
+              </div>
               <div className="flex items-center space-x-4 mt-4">
                 <p className="text-lg text-gray-700">Status: {statusMap[intake.id] || intake.status}</p>
                 <button
@@ -316,7 +311,6 @@ const InnamePage = () => {
         </div>
       </div>
 
-      {/* Toekomstige innames */}
       <div className="mb-12">
         <h2 className="text-2xl font-semibold mb-4">
           Toekomstige inleveringen ({futureInnamen.length})
@@ -324,7 +318,10 @@ const InnamePage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {futureInnamen.map((intake) => (
             <div key={intake.id} className="bg-white shadow-lg rounded-lg p-6 transition-all hover:shadow-xl">
-              <h2 className="text-2xl font-semibold text-blue-600">Voertuig ID: {intake.voertuigId}</h2>
+              <div className="mb-4">
+                <h2 className="text-2xl font-semibold text-blue-600">Naam klant: {intake.klantNaam}</h2>
+                <p className="text-lg text-gray-600">Voertuig ID: {intake.voertuigId}</p>
+              </div>
               <div className="flex items-center space-x-4 mt-4">
                 <p className="text-lg text-gray-700">Status: {statusMap[intake.id] || intake.status}</p>
                 <button

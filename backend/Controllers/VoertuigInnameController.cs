@@ -28,6 +28,7 @@ public class VoertuigInnameController : ControllerBase
             {
                 i.Id,
                 i.VoertuigId,
+                KlantNaam = i.KlantNaam,
                 i.Remarks,
                 i.IntakeDate,
                 i.Status,
