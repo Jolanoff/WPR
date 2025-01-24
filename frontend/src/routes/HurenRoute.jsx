@@ -6,7 +6,7 @@ const HurenRoute = [
         path: "/huren",
         element: (
             <ProtectedRoute>
-                <HurenPage />,
+                <HurenPage />
             </ProtectedRoute>
         ),
     },

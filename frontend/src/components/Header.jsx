@@ -14,7 +14,11 @@ export default function Header() {
             { href: "/dashboard", label: "Home" },
             { href: "/huren", label: "Aanbod" },
         ];
-        const adminLinks = [{ href: "/admin", label: "Admin Dashboard" }];
+        const adminLinks = [
+            { href: "/admin", label: "Admin Dashboard"  },
+            { href: "/privacyverklaringBewerk", label: "Bewerk Privacy"  }
+        
+        ];
 
         const bedrijfLinks = [
             { href: "/abonnementen", label: "Abonnementen" },
@@ -27,6 +31,8 @@ export default function Header() {
         const BackofficeLinks = [
             { href: "/schade", label: "Schademeldingen" },
             { href: "/huuraanvragen", label: "Huuraanvragen" },
+
+            { href: "/privacyverklaringBewerk", label: "Bewerk Privacy"  
             { href: "/Voertuigen-beheer", label: "Beheren Voertuigen" },
             { href: "/uitgiften", label: "Uitgiften" },
             { href: "/innamen", label: "Innamen" },
@@ -35,6 +41,7 @@ export default function Header() {
         ];
         const KlantenLinks = [
             { href: "/huren-history", label: "Mijn Huuraanvragen" },
+
 
         ];
 
