@@ -13,7 +13,7 @@ export default function Footer() {
         <div>
           <p className="text-white text-sm">
             <a
-              href="#"
+              href="/privacyverklaring"
               className="hover:underline"
               aria-label="Bekijk de privacyverklaring"
             >
