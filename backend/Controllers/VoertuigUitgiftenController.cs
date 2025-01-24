@@ -23,13 +23,16 @@ public class VoertuigUitgiftenController : ControllerBase
     public IActionResult GetUitgiften()
     {
         var uitgiften = _context.Uitgiften
+            .Where(u => u.Status == "Klaar om opgehaald te worden")
             
             .Select(u => new {
                 u.Id,
                 u.CustomerName,
                 u.VoertuigId,
                 u.KlantId,
-                u.Remarks
+                u.Status,
+                IssueDate = u.IssueDate.Date,
+                ToDate = u.ToDate.Date
             })
             .ToList();
 
@@ -89,9 +92,11 @@ public IActionResult AcceptUitgifte(int id, [FromBody] AcceptUitgifteRequest req
         Status = "Pending", // Stel een standaard status in
         IntakeDate = request.FromDate,
         ToDate = request.ToDate,
-        KlantId = request.KlantId, // Dit moet later worden ingevuld, mogelijk met een klant-ID
+        KlantId = request.KlantId, 
         
     };
+    uitgifte.Status = "Geaccepteerd";
+    _context.Uitgiften.Update(uitgifte);
 
     // Voeg de inname toe aan de database
     _context.Innames.Add(newInname);
@@ -111,18 +116,6 @@ catch (Exception ex)
 }
 }
 
-// Request class voor de API (DTO)
-public class VehicleIssueRequest
-{
-    [Required]
-    [StringLength(100)]
-    public string CustomerName { get; set; }
 
-    [Required]
-    public int VoertuigId { get; set; }  // Verander dit naar int als het voertuigId een integer is
-
-    [StringLength(500)]
-    public string Remarks { get; set; }
-}
 
 

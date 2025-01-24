@@ -15,8 +15,8 @@ namespace backend.Models.Voertuigen
         public bool Status { get; set; }
         public string VoertuigType { get; set; }
         public string? imageUrl { get; set; }
-        
         public double Prijs { get; set; }
+        public bool MarkedForDeletion { get; set; }
         public List<Reservering>? Reserveringen { get; set; }  
         public List<HuurAanvraag>? HuurAanvragen { get; set; } = new List<HuurAanvraag>();
 

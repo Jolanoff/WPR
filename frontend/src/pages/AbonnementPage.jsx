@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import api from "../api";
 import AbonnementForm from "../components/bedrijf/abonnement/AbonnementForm";
 import AbonnementList from "../components/bedrijf/abonnement/AbonnementList";
-
 import UseAuthorization from "../utils/UseAuthorization";
 
 const AbonnementPage = () => {
@@ -13,8 +12,9 @@ const AbonnementPage = () => {
         abonnementType: "pay-as-you-go",
         betaalmethode: "iDeal",
         startDatum: "",
+        kosten: 50,  
+        customAmount: "",  
     });
-    const [kosten, setKosten] = useState(0);
 
     useEffect(() => {
         if (!isAuthorized) return;
@@ -31,17 +31,18 @@ const AbonnementPage = () => {
         fetchAbonnementen();
     }, [isAuthorized]);
 
-    useEffect(() => {
-        const abonnementKosten = formData.abonnementType === "pay-as-you-go" ? 50 : 500;
-        setKosten(abonnementKosten);
-    }, [formData.abonnementType]);
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await api.post("/bedrijf", formData);
+            const payload = {
+                ...formData,
+                kosten: parseFloat(formData.kosten),  
+                customAmount: parseFloat(formData.customAmount) || 0,  
+            };
+
+            await api.post("/bedrijf", payload);
             alert("Abonnement succesvol aangemaakt!");
-            setAbonnementen((prev) => [...prev, response.data]);
+            setAbonnementen((prev) => [...prev, payload]);
         } catch (error) {
             alert(error.response?.data.message || "Er is iets misgegaan.");
         }
@@ -79,7 +80,6 @@ const AbonnementPage = () => {
             {!hasValidSubscription ? (
                 <AbonnementForm
                     onSubmit={handleSubmit}
-                    kosten={kosten}
                     formData={formData}
                     setFormData={setFormData}
                 />

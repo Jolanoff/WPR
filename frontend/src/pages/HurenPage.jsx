@@ -22,6 +22,9 @@ function HurenPage() {
 
     const [typeFilter, setTypeFilter] = useState("alle");
     const [brandFilter, setBrandFilter] = useState([]);
+    const [trekvermogenFilter, setTrekvermogenFilter] = useState("");
+    const [aantalDeurenFilter, setAantalDeurenFilter] = useState("");
+    const [slaapplaatsenFilter, setSlaapplaatsenFilter] = useState("");
 
     const fetchVoertuigen = async () => {
         setLoading(true);
@@ -32,7 +35,6 @@ function HurenPage() {
                 eindDatum,
             });
 
-            console.log(response.data);
             setVoertuigen(response.data);
         } catch (error) {
             setError(error.message || "Error fetching vehicles");
@@ -56,20 +58,30 @@ function HurenPage() {
             brandFilter.length === 0 ||
             (voertuig.merk && brandFilter.includes(voertuig.merk));
 
-        return typeCondition && brandCondition;
+        // Specific attribute filters
+        const trekvermogenCondition =
+            trekvermogenFilter === "" ||
+            voertuig.trekvermogen >= Number(trekvermogenFilter);
+
+        const aantalDeurenCondition =
+            aantalDeurenFilter === "" ||
+            voertuig.aantalDeuren === Number(aantalDeurenFilter);
+
+        const slaapplaatsenCondition =
+            slaapplaatsenFilter === "" ||
+            voertuig.slaapplaatsen >= Number(slaapplaatsenFilter);
+
+        return (
+            typeCondition &&
+            brandCondition &&
+            trekvermogenCondition &&
+            aantalDeurenCondition &&
+            slaapplaatsenCondition
+        );
     });
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
-
-    const filteredMerken = voertuigen
-        .filter(
-            (voertuig) =>
-                typeFilter === "alle" ||
-                voertuig.voertuigType?.toLowerCase() === typeFilter
-        )
-        .map((voertuig) => voertuig.merk)
-        .filter((merk, index, self) => merk && self.indexOf(merk) === index);
 
     return (
         <div className="flex">
@@ -80,9 +92,12 @@ function HurenPage() {
                 eindDatum={eindDatum}
                 onStartDatumChange={setStartDatum}
                 onEindDatumChange={setEindDatum}
-                merken={filteredMerken}
+                merken={voertuigen.map((v) => v.merk)}
                 brandFilter={brandFilter}
                 onBrandFilterChange={setBrandFilter}
+                setTrekvermogenFilter={setTrekvermogenFilter}
+                setAantalDeurenFilter={setAantalDeurenFilter}
+                setSlaapplaatsenFilter={setSlaapplaatsenFilter}
             />
 
             <div className="flex-grow p-4">
@@ -96,11 +111,11 @@ function HurenPage() {
                             kenteken={voertuig.kenteken}
                             kleur={voertuig.kleur}
                             aanschafjaar={voertuig.aanschafjaar}
-                            prijs={
-                                typeof voertuig.prijs === "number" && voertuig.prijs > 0
-                                    ? voertuig.prijs.toFixed(2)
-                                    : "Prijs is onbekend"
-                            }
+                            prijs={voertuig.prijs.toFixed(2)}
+                            voertuigType={voertuig.voertuigType}
+                            trekvermogen={voertuig.trekvermogen}
+                            aantalDeuren={voertuig.aantalDeuren}
+                            slaapplaatsen={voertuig.slaapplaatsen}
                             imageUrl={voertuig.imageUrl || notavailable}
                             status={voertuig.status}
                             reserveringen={voertuig.reserveringen}

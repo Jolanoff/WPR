@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using backend.Services;
+using backend.Dtos.Schade;
 
 namespace backend.Controllers
 {
@@ -57,6 +58,26 @@ namespace backend.Controllers
                 return StatusCode(500, new { message = "Error switching status.", details = ex.Message });
             }
         }
+
+        [HttpPost("report-schade")]
+        public async Task<IActionResult> ReportSchade([FromBody] ReportSchadeDto schadeDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var result = await _schadeService.ReportSchadeAsync(schadeDto.HuurAanvraagId, schadeDto.Beschrijving, schadeDto.Locatie);
+
+            if (result)
+            {
+                return Ok(new { message = "Schade succesvol geregistreerd." });
+            }
+
+            return BadRequest(new { message = "Schade kon niet worden geregistreerd." });
+        }
+
+
 
     }
 }

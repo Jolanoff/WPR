@@ -86,15 +86,18 @@ namespace backend.Controllers
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
                 if (string.IsNullOrEmpty(userId))
+                {
                     return Unauthorized(new { message = "Gebruiker niet geauthenticeerd." });
+                }
 
                 var abonnement = await _bedrijfService.CreateAbonnementAsync(
                     userId,
                     dto.AbonnementType,
                     dto.Betaalmethode,
-                    dto.StartDatum
-                  
+                    dto.StartDatum,
+                    dto.CustomAmount  
                 );
 
                 return Ok(abonnement);
@@ -104,6 +107,7 @@ namespace backend.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+
 
         [HttpPost("toevoegen-bedrijf-medewerker")]
         [Authorize(Roles = "Bedrijf,Wagenparkbeheerder")]
@@ -186,6 +190,28 @@ namespace backend.Controllers
                 return BadRequest(new { message = ex.Message });
             }
         }
+        [Authorize(Roles = "Bedrijf")]
+        [HttpGet("verhuurde-voertuigen")]
+        public async Task<IActionResult> GetVerhuurdeVoertuigen(int year, int? month)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var result = await _bedrijfService.GetVerhuurdeVoertuigenAsync(userId, year, month);
+
+                if (result == null || result.Count == 0)
+                {
+                    return NotFound(new { message = "Geen gehuurde voertuigen gevonden." });
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
 
 
     }

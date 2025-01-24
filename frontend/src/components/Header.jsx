@@ -12,7 +12,6 @@ export default function Header() {
         if (!userRoles) return null;
         const commonLinks = [
             { href: "/dashboard", label: "Home" },
-            { href: "/contact", label: "Contact" },
             { href: "/huren", label: "Aanbod" },
         ];
         const adminLinks = [
@@ -24,14 +23,26 @@ export default function Header() {
         const bedrijfLinks = [
             { href: "/abonnementen", label: "Abonnementen" },
             { href: "/bedrijf-medewerkers", label: "Beheer Medewerkers" },
+            { href: "/huren-history", label: "Mijn Huuraanvragen" },
+            { href: "/bedrijf/huuraanvragen", label: "Overzicht Aanvragen" },
+
+
         ];
         const BackofficeLinks = [
             { href: "/schade", label: "Schademeldingen" },
             { href: "/huuraanvragen", label: "Huuraanvragen" },
-            { href: "/privacyverklaringBewerk", label: "Bewerk Privacy"  }
+
+            { href: "/privacyverklaringBewerk", label: "Bewerk Privacy"  
+            { href: "/Voertuigen-beheer", label: "Beheren Voertuigen" },
+            { href: "/uitgiften", label: "Uitgiften" },
+            { href: "/innamen", label: "Innamen" },
+            { href: "/schade", label: "Schades" },
+
+        ];
+        const KlantenLinks = [
+            { href: "/huren-history", label: "Mijn Huuraanvragen" },
 
 
-        
         ];
 
         // Combine links based on roles
@@ -43,12 +54,21 @@ export default function Header() {
         if (userRoles.includes("BackOfficeMedewerker")) {
             links = [...links, ...BackofficeLinks];
         }
+
         if (
             userRoles.some((role) =>
                 ["Bedrijf", "Wagenparkbeheerder"].includes(role)
             )
         ) {
             links = [...links, ...bedrijfLinks];
+        }
+
+        if (
+            userRoles.some((role) =>
+                ["ZakelijkeHuurder", "ParticuliereHuurder"].includes(role)
+            )
+        ) {
+            links = [...links, ...KlantenLinks];
         }
 
         return links.map((link, index) => (
@@ -102,7 +122,7 @@ export default function Header() {
                                 onClick={toggleProfileMenu}
                             />
                             {showProfileMenu && (
-                                <div className="absolute right-0 mt-2 w-48 bg-white border rounded shadow-md">
+                                <div className="absolute right-0 mt-2 w-48 bg-white border z-50 rounded shadow-md">
                                     <a
                                         href="/profiel"
                                         className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
