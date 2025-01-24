@@ -1,4 +1,5 @@
-﻿using backend.Models.Aanvragen;
+﻿using backend.Models;
+using backend.Models.Aanvragen;
 using backend.Models.Gebruiker;
 using backend.Models.Klanten;
 using backend.Models.Klanten.Bedrijven;
@@ -41,6 +42,9 @@ namespace backend.DbContext
         public DbSet<Reservering> Reserveringen { get; set; }
         public DbSet<Factuur> Facturen { get; set; }
 
+        public DbSet<Privacyverklaring> Privacyverklaringen { get; set; }
+
+
 
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -49,6 +53,12 @@ namespace backend.DbContext
 
             // Gebruik standaard schema
             builder.HasDefaultSchema("applicationdb");
+
+            builder.Entity<Privacyverklaring>().HasData(new Privacyverklaring
+            {
+                Id = 1, // Zorg ervoor dat de ID overeenkomt met de primaire sleutel
+                Tekst = "Dit is een voorbeeld van een privacyverklaring."
+            });
 
             // Configureer Voertuig als de basisentiteit
             builder.Entity<Voertuig>()

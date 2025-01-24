@@ -15,7 +15,11 @@ export default function Header() {
             { href: "/contact", label: "Contact" },
             { href: "/huren", label: "Aanbod" },
         ];
-        const adminLinks = [{ href: "/admin", label: "Admin Dashboard" }];
+        const adminLinks = [
+            { href: "/admin", label: "Admin Dashboard"  },
+            { href: "/privacyverklaringBewerk", label: "Bewerk Privacy"  }
+        
+        ];
 
         const bedrijfLinks = [
             { href: "/abonnementen", label: "Abonnementen" },
@@ -24,6 +28,8 @@ export default function Header() {
         const BackofficeLinks = [
             { href: "/schade", label: "Schademeldingen" },
             { href: "/huuraanvragen", label: "Huuraanvragen" },
+            { href: "/privacyverklaringBewerk", label: "Bewerk Privacy"  }
+
 
         
         ];
