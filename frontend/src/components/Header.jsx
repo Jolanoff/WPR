@@ -32,7 +32,7 @@ export default function Header() {
             { href: "/schade", label: "Schademeldingen" },
             { href: "/huuraanvragen", label: "Huuraanvragen" },
 
-            { href: "/privacyverklaringBewerk", label: "Bewerk Privacy"  
+            { href: "/privacyverklaringBewerk", label: "Bewerk Privacy"  },
             { href: "/Voertuigen-beheer", label: "Beheren Voertuigen" },
             { href: "/uitgiften", label: "Uitgiften" },
             { href: "/innamen", label: "Innamen" },
