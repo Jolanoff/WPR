@@ -21,9 +21,14 @@ import AanvraagRouter from "./routes/Huren/AanvraagRouter";
 import HomeRouter from "./routes/HomeRouter";
 import HuurAanvragenRouter from "./routes/BackOfficeMedewerker/HuurAanvragenRouter";
 import HuurAanvragenHistoryRouter from "./routes/Huren/HuurAanvragenHistoryRouter";
+
+import PrivacyverklaringRouter from "./routes/PrivacyverklaringRouter";
+import PrivacyverklaringBewerkRouter from "./routes/PrivacyverklaringbewerkRouter";
+
 import SuccessRouter from "./routes/Huren/SuccessRouter";
 import VoertuigenBeheerRouter from "./routes/BackOfficeMedewerker/VoertuigenBeheerRouter";
 import VerhuurdeVoertuigenRouter from "./routes/bedrijf/VerhuurdeVoertuigenRouter";
+
 
 const routes = [
     {
@@ -58,7 +63,14 @@ const routes = [
             ...HuurAanvragenRouter,
             ...UitgifteRouter,
             ...InnameRouter,
+
+
+            //Privacyverklaring
+            ...PrivacyverklaringBewerkRouter,
+            ...PrivacyverklaringRouter
+
             ...VoertuigenBeheerRouter
+
 
         ],
     },

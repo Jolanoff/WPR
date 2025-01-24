@@ -48,6 +48,8 @@ namespace backend
             builder.Services.AddScoped<SchademeldingenService>();
             builder.Services.AddScoped<VoertuigService>();
             builder.Services.AddScoped<HuurAanvraagService>();
+            builder.Services.AddScoped<PrivacyverklaringService>();
+
 
 
 
