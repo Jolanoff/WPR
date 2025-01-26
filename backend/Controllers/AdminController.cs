@@ -16,7 +16,7 @@ namespace backend.Controllers
         {
             _adminService = adminService;
         }
-        [HttpPost("add-medewerker")]
+        [HttpPost("voeg medewerker toe")]
         public async Task<IActionResult> AddMedewerker([FromBody] MaakMedewerkerDto dto)
         {
             try
@@ -48,7 +48,7 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Error retrieving medewerkers", details = ex.Message });
+                return StatusCode(500, new { message = "Er is een fout opgetreden tijdens het ophalen van medewerkers", details = ex.Message });
             }
         }
     }

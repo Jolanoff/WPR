@@ -158,7 +158,7 @@ const InnamePage = () => {
         const schadeData = schadeFormMap[intakeId];
   
         if (!schadeData?.beschrijving || !schadeData?.locatie) {
-          alert("Vul de beschrijving en locatie in voor schade.");
+          alert("Vul de beschrijving en locatie in van de schade.");
           return;
         }
   
@@ -175,7 +175,7 @@ const InnamePage = () => {
         );
   
         if (schadeResponse.status === 200) {
-          alert("Schade succesvol geregistreerd!");
+          alert("Schade succesvol geregistreerd");
           setSchadeFormMap((prevState) => ({
             ...prevState,
             [intakeId]: { beschrijving: "", locatie: "" },
@@ -188,7 +188,7 @@ const InnamePage = () => {
       });
   
       if (response.status === 200) {
-        alert("Inname succesvol bijgewerkt!");
+        alert("Inname succesvol bijgewerkt");
         setSelectedFiles(null);
         setRemarksMap((prevState) => {
           const updatedRemarks = { ...prevState };
@@ -196,7 +196,7 @@ const InnamePage = () => {
           return updatedRemarks;
         });
       } else {
-        alert(`Er ging iets mis: ${response.data.message}`);
+        alert(`Er is iets misgegaan: ${response.data.message}`);
       }
     } catch (error) {
       console.error("Fout bij het updaten van de inname:", error);

@@ -18,7 +18,7 @@ const VoertuigenList = ({ voertuigen, loading, handleDelete }) => {
       if (err.response && err.response.status === 404) {
         setReserveringen([]); 
       } else {
-        setError(err.response?.data?.message || "Failed to fetch reserveringen.");
+        setError(err.response?.data?.message || "Niet gelukt om reserveringen op te halen.");
       }
     } finally {
       setSelectedVoertuig(voertuigId);
@@ -27,10 +27,10 @@ const VoertuigenList = ({ voertuigen, loading, handleDelete }) => {
   };
   return (
     <div>
-      <h2 className="text-xl font-semibold text-gray-700 mb-4">Voertuigen Lijst</h2>
+      <h2 className="text-xl font-semibold text-gray-700 mb-4">Voertuigenlijst</h2>
 
       {loading ? (
-        <p className="text-gray-500">Loading...</p>
+        <p className="text-gray-500">Aan het laden..</p>
       ) : (
         <ul className="space-y-4">
           {voertuigen.map((v) => (

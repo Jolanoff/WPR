@@ -17,17 +17,14 @@ function LoginForm() {
     setError(null);
 
     try {
-      // Log in the user
       await api.post("/auth/login", { email, password });
 
-      // Fetch user info and store in Zustand
       await fetchUserInfo();
 
-      // Navigate to the dashboard
       navigate("/dashboard");
     } catch (err) {
-      console.error(err.response?.data?.message || "Login failed");
-      setError(err.response?.data?.message || "Login failed");
+      console.error(err.response?.data?.message || "Inloggen mislukt");
+      setError(err.response?.data?.message || "Inloggen mislukt");
     }
   };
 

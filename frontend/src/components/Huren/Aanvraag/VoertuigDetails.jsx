@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 
 function VoertuigDetails({ voertuigDetails }) {
-    const [totalPrice, setTotalPrice] = useState("Prijs is onbekend");
+    const [totalPrice, setTotalePrijs] = useState("Prijs is onbekend");
     const [totalDays, setTotalDays] = useState(0);
 
     useEffect(() => {
@@ -14,9 +14,9 @@ function VoertuigDetails({ voertuigDetails }) {
             const adjustedDays = days > 0 ? days : 1;
             setTotalDays(adjustedDays);
             if (adjustedDays > 0 && voertuigDetails.prijs > 0) {
-                setTotalPrice(`€${(adjustedDays * voertuigDetails.prijs).toFixed(2)}`);
+                setTotalePrijs(`€${(adjustedDays * voertuigDetails.prijs).toFixed(2)}`);
             } else {
-                setTotalPrice("Prijs is onbekend");
+                setTotalePrijs("Prijs is onbekend");
             }
         }
     }, [voertuigDetails]);

@@ -14,5 +14,5 @@ export const HandleApiErrors = (errorResponse) => {
     return JSON.stringify(errorResponse.data); 
   }
 
-  return "An unexpected error occurred.";
+  return "Een onverwachte error heeft plaatsgevonden";
 };
