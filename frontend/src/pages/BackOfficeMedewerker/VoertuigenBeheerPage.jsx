@@ -42,7 +42,6 @@ const VoertuigenBeheerPage = () => {
     }
   };
 
-  // Filter voertuigen based on the selected type
   const filteredVoertuigen = voertuigen.filter((voertuig) => {
     const typeCondition =
       typeFilter === "alle" ||
@@ -51,13 +50,12 @@ const VoertuigenBeheerPage = () => {
     return typeCondition;
   });
 
-  // Add new voertuig
   const handleCreate = async () => {
     try {
       await api.post("/Voertuig/CreateVoertuig", newVoertuig);
       fetchVoertuigen();
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to create voertuig");
+      setError(err.response?.data?.message || "Niet gelukt om voertuig toe te voegen");
     }
   };
 
@@ -69,7 +67,7 @@ const VoertuigenBeheerPage = () => {
       await api.delete(`/Voertuig/DeleteVoertuig/${id}`);
       fetchVoertuigen();
     } catch (err) {
-      setError(err.response?.data?.message || "Failed to delete voertuig");
+      setError(err.response?.data?.message || "Niet gelukt om voertuig te verwijderen");
     }
   };
   

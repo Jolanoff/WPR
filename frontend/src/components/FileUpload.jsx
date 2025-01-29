@@ -10,7 +10,7 @@ const FileUpload = () => {
 
   const handleUpload = async () => {
     if (files.length === 0) {
-      alert("Selecteer minimaal één bestand!");
+      alert("Selecteer minimaal één bestand");
       return;
     }
 
@@ -23,7 +23,7 @@ const FileUpload = () => {
       const response = await axios.post("http://localhost:5000/api/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      alert("Bestanden succesvol geüpload!");
+      alert("Bestanden succesvol geüpload");
       console.log(response.data);
     } catch (error) {
       console.error("Upload mislukt", error);

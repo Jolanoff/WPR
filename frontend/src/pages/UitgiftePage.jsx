@@ -15,7 +15,6 @@ const UitgiftePage = () => {
     remarks: ""
   });
 
-  // Haal uitgiften op
   useEffect(() => {
     const fetchUitgiften = async () => {
       try {
@@ -98,7 +97,7 @@ const UitgiftePage = () => {
         prev.filter(u => u.id !== selectedUitgifte.id)
       );
       setSelectedUitgifte(null);
-      alert("Uitgifte succesvol geaccepteerd!");
+      alert("Uitgifte succesvol geaccepteerd");
     } catch (error) {
       console.error("Acceptatiefout:", error.response?.data || error.message);
       alert("Acceptatie mislukt: " + (error.response?.data?.message || error.message));
@@ -132,7 +131,7 @@ const UitgiftePage = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">Uitgiftebeheer</h1>
 
-      {loading && <p className="text-gray-600">Laden...</p>}
+      {loading && <p className="text-gray-600">Bezig met laden...</p>}
       
       {error && (
         <div className="bg-red-100 text-red-700 p-3 rounded mb-4">
@@ -238,7 +237,6 @@ const UitgiftePage = () => {
   );
 };
 
-// Sub-componenten
 const Section = ({ title, uitgiften, onAccept, className }) => (
   <div className={className}>
     <h2 className="text-lg font-semibold mb-4 border-b pb-2">{title}</h2>

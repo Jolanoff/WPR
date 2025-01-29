@@ -56,13 +56,13 @@ namespace backend.DbContext
 
             builder.Entity<Privacyverklaring>().HasData(new Privacyverklaring
             {
-                Id = 1, // Zorg ervoor dat de ID overeenkomt met de primaire sleutel
+                Id = 1, 
                 Tekst = "Dit is een voorbeeld van een privacyverklaring."
             });
 
             // Configureer Voertuig als de basisentiteit
             builder.Entity<Voertuig>()
-                .ToTable("Voertuigen");  // De tabel voor de gemeenschappelijke velden
+                .ToTable("Voertuigen");  
 
             // Configureer Auto met een eigen tabel, maar gedeelde velden van Voertuig
             builder.Entity<Auto>()

@@ -73,7 +73,7 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+                return StatusCode(500, new { message = "Er heeft zich een onverwachte fout voorgedaan", detail = ex.Message });
             }
         }
         [Authorize(Roles = "BackOfficeMedewerker,Admin")]
@@ -124,7 +124,7 @@ namespace backend.Controllers
             try
             {
                 await _voertuigService.DeleteVoertuigAsync(id);
-                return Ok(new { message = "Voertuig successfully marked for deletion." });
+                return Ok(new { message = "Voertuig succesvol gemarkeerd voor verwijdering" });
             }
             catch (KeyNotFoundException ex)
             {
@@ -136,7 +136,7 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+                return StatusCode(500, new { message = "Er heeft zich een onverwachte fout voorgedaan", detail = ex.Message });
             }
         }
         [Authorize(Roles = "BackOfficeMedewerker,Admin")]
@@ -148,14 +148,14 @@ namespace backend.Controllers
                 var voertuigen = await _voertuigService.GetMarkedForDeletionAsync();
                 if (!voertuigen.Any())
                 {
-                    return NotFound(new { message = "No voertuigen marked for deletion." });
+                    return NotFound(new { message = "Geen voertuigen zijn gemarkeerd voor verwijdering" });
                 }
 
                 return Ok(voertuigen);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+                return StatusCode(500, new { message = "Er heeft zich een onverwachte fout voorgedaan", detail = ex.Message });
             }
         }
         [Authorize(Roles = "BackOfficeMedewerker,Admin")]
@@ -167,9 +167,9 @@ namespace backend.Controllers
                 var result = await _voertuigService.RestoreVoertuigAsync(id);
                 if (result)
                 {
-                    return Ok(new { message = "Voertuig restored successfully." });
+                    return Ok(new { message = "Voertuig succesvol teruggehaald" });
                 }
-                return BadRequest(new { message = "Failed to restore voertuig." });
+                return BadRequest(new { message = "Het is niet gelukt om het voertuig terug te halen" });
             }
             catch (KeyNotFoundException ex)
             {
@@ -181,7 +181,7 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+                return StatusCode(500, new { message = "Er heeft zich een onverwachte fout voorgedaan", detail = ex.Message });
             }
         }
         [Authorize(Roles = "BackOfficeMedewerker,Admin")]
@@ -193,13 +193,13 @@ namespace backend.Controllers
                 var reserveringen = await _voertuigService.GetReserveringenByVoertuigIdAsync(voertuigId);
                 if (!reserveringen.Any())
                 {
-                    return NotFound(new { message = $"No reserveringen found for voertuig with ID {voertuigId}." });
+                    return NotFound(new { message = $"Er zijn geen reserveringen gevonden met het volgende ID: {voertuigId}." });
                 }
                 return Ok(reserveringen);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An unexpected error occurred.", detail = ex.Message });
+                return StatusCode(500, new { message = "Er heeft zich een onverwachte fout voorgedaan", detail = ex.Message });
             }
         }
 

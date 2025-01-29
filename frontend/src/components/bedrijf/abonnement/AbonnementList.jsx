@@ -2,7 +2,7 @@ const AbonnementList = ({ abonnementen, handleCancel }) => {
     return (
         <ul className="bg-white p-4 shadow rounded">
             {abonnementen.map((abonnement) => {
-                const today = new Date();
+                const vandaag = new Date();
                 const startDatum = new Date(abonnement.startDatum);
                 const eindDatum = new Date(abonnement.eindDatum);
                 const stopDatum = abonnement.stopDatum ? new Date(abonnement.stopDatum) : null;
@@ -12,13 +12,13 @@ const AbonnementList = ({ abonnementen, handleCancel }) => {
                 if (stopDatum) {
                     if (stopDatum < startDatum) {
                         statusLabel = "Geannuleerd";
-                    } else if (today >= startDatum && today <= eindDatum) {
+                    } else if (vandaag >= startDatum && vandaag <= eindDatum) {
                         statusLabel = `Uw abonnement wordt stopgezet op: ${eindDatum.toLocaleDateString()}`;
                     }
                 } else {
-                    if (today < startDatum) {
+                    if (vandaag < startDatum) {
                         statusLabel = `Uw abonnement begint: ${startDatum.toLocaleDateString()}`;
-                    } else if (today <= eindDatum) {
+                    } else if (vandaag <= eindDatum) {
                         statusLabel = "Actief";
                     } else {
                         statusLabel = "Verlopen";

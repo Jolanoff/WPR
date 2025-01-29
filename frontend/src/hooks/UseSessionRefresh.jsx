@@ -9,9 +9,9 @@ const UseSessionRefresh = () => {
             const interval = setInterval(async () => {
                 try {
                     await api.get("/auth/refresh-session-explicit");
-                    console.log("Session refreshed successfully with a new cookie");
+                    console.log("Sessie was succesvol vernieuwd met een nieuwe cookie");
                 } catch (error) {
-                    console.error("Session refresh failed", error);
+                    console.error("Herladen van de pagina mislukt", error);
                 }
             }, 60000);
 

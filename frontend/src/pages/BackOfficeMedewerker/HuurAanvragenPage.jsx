@@ -12,7 +12,7 @@ export default function HuurAanvragenPage() {
                 const response = await api.get("/HuurAanvraag/all");
                 setHuuraanvragen(response.data);
             } catch (err) {
-                setError(err.response?.data?.message || "Failed to fetch huur aanvragen.");
+                setError(err.response?.data?.message || "Niet gelukt om huuraanvragen op te halen.");
             }
         };
 
@@ -29,16 +29,16 @@ export default function HuurAanvragenPage() {
             );
         } catch (err) {
             console.error(err);
-            alert("Failed to approve the aanvraag.");
+            alert("Niet gelukt om de aanvraag te bevestigen.");
         }
     };
 
     const handleRefuse = async (id) => {
-        const reason = prompt("Please enter a reason for refusing this aanvraag:");
-        if (!reason) return;
+        const reden = prompt("Voer een reden in om deze aanvraag af te wijzen:");
+        if (!reden) return;
 
         try {
-            await api.patch(`/HuurAanvraag/${id}/refuse`, reason, {
+            await api.patch(`/HuurAanvraag/${id}/refuse`, reden, {
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -50,7 +50,7 @@ export default function HuurAanvragenPage() {
             );
         } catch (err) {
             console.error(err);
-            alert("Failed to refuse the aanvraag.");
+            alert("Niet gelukt om de aanvraag af te wijzen.");
         }
     };
 
@@ -66,15 +66,15 @@ export default function HuurAanvragenPage() {
                 <thead>
                     <tr>
                         <th className="py-2 px-4 border-b">ID</th>
-                        <th className="py-2 px-4 border-b">Start Datum</th>
-                        <th className="py-2 px-4 border-b">Eind Datum</th>
+                        <th className="py-2 px-4 border-b">Startdatum</th>
+                        <th className="py-2 px-4 border-b">Einddatum</th>
                         <th className="py-2 px-4 border-b">Aard van Reis</th>
-                        <th className="py-2 px-4 border-b">Kilometers</th>
+                        <th className="py-2 px-4 border-b">Aantal kilometers</th>
                         <th className="py-2 px-4 border-b">Klant Naam</th>
                         <th className="py-2 px-4 border-b">Voertuig</th>
                         <th className="py-2 px-4 border-b">Kenteken</th>
                         <th className="py-2 px-4 border-b">Status</th>
-                        <th className="py-2 px-4 border-b">Actions</th>
+                        <th className="py-2 px-4 border-b">Acties</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -101,18 +101,18 @@ export default function HuurAanvragenPage() {
                                             onClick={() => handleApprove(aanvraag.id)}
                                             className="bg-green-500 text-white py-1 px-3 rounded hover:bg-green-600"
                                         >
-                                            Approve
+                                            Goedkeuren
                                         </button>
                                         <button
                                             onClick={() => handleRefuse(aanvraag.id)}
                                             className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
                                         >
-                                            Refuse
+                                            Afwijzen
                                         </button>
                                     </div>
                                 )}
                                 {aanvraag.approvalStatus !== "Pending" && (
-                                    <span className="text-gray-500">No Actions Available</span>
+                                    <span className="text-gray-500">Geen acties beschikbaar</span>
                                 )}
                             </td>
                         </tr>

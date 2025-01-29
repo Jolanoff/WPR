@@ -5,7 +5,7 @@ export const CheckRole = async () => {
         const response = await api.get("/account/role"); 
         return response.data.roles; 
     } catch (error) {
-        console.error("Error fetching roles:", error);
+        console.error("Error bij het ophalen van rollen:", error);
         return [];
     }
 };

@@ -9,8 +9,8 @@ function VoertuigenSidebar({
     onStartDatumChange,
     onEindDatumChange,
     merken = [],
-    brandFilter,
-    onBrandFilterChange,
+    merkFilter,
+    onMerkFilterChange,
     setTrekvermogenFilter,
     setAantalDeurenFilter,
     setSlaapplaatsenFilter
@@ -18,7 +18,7 @@ function VoertuigenSidebar({
     const [startDatum, setStartDatum] = useState(parentStartDatum);
     const [eindDatum, setEindDatum] = useState(parentEindDatum);
     const [errorMessage, setErrorMessage] = useState("");
-    const [showAllBrands, setShowAllBrands] = useState(false);
+    const [toonAlleMerken, setToonAlleMerken] = useState(false);
     const [allowedOptions, setAllowedOptions] = useState([]);
     const { userRoles, fetchUserInfo, loading } = useAuthStore();
 
@@ -46,14 +46,14 @@ function VoertuigenSidebar({
     }, [userRoles]);
 
     const toggleMerk = (merk) => {
-        const newBrandFilter = brandFilter.includes(merk)
-            ? brandFilter.filter((m) => m !== merk)
-            : [...brandFilter, merk];
-        onBrandFilterChange(newBrandFilter);
+        const newMerkFilter = merkFilter.includes(merk)
+            ? merkFilter.filter((m) => m !== merk)
+            : [...merkFilter, merk];
+        onMerkFilterChange(newMerkFilter);
     };
 
     const clearAllBrands = () => {
-        onBrandFilterChange([]);
+        onMerkFilterChange([]);
     };
 
     const handleStartDatumChange = (newStartDatum) => {
@@ -76,7 +76,7 @@ function VoertuigenSidebar({
         }
     }, [startDatum, eindDatum]);
 
-    const displayedMerken = showAllBrands ? merken : merken.slice(0, 12);
+    const displayedMerken = ToonAlleMerken ? merken : merken.slice(0, 12);
 
     return (
         <div className="w-64 p-4 bg-gray-100 border-r">
@@ -119,7 +119,7 @@ function VoertuigenSidebar({
 
                 <h3 className="font-semibold mb-2 flex justify-between items-center">
                     Merken
-                    {brandFilter.length > 0 && (
+                    {merkFilter.length > 0 && (
                         <button
                             onClick={clearAllBrands}
                             className="text-xs text-red-600 hover:text-red-800"
@@ -134,7 +134,7 @@ function VoertuigenSidebar({
                             <input
                                 type="checkbox"
                                 id={`merk-${merk}`}
-                                checked={brandFilter.includes(merk)}
+                                checked={merkFilter.includes(merk)}
                                 onChange={() => toggleMerk(merk)}
                                 className="mr-2 w-4 h-4"
                             />
@@ -150,10 +150,10 @@ function VoertuigenSidebar({
 
                 {merken.length > 12 && (
                     <button
-                        onClick={() => setShowAllBrands(!showAllBrands)}
+                        onClick={() => setToonAlleMerken(!toonAlleMerken)}
                         className="w-full bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600 transition-colors"
                     >
-                        {showAllBrands ? "Minder tonen" : "Meer tonen"}
+                        {toonAlleMerken ? "Minder tonen" : "Meer tonen"}
                     </button>
                 )}
 

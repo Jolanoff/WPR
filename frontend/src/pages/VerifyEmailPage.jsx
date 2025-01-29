@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import api from "../api"; // Import your axios instance
+import api from "../api"; 
 
 const VerifyEmailPage = () => {
   const [searchParams] = useSearchParams();
@@ -14,7 +14,7 @@ const VerifyEmailPage = () => {
       const token = searchParams.get("token");
 
       if (!userId || !token) {
-        setError("Invalid verification link.");
+        setError("Ongeldige verificatielink");
         return;
       }
 
@@ -23,12 +23,12 @@ const VerifyEmailPage = () => {
           params: { userId, token },
         });
 
-        setMessage("Your email has been successfully verified!");
+        setMessage("Uw email is succesvol geverifieerd");
         setTimeout(() => {
           navigate("/login"); // Redirect to login page after success
         }, 3000); // Redirect after 3 seconds
       } catch (err) {
-        setError(err.response?.data?.message || "Email verification failed.");
+        setError(err.response?.data?.message || "Verificatie mislukt");
       }
     };
 
@@ -39,11 +39,11 @@ const VerifyEmailPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md text-center">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">
-          Email Verification
+          Email Verificatie
         </h2>
         {message && <p className="text-green-500 mb-4">{message}</p>}
         {error && <p className="text-red-500 mb-4">{error}</p>}
-        {!message && !error && <p>Verifying your email, please wait...</p>}
+        {!message && !error && <p>Bezig met het verifieeren van uw email, even geduld...</p>}
       </div>
     </div>
   );
