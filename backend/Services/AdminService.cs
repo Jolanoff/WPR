@@ -43,6 +43,7 @@ namespace backend.Services
             {
                 Functie = role,
                 UserId = newUser.Id,
+                Locatie = "Denhaag",
                 User = newUser
 
             };

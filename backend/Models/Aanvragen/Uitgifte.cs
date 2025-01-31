@@ -19,7 +19,7 @@ namespace backend.Models.Aanvragen
 
     // Relatie met Voertuig
     [JsonIgnore]
-    public Voertuig Voertuig { get; set; }  // Relatie naar Voertuig
+    public Voertuig Voertuig { get; set; }  
 
     // Relatie naar klant
     [JsonIgnore]

@@ -47,6 +47,9 @@ function VoertuigDetails({ voertuigDetails }) {
                         <span className="font-medium">Kleur:</span> {voertuigDetails.kleur}
                     </p>
                     <p className="text-gray-600">
+                        <span className="font-medium">Locatie:</span> {voertuigDetails.locatie}
+                    </p>
+                    <p className="text-gray-600">
                         <span className="font-medium">Aanschafjaar:</span>{" "}
                         {voertuigDetails.aanschafjaar}
                     </p>

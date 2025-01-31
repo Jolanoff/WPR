@@ -17,7 +17,8 @@ export default function VoertuigCard({
     status,
     reserveringen,
     startDatum,
-    eindDatum
+    eindDatum,
+    locatie
 }) {
     const navigate = useNavigate();
     const [showReservations, setShowReservations] = useState(false);
@@ -39,7 +40,8 @@ export default function VoertuigCard({
                 imageUrl,
                 status,
                 startDatum,
-                eindDatum
+                eindDatum,
+                locatie
             },
         });
     };
@@ -59,6 +61,8 @@ export default function VoertuigCard({
                     <p><strong>Kenteken:</strong> {kenteken}</p>
                     <p><strong>Kleur:</strong> {kleur}</p>
                     <p><strong>Aanschafjaar:</strong> {aanschafjaar}</p>
+                    <p><strong>Locatie:</strong> {locatie}</p>
+
 
                     {voertuigType.toLowerCase() === "caravan" && trekvermogen && (
                         <p><strong>Trekvermogen:</strong> {trekvermogen} kg</p>

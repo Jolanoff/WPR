@@ -17,6 +17,8 @@ namespace backend.Models.Voertuigen
         public string? imageUrl { get; set; }
         public double Prijs { get; set; }
         public bool MarkedForDeletion { get; set; }
+
+        public string Locatie { get; set; }
         public List<Reservering>? Reserveringen { get; set; }  
         public List<HuurAanvraag>? HuurAanvragen { get; set; } = new List<HuurAanvraag>();
 

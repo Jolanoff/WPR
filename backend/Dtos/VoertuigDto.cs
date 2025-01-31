@@ -12,6 +12,8 @@ namespace backend.Dtos.Voertuigen
         public int Aanschafjaar { get; set; }
         public bool Status { get; set; }
         public string VoertuigType { get; set; }
+        public string Locatie { get; set; }
+
 
         public double Prijs {  get; set; }
         public List<ReserveringDto> Reserveringen { get; set; } 

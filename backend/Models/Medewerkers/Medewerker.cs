@@ -7,6 +7,7 @@ namespace backend.Models.Medewerkers
         public int Id { get; set; } // Primaire sleutel
 
         public string Functie { get; set; } // "FrontOffice" of "BackOffice"
+        public string Locatie { get; set; }
 
         // Relatie met User
         public string UserId { get; set; } // Buitenlandse sleutel naar User

@@ -1,5 +1,6 @@
 ﻿using backend.DbContext;
 using backend.Dtos.HuurAanvraag;
+using backend.Models;
 using backend.Models.Aanvragen;
 using backend.Models.Gebruiker;
 using backend.Models.Klanten;
@@ -120,6 +121,20 @@ public class HuurAanvraagService
         var dailyPrice = voertuig.Prijs;
         var totalPrice = days * dailyPrice;
 
+        var loyalty = await _context.LoyaltyPrograms.FirstOrDefaultAsync(l => l.KlantId == klant.Id);
+        int discount = 0;
+
+        if (loyalty != null && aanvraagDto.UsedPoints > 0 && loyalty.LoyaltyPoints >= aanvraagDto.UsedPoints)
+        {
+            discount = aanvraagDto.UsedPoints * 10; 
+            totalPrice -= discount;
+            totalPrice = Math.Max(0, totalPrice);
+
+            // Deduct points from loyalty program
+            loyalty.LoyaltyPoints -= aanvraagDto.UsedPoints;
+            _context.LoyaltyPrograms.Update(loyalty);
+        }
+
         // Create the HuurAanvraag
         var huurAanvraag = new HuurAanvraag
         {
@@ -140,7 +155,7 @@ public class HuurAanvraagService
         {
             Bedrag = totalPrice,
             BetaalStatus = false,
-            BetalingsOptie = "Onbekend", // Default payment option
+            BetalingsOptie = "Onbekend", 
             HuurAanvraagId = huurAanvraag.Id
         };
 
@@ -148,7 +163,28 @@ public class HuurAanvraagService
         _context.Facturen.Add(factuur);
         await _context.SaveChangesAsync();
 
+        await AddLoyaltyPoints(klant.Id, totalPrice);
+
         return huurAanvraag;
+    }
+    private async Task AddLoyaltyPoints(int klantId, double huurPrijs)
+    {
+        var klantLoyalty = await _context.LoyaltyPrograms
+            .FirstOrDefaultAsync(l => l.KlantId == klantId);
+
+        if (klantLoyalty == null)
+        {
+            klantLoyalty = new LoyaltyProgram
+            {
+                KlantId = klantId,
+                LoyaltyPoints = 0
+            };
+            _context.LoyaltyPrograms.Add(klantLoyalty);
+        }
+        int pointsEarned = (int)(huurPrijs / 10);
+        klantLoyalty.LoyaltyPoints += pointsEarned;
+
+        await _context.SaveChangesAsync();
     }
 
 

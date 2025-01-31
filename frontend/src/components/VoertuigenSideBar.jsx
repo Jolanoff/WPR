@@ -13,13 +13,17 @@ function VoertuigenSidebar({
     onBrandFilterChange,
     setTrekvermogenFilter,
     setAantalDeurenFilter,
-    setSlaapplaatsenFilter
+    setSlaapplaatsenFilter,
+    voertuigen, 
+    setLocatieFilter, 
 }) {
     const [startDatum, setStartDatum] = useState(parentStartDatum);
     const [eindDatum, setEindDatum] = useState(parentEindDatum);
     const [errorMessage, setErrorMessage] = useState("");
     const [showAllBrands, setShowAllBrands] = useState(false);
     const [allowedOptions, setAllowedOptions] = useState([]);
+    const [locatieFilter, setLocalLocatieFilter] = useState("");
+
     const { userRoles, fetchUserInfo, loading } = useAuthStore();
 
     useEffect(() => {
@@ -78,6 +82,17 @@ function VoertuigenSidebar({
 
     const displayedMerken = showAllBrands ? merken : merken.slice(0, 12);
 
+   
+    const uniekeLocaties = [
+        ...new Set(voertuigen.map((voertuig) => voertuig.locatie).filter(Boolean)),
+    ];
+
+    const handleLocatieChange = (e) => {
+        const selectedLocatie = e.target.value;
+        setLocalLocatieFilter(selectedLocatie);
+        setLocatieFilter(selectedLocatie); // Update parent component
+    };
+
     return (
         <div className="w-64 p-4 bg-gray-100 border-r">
             <h2 className="text-xl font-bold mb-4">Filters</h2>
@@ -87,7 +102,6 @@ function VoertuigenSidebar({
                 <h4>Start datum</h4>
                 <input
                     type="date"
-                    id="start-date-picker"
                     value={startDatum}
                     onChange={(e) => handleStartDatumChange(e.target.value)}
                     className="w-full rounded-md p-2 border border-black mb-4"
@@ -98,7 +112,6 @@ function VoertuigenSidebar({
                 <h4>Eind datum</h4>
                 <input
                     type="date"
-                    id="end-date-picker"
                     value={eindDatum}
                     onChange={(e) => handleEindDatumChange(e.target.value)}
                     className="w-full rounded-md p-2 border border-black mb-4"
@@ -113,6 +126,20 @@ function VoertuigenSidebar({
                     {allowedOptions.map((option) => (
                         <option key={option.value} value={option.value}>
                             {option.label}
+                        </option>
+                    ))}
+                </select>
+
+                <h3 className="font-semibold mb-2">Locatie</h3>
+                <select
+                    className="w-full rounded-md p-2 border border-black mb-4"
+                    value={locatieFilter}
+                    onChange={handleLocatieChange}
+                >
+                    <option value="">Alle Locaties</option>
+                    {uniekeLocaties.map((locatie) => (
+                        <option key={locatie} value={locatie}>
+                            {locatie}
                         </option>
                     ))}
                 </select>
@@ -133,29 +160,16 @@ function VoertuigenSidebar({
                         <div key={merk} className="flex items-center">
                             <input
                                 type="checkbox"
-                                id={`merk-${merk}`}
                                 checked={brandFilter.includes(merk)}
                                 onChange={() => toggleMerk(merk)}
                                 className="mr-2 w-4 h-4"
                             />
-                            <label
-                                htmlFor={`merk-${merk}`}
-                                className="text-sm flex-grow overflow-hidden whitespace-nowrap overflow-ellipsis"
-                            >
+                            <label className="text-sm flex-grow overflow-hidden whitespace-nowrap overflow-ellipsis">
                                 {merk}
                             </label>
                         </div>
                     ))}
                 </div>
-
-                {merken.length > 12 && (
-                    <button
-                        onClick={() => setShowAllBrands(!showAllBrands)}
-                        className="w-full bg-blue-500 text-white py-1 rounded-md hover:bg-blue-600 transition-colors"
-                    >
-                        {showAllBrands ? "Minder tonen" : "Meer tonen"}
-                    </button>
-                )}
 
                 <h3 className="font-semibold mb-2 mt-4">Trekvermogen (kg)</h3>
                 <input

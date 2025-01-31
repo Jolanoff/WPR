@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using backend.Models.Voertuigen;  // Zorg ervoor dat de juiste namespaces worden geïmporteerd
+using backend.Models.Voertuigen; 
 using System.ComponentModel.DataAnnotations;
 using backend.DbContext;
 using backend.Models.Aanvragen;
 using backend.Dtos.Aanvragen;
+using System.Security.Claims;
 
 
 [ApiController]
@@ -12,25 +13,43 @@ public class VoertuigUitgiftenController : ControllerBase
 {
     private readonly ApplicationsDbContext _context;
 
-    // Constructor om de DbContext te injecteren
+
     public VoertuigUitgiftenController(ApplicationsDbContext context)
     {
         _context = context;
     }
 
-    // Endpoint voor het ophalen van uitgiften
     [HttpGet("uitgiften")]
     public IActionResult GetUitgiften()
     {
+
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new { message = "Gebruiker niet geauthenticeerd" });
+        }
+
+        var medewerker = _context.Medewerkers
+            .FirstOrDefault(m => m.UserId == userId);
+
+        if (medewerker == null)
+        {
+            return NotFound(new { message = "Frontoffice medewerker niet gevonden" });
+        }
+
+        var locatie = medewerker.Locatie; 
+
         var uitgiften = _context.Uitgiften
-            .Where(u => u.Status == "Klaar om opgehaald te worden")
-            
-            .Select(u => new {
+            .Where(u => u.Status == "Klaar om opgehaald te worden" && u.Voertuig.Locatie == locatie)
+            .Select(u => new
+            {
                 u.Id,
                 u.CustomerName,
                 u.VoertuigId,
                 u.KlantId,
                 u.Status,
+                u.Voertuig,
                 IssueDate = u.IssueDate.Date,
                 ToDate = u.ToDate.Date
             })
@@ -39,31 +58,48 @@ public class VoertuigUitgiftenController : ControllerBase
         return Ok(uitgiften);
     }
 
-    
-    
-[HttpGet("uitgifte/{id}")]
-public IActionResult GetUitgifteById(int id)
-{
-    var uitgifte = _context.Uitgiften
-        .Where(u => u.Id == id)
-        .Select(u => new
-        {
-            u.CustomerName,
-            u.VoertuigId,
-            u.Remarks,
-            FromDate = u.IssueDate.ToString("yyyy-MM-dd"),
-            ToDate = u.ToDate.ToString("yyyy-MM-dd")
-        })
-        .FirstOrDefault();
-
-    if (uitgifte == null)
+    [HttpGet("uitgifte/{id}")]
+    public IActionResult GetUitgifteById(int id)
     {
-        return NotFound(new { message = "Uitgifte niet gevonden" });
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new { message = "Gebruiker niet geauthenticeerd" });
+        }
+
+        var medewerker = _context.Medewerkers
+            .FirstOrDefault(m => m.UserId == userId);
+
+        if (medewerker == null)
+        {
+            return NotFound(new { message = "Frontoffice medewerker niet gevonden" });
+        }
+
+        var locatie = medewerker.Locatie;
+
+        var uitgifte = _context.Uitgiften
+            .Where(u => u.Id == id && u.Voertuig.Locatie == locatie) 
+            .Select(u => new
+            {
+                u.CustomerName,
+                u.VoertuigId,
+                u.Remarks,
+                FromDate = u.IssueDate.ToString("yyyy-MM-dd"),
+                ToDate = u.ToDate.ToString("yyyy-MM-dd")
+            })
+            .FirstOrDefault();
+
+        if (uitgifte == null)
+        {
+            return NotFound(new { message = "Uitgifte niet gevonden of niet beschikbaar voor uw locatie" });
+        }
+
+        return Ok(uitgifte);
     }
 
-    return Ok(uitgifte);
-}
-[HttpPost("accept/{id}")]
+
+    [HttpPost("accept/{id}")]
 public IActionResult AcceptUitgifte(int id, [FromBody] AcceptUitgifteRequest request)
 {
     // Controleer of het model voldoet aan de validatie

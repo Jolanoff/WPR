@@ -36,55 +36,43 @@ const UitgiftePage = () => {
     fetchUitgiften();
   }, []);
 
-  // Datumhelpers
-  const getCurrentDate = () => {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    return now;
-  };
-
-  const [today] = useState(getCurrentDate());
-
   // Categoriseer uitgiften
   const categorizeUitgiften = () => {
-    const todayUitgiften = [];
-    const futureUitgiften = [];
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    uitgiften.forEach(uitgifte => {
-      try {
+    return uitgiften.reduce(
+      (acc, uitgifte) => {
         const issueDate = new Date(uitgifte.issueDate);
         issueDate.setHours(0, 0, 0, 0);
 
         if (issueDate.getTime() === today.getTime()) {
-          todayUitgiften.push(uitgifte);
+          acc.todayUitgiften.push(uitgifte);
         } else if (issueDate > today) {
-          futureUitgiften.push(uitgifte);
+          acc.futureUitgiften.push(uitgifte);
         }
-      } catch (error) {
-        console.warn("Ongeldige datum:", uitgifte.issueDate);
-      }
-    });
-
-    return { todayUitgiften, futureUitgiften };
+        return acc;
+      },
+      { todayUitgiften: [], futureUitgiften: [] }
+    );
   };
 
   const { todayUitgiften, futureUitgiften } = categorizeUitgiften();
 
-  // Handlers
+  // Vul automatisch de formuliergegevens bij het accepteren
   const handleAcceptClick = (uitgifte) => {
     setSelectedUitgifte(uitgifte);
     setFormData({
       customerName: uitgifte.customerName,
       voertuigId: uitgifte.voertuigId.toString(),
       klantId: uitgifte.klantId.toString(),
-      fromDate: formatDateForInput(uitgifte.issueDate),
-      toDate: isValidDate(uitgifte.toDate) 
-        ? formatDateForInput(uitgifte.toDate) 
-        : "",
+      fromDate: formatDateForInput(uitgifte.issueDate), // Auto-filled start date
+      toDate: isValidDate(uitgifte.toDate) ? formatDateForInput(uitgifte.toDate) : "", // Auto-filled end date
       remarks: ""
     });
   };
 
+  // Verzenden van acceptatie
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -94,9 +82,7 @@ const UitgiftePage = () => {
         toDate: formData.toDate ? new Date(formData.toDate) : null
       });
 
-      setUitgiften(prev => 
-        prev.filter(u => u.id !== selectedUitgifte.id)
-      );
+      setUitgiften((prev) => prev.filter((u) => u.id !== selectedUitgifte.id));
       setSelectedUitgifte(null);
       alert("Uitgifte succesvol geaccepteerd!");
     } catch (error) {
@@ -105,27 +91,15 @@ const UitgiftePage = () => {
     }
   };
 
-  // Hulpfunctions
+  // Datum helpers
   const formatDateForInput = (dateString) => {
-    try {
-      return new Date(dateString).toISOString().split("T")[0];
-    } catch {
-      return "";
-    }
-  };
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+};
+
 
   const isValidDate = (dateString) => {
     return !dateString.startsWith("0001-01-01") && !isNaN(new Date(dateString));
-  };
-
-  const formatDisplayDate = (dateString) => {
-    if (!isValidDate(dateString)) return "Niet beschikbaar";
-    
-    return new Date(dateString).toLocaleDateString("nl-NL", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric"
-    });
   };
 
   return (
@@ -164,47 +138,15 @@ const UitgiftePage = () => {
           </h2>
           
           <form onSubmit={handleSubmit} className="space-y-4">
-            <FormField
-              label="Klantnaam"
-              name="customerName"
-              value={formData.customerName}
-              onChange={(e) => setFormData({...formData, customerName: e.target.value})}
-              required
-            />
+            <FormField label="Klantnaam" value={formData.customerName} disabled />
 
-            <FormField
-              label="Voertuig ID"
-              name="voertuigId"
-              value={formData.voertuigId}
-              disabled
-            />
+            <FormField label="Voertuig ID" value={formData.voertuigId} disabled />
 
-            <FormField
-              label="Klant ID"
-              name="klantId"
-              value={formData.klantId}
-              disabled
-            />
+            <FormField label="Klant ID" value={formData.klantId} disabled />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormField
-                label="Vanaf datum"
-                type="date"
-                name="fromDate"
-                value={formData.fromDate}
-                onChange={(e) => setFormData({...formData, fromDate: e.target.value})}
-                required
-              />
-
-              <FormField
-                label="Tot datum"
-                type="date"
-                name="toDate"
-                value={formData.toDate}
-                onChange={(e) => setFormData({...formData, toDate: e.target.value})}
-                disabled={!isValidDate(selectedUitgifte.toDate)}
-                title={!isValidDate(selectedUitgifte.toDate) ? "Innamedatum niet beschikbaar" : ""}
-              />
+              <FormField label="Vanaf datum" value={formData.fromDate} disabled />
+              <FormField label="Tot datum" value={formData.toDate} disabled />
             </div>
 
             <FormField
@@ -212,7 +154,7 @@ const UitgiftePage = () => {
               type="textarea"
               name="remarks"
               value={formData.remarks}
-              onChange={(e) => setFormData({...formData, remarks: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
               className="h-32"
             />
 
@@ -245,11 +187,7 @@ const Section = ({ title, uitgiften, onAccept, className }) => (
     <div className="space-y-3">
       {uitgiften.length > 0 ? (
         uitgiften.map(uitgifte => (
-          <UitgifteCard
-            key={uitgifte.id}
-            uitgifte={uitgifte}
-            onAccept={onAccept}
-          />
+          <UitgifteCard key={uitgifte.id} uitgifte={uitgifte} onAccept={onAccept} />
         ))
       ) : (
         <p className="text-gray-500 text-sm">Geen uitgiften gevonden</p>
@@ -259,70 +197,25 @@ const Section = ({ title, uitgiften, onAccept, className }) => (
 );
 
 const UitgifteCard = ({ uitgifte, onAccept }) => (
-  <div className="bg-white p-4 rounded shadow-sm border border-gray-100 hover:border-blue-200 transition-all">
+  <div className="bg-white p-4 rounded shadow-sm border hover:border-blue-200 transition-all">
     <div className="flex justify-between items-start">
       <div>
-        <h3 className="font-medium text-gray-800">{uitgifte.customerName}</h3>
-        <div className="text-sm text-gray-600 mt-1 space-y-1">
-          <p>Voertuig ID: {uitgifte.voertuigId}</p>
-          <p>Ophaaldatum: {new Date(uitgifte.issueDate).toLocaleDateString("nl-NL")}</p>
-          <p>Innamedatum: {uitgifte.toDate.startsWith("0001") 
-              ? "Nog niet bepaald" 
-              : new Date(uitgifte.toDate).toLocaleDateString("nl-NL")}
-          </p>
-        </div>
+        <h3 className="font-medium text-gray-800">Klant: {uitgifte.customerName}</h3>
+        <p className="text-sm text-gray-600 mt-1">Voertuig: {uitgifte.voertuig.merk + " " + uitgifte.voertuig.type}</p>
+        <p className="text-sm text-gray-600 mt-1">Kenteken: {uitgifte.voertuig.kenteken}</p>
+
       </div>
-      <button
-        onClick={() => onAccept(uitgifte)}
-        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
-      >
+      <button onClick={() => onAccept(uitgifte)} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm">
         Accepteren
       </button>
     </div>
   </div>
 );
 
-const FormField = ({ 
-  label, 
-  type = "text", 
-  name, 
-  value, 
-  onChange, 
-  disabled = false,
-  required = false,
-  className = "",
-  ...props 
-}) => (
-  <div className={`space-y-1 ${className}`}>
-    <label className="block text-sm font-medium text-gray-700">
-      {label}
-      {required && <span className="text-red-500"> *</span>}
-    </label>
-    {type === "textarea" ? (
-      <textarea
-        className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-          disabled ? "bg-gray-100 cursor-not-allowed" : ""
-        }`}
-        name={name}
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        {...props}
-      />
-    ) : (
-      <input
-        type={type}
-        className={`w-full p-2 border rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
-          disabled ? "bg-gray-100 cursor-not-allowed" : ""
-        }`}
-        name={name}
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        required={required}
-        {...props}
-      />
-    )}
+const FormField = ({ label, value, type = "text", disabled }) => (
+  <div className="space-y-1">
+    <label className="block text-sm font-medium text-gray-700">{label}</label>
+    <input type={type} className="w-full p-2 border rounded-md bg-gray-100 cursor-not-allowed" value={value} disabled />
   </div>
 );
 

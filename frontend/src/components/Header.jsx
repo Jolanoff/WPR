@@ -13,6 +13,9 @@ export default function Header() {
         const commonLinks = [
             { href: "/dashboard", label: "Home" },
             { href: "/huren", label: "Aanbod" },
+            { href: "/blog", label: "Blog" },
+
+
         ];
         const adminLinks = [
             { href: "/admin", label: "Admin Dashboard"  },
@@ -41,7 +44,10 @@ export default function Header() {
         ];
         const KlantenLinks = [
             { href: "/huren-history", label: "Mijn Huuraanvragen" },
-
+            { href: "/loyalty", label: "Punten" },
+        ];
+        const FrontOfficeLinks = [
+            { href: "/manage-blog", label: "Manage Blog" },
 
         ];
 
@@ -53,6 +59,9 @@ export default function Header() {
         }
         if (userRoles.includes("BackOfficeMedewerker")) {
             links = [...links, ...BackofficeLinks];
+        }
+        if (userRoles.includes("FrontOfficeMedewerker")) {
+            links = [...links, ...FrontOfficeLinks];
         }
 
         if (

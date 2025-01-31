@@ -28,6 +28,9 @@ import PrivacyverklaringBewerkRouter from "./routes/PrivacyverklaringbewerkRoute
 import SuccessRouter from "./routes/Huren/SuccessRouter";
 import VoertuigenBeheerRouter from "./routes/BackOfficeMedewerker/VoertuigenBeheerRouter";
 import VerhuurdeVoertuigenRouter from "./routes/bedrijf/VerhuurdeVoertuigenRouter";
+import LoyaltyRouter from "./routes/LoyaltyRouter";
+import BlogRouter from "./routes/BlogRouter";
+import ManageBlogRouter from "./routes/ManageBlogRouter";
 
 
 const routes = [
@@ -63,13 +66,17 @@ const routes = [
             ...HuurAanvragenRouter,
             ...UitgifteRouter,
             ...InnameRouter,
-
+            ...LoyaltyRouter,
 
             //Privacyverklaring
             ...PrivacyverklaringBewerkRouter,
-            ...PrivacyverklaringRouter
+            ...PrivacyverklaringRouter,
 
-            ...VoertuigenBeheerRouter
+            ...VoertuigenBeheerRouter,
+
+            ...BlogRouter,
+            ...ManageBlogRouter
+
 
 
         ],

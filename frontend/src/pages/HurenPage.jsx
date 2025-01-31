@@ -26,6 +26,8 @@ function HurenPage() {
     const [aantalDeurenFilter, setAantalDeurenFilter] = useState("");
     const [slaapplaatsenFilter, setSlaapplaatsenFilter] = useState("");
 
+    const [locatieFilter, setLocatieFilter] = useState("");
+
     const fetchVoertuigen = async () => {
         setLoading(true);
         setError(null);
@@ -33,6 +35,7 @@ function HurenPage() {
             const response = await api.post("/Voertuig", {
                 startDatum,
                 eindDatum,
+                locatie : locatieFilter,
             });
 
             setVoertuigen(response.data);
@@ -71,12 +74,15 @@ function HurenPage() {
             slaapplaatsenFilter === "" ||
             voertuig.slaapplaatsen >= Number(slaapplaatsenFilter);
 
+        const locatieCondition = locatieFilter === "" || voertuig.locatie === locatieFilter;
+
         return (
             typeCondition &&
             brandCondition &&
             trekvermogenCondition &&
             aantalDeurenCondition &&
-            slaapplaatsenCondition
+            slaapplaatsenCondition &&
+            locatieCondition
         );
     });
 
@@ -98,6 +104,8 @@ function HurenPage() {
                 setTrekvermogenFilter={setTrekvermogenFilter}
                 setAantalDeurenFilter={setAantalDeurenFilter}
                 setSlaapplaatsenFilter={setSlaapplaatsenFilter}
+                voertuigen={voertuigen}
+                setLocatieFilter={setLocatieFilter}
             />
 
             <div className="flex-grow p-4">
@@ -121,6 +129,7 @@ function HurenPage() {
                             reserveringen={voertuig.reserveringen}
                             startDatum={startDatum}
                             eindDatum={eindDatum}
+                            locatie={voertuig.locatie}
                         />
                     ))}
                 </div>

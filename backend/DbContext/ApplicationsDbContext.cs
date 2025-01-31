@@ -24,7 +24,7 @@ namespace backend.DbContext
         public DbSet<Medewerker> Medewerkers { get; set; }
 
 
-
+        public DbSet<LoyaltyProgram> LoyaltyPrograms { get; set; }
         public DbSet<Voertuig> Voertuigen { get; set; }
 
         public DbSet<Auto> Autos { get; set; }
@@ -34,7 +34,7 @@ namespace backend.DbContext
         public DbSet<Abonnement> Abonnementen { get; set; }
         public DbSet<Uitgifte> Uitgiften { get; set; }
         public DbSet<Inname> Innames { get; set; }
-
+        public DbSet<BlogPost> BlogPosts { get; set; }
 
 
         public DbSet<Schade> Schades { get; set; }

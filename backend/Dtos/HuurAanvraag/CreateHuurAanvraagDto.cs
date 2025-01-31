@@ -7,4 +7,6 @@ public class CreateHuurAanvraagDto
     public string AardVanReis { get; set; }
     public int VerwachteKilometers { get; set; }
     public int VoertuigId { get; set; }
+
+    public int UsedPoints { get; set; }
 }

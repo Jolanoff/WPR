@@ -22,7 +22,8 @@ public class VoertuigService
     public async Task<IEnumerable<VoertuigDto>> GetAllVoertuigenAsync(
     DateTime checkStartDatum,
     DateTime checkEindDatum,
-    string userId
+    string userId,
+        string? locatieFilter = null
 )
     {
         // Fetch user and roles
@@ -50,6 +51,7 @@ public class VoertuigService
                 VoertuigType = v.VoertuigType,
                 imageUrl = v.imageUrl,
                 Prijs = v.Prijs,
+                Locatie = v.Locatie,
                 Reserveringen = v.Reserveringen.Select(r => new ReserveringDto
                 {
                     Id = r.Id,
@@ -61,6 +63,10 @@ public class VoertuigService
                 AantalDeuren = v is Auto ? ((Auto)v).AantalDeuren : (int?)null
             });
 
+        if (!string.IsNullOrEmpty(locatieFilter))
+        {
+            query = query.Where(v => v.Locatie.ToLower() == locatieFilter.ToLower());
+        }
         // Apply filtering for restricted roles
         if (roles.Any(role => restrictedRoles.Contains(role)))
         {
