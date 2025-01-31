@@ -37,7 +37,7 @@ function HurenPage() {
 
             setVoertuigen(response.data);
         } catch (error) {
-            setError(error.message || "Fout bij het ophalen van voertuigen");
+            setError(error.message || "Error fetching vehicles");
         } finally {
             setLoading(false);
         }
@@ -80,7 +80,7 @@ function HurenPage() {
         );
     });
 
-    if (loading) return <div>Aan het laden...</div>;
+    if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
 
     return (

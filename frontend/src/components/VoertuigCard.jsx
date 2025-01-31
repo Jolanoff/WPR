@@ -20,7 +20,7 @@ export default function VoertuigCard({
     eindDatum
 }) {
     const navigate = useNavigate();
-    const [ToonReserveringen, setToonReserveringen] = useState(false);
+    const [showReservations, setShowReservations] = useState(false);
 
     const handleRent = () => {
         navigate("/aanvraag", {
@@ -96,16 +96,16 @@ export default function VoertuigCard({
                     <button
                         type="button"
                         className="w-full mt-4 py-3 bg-gray-500 text-white font-semibold rounded-md hover:bg-gray-600 transition duration-300"
-                        onClick={() => setToonReserveringen(!ToonReserveringen)}
+                        onClick={() => setShowReservations(!showReservations)}
                     >
-                        {ToonReserveringen
+                        {showReservations
                             ? "Verberg reserveringen"
                             : "Toon reserveringen"}
                     </button>
                 )}
             </div>
 
-            {ToonReserveringen && status && (
+            {showReservations && status && (
                 <div className="mt-4 bg-gray-100 p-4 rounded-md shadow-md max-w-md">
                     <h2 className="text-lg font-bold mb-2">Reserveringen</h2>
                     {reserveringen && reserveringen.length > 0 ? (

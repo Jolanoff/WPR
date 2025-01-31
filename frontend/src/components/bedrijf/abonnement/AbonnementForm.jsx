@@ -5,7 +5,7 @@ const AbonnementForm = ({ onSubmit, formData, setFormData }) => {
 
     const [customAmount, setCustomAmount] = useState(formData.customAmount || "");
 
-    const berekenPrijsMetKorting = (amount) => {
+    const calculateDiscountedPrice = (amount) => {
         let numericAmount = parseFloat(amount);
 
         if (isNaN(numericAmount) || numericAmount < 500) {
@@ -28,7 +28,7 @@ const AbonnementForm = ({ onSubmit, formData, setFormData }) => {
             setFormData((prev) => ({ ...prev, kosten: 50, customAmount: "" }));
             setCustomAmount("");
         } else if (formData.abonnementType === "prepaid" && customAmount) {
-            const discountedPrice = berekenPrijsMetKorting(customAmount);
+            const discountedPrice = calculateDiscountedPrice(customAmount);
             setFormData((prev) => ({
                 ...prev,
                 kosten: discountedPrice,

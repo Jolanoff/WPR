@@ -2,7 +2,7 @@ import React from "react";
 import BedrijfField from "./BedrijfField";
 
 const RegisterForm = ({ formData, setFormData, onSubmit, responsePayload }) => {
-  const handleVerandering = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
   
     if (name.startsWith("adres.")) {
@@ -62,7 +62,7 @@ const RegisterForm = ({ formData, setFormData, onSubmit, responsePayload }) => {
             id={id}
             name={id}
             value={formData[id]}
-            onChange={handleVerandering}
+            onChange={handleChange}
             required
             className="w-full mt-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
           />
@@ -77,7 +77,7 @@ const RegisterForm = ({ formData, setFormData, onSubmit, responsePayload }) => {
           id="role"
           name="role"
           value={formData.role}
-          onChange={handleVerandering}
+          onChange={handleChange}
           className="w-full mt-2 p-2 border rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none"
         >
           <option value="ParticuliereHuurder">Particulier</option>
@@ -88,7 +88,7 @@ const RegisterForm = ({ formData, setFormData, onSubmit, responsePayload }) => {
       {formData.role === "Bedrijf" && (
         <BedrijfField
           kvkNummer={formData.kvkNummer}
-          onChange={handleVerandering}
+          onChange={handleChange}
         />
       )}
 

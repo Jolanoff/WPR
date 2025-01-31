@@ -4,8 +4,8 @@ import UseAuthorization from "../../utils/UseAuthorization";
 
 
 const VerhuurdeVoertuigenPage = () => {
-  const [jaar, setJaar] = useState(new Date().getFullYear());
-  const [maand, setMaand] = useState("");
+  const [year, setYear] = useState(new Date().getFullYear());
+  const [month, setMonth] = useState("");
   const [verhuurdeVoertuigen, setVerhuurdeVoertuigen] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -17,7 +17,7 @@ const VerhuurdeVoertuigenPage = () => {
     setLoading(true);
     setError("");
     try {
-      const response = await api.get(`/bedrijf/verhuurde-voertuigen?jaar=${jaar}&maand=${maand || ""}`);
+      const response = await api.get(`/bedrijf/verhuurde-voertuigen?year=${year}&month=${month || ""}`);
       setVerhuurdeVoertuigen(response.data);
     } catch (err) {
       setError(err.response?.data?.message || "Fout bij het ophalen van gegevens.");
@@ -29,23 +29,23 @@ const VerhuurdeVoertuigenPage = () => {
   if (!isAuthorized) return <div>U bent niet bevoegd om deze pagina te bekijken.</div>;
   return (
     <div className="min-h-screen p-6 bg-gray-100">
-      <h1 className="text-3xl font-bold mb-6 text-center">Overzicht Verhuurde Voertuigen</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Verhuurde Voertuigen Overzicht</h1>
       
       <div className="mb-6">
-        <label className="block text-gray-700 font-medium mb-2">Selecteer jaar</label>
+        <label className="block text-gray-700 font-medium mb-2">Selecteer Jaar</label>
         <input 
           type="number" 
-          value={jaar} 
-          onChange={(e) => setJaar(e.target.value)} 
+          value={year} 
+          onChange={(e) => setYear(e.target.value)} 
           className="border rounded p-2 w-full" 
         />
       </div>
 
       <div className="mb-6">
-        <label className="block text-gray-700 font-medium mb-2">Selecteer maand (optioneel)</label>
+        <label className="block text-gray-700 font-medium mb-2">Selecteer Maand (optioneel)</label>
         <select 
-          value={maand} 
-          onChange={(e) => setMaand(e.target.value)} 
+          value={month} 
+          onChange={(e) => setMonth(e.target.value)} 
           className="border rounded p-2 w-full"
         >
           <option value="">Alle maanden</option>

@@ -4,7 +4,7 @@ const VoertuigUitgifteForm = ({ onSubmit, selectedVehicle }) => {
   const [formData, setFormData] = useState({
     customerName: "",
     voertuigId: "",
-    klantId: "", 
+    klantId: "", // Voeg KlantId toe
     fromDate: "",
     toDate: "",
     remarks: "",
@@ -16,7 +16,7 @@ const VoertuigUitgifteForm = ({ onSubmit, selectedVehicle }) => {
       setFormData({
         customerName: selectedVehicle.customerName || "",
         voertuigId: selectedVehicle.id || "",
-        klantId: selectedVehicle.klantId || "", 
+        klantId: selectedVehicle.klantId || "", // Vul klantId in
         fromDate: selectedVehicle.fromDate || "",
         toDate: selectedVehicle.toDate || "",
         remarks: selectedVehicle.remarks || "",
@@ -24,7 +24,7 @@ const VoertuigUitgifteForm = ({ onSubmit, selectedVehicle }) => {
     }
   }, [selectedVehicle]);
 
-  const handleVerandering = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
@@ -43,7 +43,7 @@ const VoertuigUitgifteForm = ({ onSubmit, selectedVehicle }) => {
           type="text"
           name="customerName"
           value={formData.customerName}
-          onChange={handleVerandering}
+          onChange={handleChange}
           required
         />
       </div>
@@ -55,7 +55,7 @@ const VoertuigUitgifteForm = ({ onSubmit, selectedVehicle }) => {
           type="text"
           name="voertuigId"
           value={formData.voertuigId}
-          onChange={handleVerandering}
+          onChange={handleChange}
           required
           disabled // Dit veld is alleen-lezen
         />
@@ -68,7 +68,7 @@ const VoertuigUitgifteForm = ({ onSubmit, selectedVehicle }) => {
           type="text"
           name="klantId"
           value={formData.klantId}
-          onChange={handleVerandering}
+          onChange={handleChange}
           required
         />
       </div>
@@ -80,7 +80,7 @@ const VoertuigUitgifteForm = ({ onSubmit, selectedVehicle }) => {
           type="date"
           name="fromDate"
           value={formData.fromDate}
-          onChange={handleVerandering}
+          onChange={handleChange}
           required
         />
       </div>
@@ -92,7 +92,7 @@ const VoertuigUitgifteForm = ({ onSubmit, selectedVehicle }) => {
           type="date"
           name="toDate"
           value={formData.toDate}
-          onChange={handleVerandering}
+          onChange={handleChange}
           required
         />
       </div>
@@ -103,7 +103,7 @@ const VoertuigUitgifteForm = ({ onSubmit, selectedVehicle }) => {
         <textarea
           name="remarks"
           value={formData.remarks}
-          onChange={handleVerandering}
+          onChange={handleChange}
         ></textarea>
       </div>
       <button type="submit">Bevestigen</button>

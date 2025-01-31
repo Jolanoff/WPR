@@ -23,7 +23,7 @@ function DashboardPage() {
   // }, []);
 
   if (loading) {
-    return <div>Aan het laden...</div>;
+    return <div>Loading...</div>;
   }
 
   if (error) {

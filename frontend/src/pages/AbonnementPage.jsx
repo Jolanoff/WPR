@@ -24,7 +24,7 @@ const AbonnementPage = () => {
                 const response = await api.get("/bedrijf");
                 setAbonnementen(response.data);
             } catch (error) {
-                console.error("Fout bij het ophalen van abonnementen:", error);
+                console.error("Fout bij ophalen abonnementen:", error);
             }
         };
 
@@ -41,7 +41,7 @@ const AbonnementPage = () => {
             };
 
             await api.post("/bedrijf", payload);
-            alert("Abonnement succesvol aangemaakt");
+            alert("Abonnement succesvol aangemaakt!");
             setAbonnementen((prev) => [...prev, payload]);
         } catch (error) {
             alert(error.response?.data.message || "Er is iets misgegaan.");
@@ -51,14 +51,14 @@ const AbonnementPage = () => {
     const handleCancel = async (id) => {
         try {
             await api.delete(`/bedrijf/cancel`);
-            alert("Abonnement succesvol geannuleerd");
+            alert("Abonnement succesvol geannuleerd!");
             setAbonnementen((prev) =>
                 prev.map((abonnement) =>
                     abonnement.id === id ? { ...abonnement, stopDatum: new Date().toISOString() } : abonnement
                 )
             );
         } catch (error) {
-            console.error("Fout bij het annuleren van abonnement:", error);
+            console.error("Fout bij annuleren abonnement:", error);
         }
     };
 

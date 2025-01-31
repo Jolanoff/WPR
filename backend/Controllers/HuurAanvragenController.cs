@@ -27,7 +27,7 @@ public class HuurAanvraagController : ControllerBase
 
             if (string.IsNullOrEmpty(userId))
             {
-                return Unauthorized(new { message = "Gebruiker is niet geauthenticeerd" });
+                return Unauthorized(new { message = "User is not authenticated." });
             }
 
             var createdAanvraag = await _huurAanvraagService.CreateHuurAanvraagAsync(userId, aanvraagDto);
@@ -39,7 +39,7 @@ public class HuurAanvraagController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Er heeft zich een fout voorgedaan", error = ex.Message });
+            return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
         }
     }
 
@@ -54,7 +54,7 @@ public class HuurAanvraagController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Er heeft zich een fout voorgedaan", error = ex.Message });
+            return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
         }
     }
 
@@ -73,7 +73,7 @@ public class HuurAanvraagController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Er heeft zich een fout voorgedaan", error = ex.Message });
+            return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
         }
     }
     [Authorize(Roles = "BackOfficeMedewerker,Admin")]
@@ -82,7 +82,7 @@ public class HuurAanvraagController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(reason))
         {
-            return BadRequest(new { message = "Het reden is vereist" });
+            return BadRequest(new { message = "The reason field is required." });
         }
 
         try
@@ -96,7 +96,7 @@ public class HuurAanvraagController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Er heeft zich een fout voorgedaan", error = ex.Message });
+            return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
         }
     }
     [Authorize(Roles = "ParticuliereHuurder,ZakelijkeHuurder,Wagenparkbeheerder,Bedrijf")]
@@ -121,7 +121,7 @@ public class HuurAanvraagController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Er heeft zich een fout voorgedaan", error = ex.Message });
+            return StatusCode(500, new { message = "An error occurred.", error = ex.Message });
         }
     }
 

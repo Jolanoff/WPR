@@ -59,7 +59,7 @@ const SchademeldingenPage = () => {
 
   if (!isAuthorized)
     return <div>U bent niet bevoegd om deze pagina te bekijken.</div>;
-  if (loading) return <div>Bezig met laden...</div>;
+  if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
   return (

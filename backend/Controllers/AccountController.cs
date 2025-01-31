@@ -14,12 +14,12 @@ namespace backend.Controllers
     public class AccountController : ControllerBase
     {
         private readonly AccountService _accountService;
-        private readonly UserManager<User> _gebruikersManager;
+        private readonly UserManager<User> _userManager;
 
-        public AccountController(AccountService accountService, UserManager<User> gebruikersManager)
+        public AccountController(AccountService accountService, UserManager<User> userManager)
         {
             _accountService = accountService;
-            _gebruikersManager = gebruikersManager;
+            _userManager = userManager;
         }
 
         [HttpGet("Account")]
@@ -31,8 +31,9 @@ namespace backend.Controllers
                 return Unauthorized();
 
             var profile = await _accountService.GetProfileAsync(userId);
-            return profile != null ? Ok(profile) : NotFound(new { message = "Gebruiker niet gevonden" });
+            return profile != null ? Ok(profile) : NotFound(new { message = "User not found" });
         }
+
 
         [HttpPut("Account")]
         [Authorize]
@@ -42,9 +43,9 @@ namespace backend.Controllers
             {
                 var errors = ModelState.ToDictionary(
                     kvp => kvp.Key,
-                    kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-                );
-                return BadRequest(ModelState);
+                     kvp => kvp.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+                 );
+                return BadRequest(ModelState); // Return validation errors
             }
 
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -57,6 +58,7 @@ namespace backend.Controllers
                 : BadRequest(new { message });
         }
 
+
         [HttpDelete("Account")]
         [Authorize]
         public async Task<IActionResult> DeleteAccount()
@@ -68,12 +70,13 @@ namespace backend.Controllers
             var success = _accountService.DeleteAccount(userId);
             if (success)
             {
-                await HttpContext.SignOutAsync();
-                return Ok(new { message = "Account succesvol verwijdert" });
+                await HttpContext.SignOutAsync(); 
+                return Ok(new { message = "Account deleted successfully" });
             }
 
-            return BadRequest(new { message = "Niet gelukt om account te verwijderen" });
+            return BadRequest(new { message = "Delete failed" });
         }
+
 
         [HttpPut("Account/ChangePassword")]
         [Authorize]
@@ -84,7 +87,7 @@ namespace backend.Controllers
                 return Unauthorized();
 
             var success = await _accountService.ChangePasswordAsync(userId, dto);
-            return success ? Ok(new { message = "Wachtwoord succesvol verandert" }) : BadRequest(new { message = "Niet gelukt om wachtwoord aan te passen" });
+            return success ? Ok(new { message = "Password updated successfully" }) : BadRequest(new { message = "Password update failed" });
         }
 
         [Authorize]
@@ -95,14 +98,14 @@ namespace backend.Controllers
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (userId == null)
-                    return Unauthorized(new { message = "Gebruiker is niet geauthenticeerd" });
+                    return Unauthorized(new { message = "User not authenticated." });
 
-                var user = await _gebruikersManager.FindByIdAsync(userId);
+                var user = await _userManager.FindByIdAsync(userId);
                 if (user == null)
-                    return NotFound(new { message = "Gebruiker niet gevonden" });
+                    return NotFound(new { message = "User not found." });
 
-                var roles = await _gebruikersManager.GetRolesAsync(user);
-                return Ok(new { roles });
+                var roles = await _userManager.GetRolesAsync(user);
+                return Ok(new {roles}); 
             }
             catch (Exception ex)
             {

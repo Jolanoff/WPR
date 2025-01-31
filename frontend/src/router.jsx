@@ -67,7 +67,7 @@ const routes = [
 
             //Privacyverklaring
             ...PrivacyverklaringBewerkRouter,
-            ...PrivacyverklaringRouter,
+            ...PrivacyverklaringRouter
 
             ...VoertuigenBeheerRouter
 

@@ -6,6 +6,7 @@ const RestoreVoertuigenModal = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  // Fetch voertuigen marked for deletion
   const fetchMarkedVoertuigen = async () => {
     setLoading(true);
     setError("");
@@ -14,10 +15,10 @@ const RestoreVoertuigenModal = ({ isOpen, onClose }) => {
       setVoertuigen(response.data);
 
       if (response.data.length === 0) {
-        setError("Geen voertuigen gemarkeerd voor verwijdering.");
+        setError("No voertuigen marked for deletion.");
       }
     } catch (err) {
-      setError(err.response?.data?.message || "Niet gelukt om voertuigen op te halen.");
+      setError(err.response?.data?.message || "Failed to fetch voertuigen.");
     } finally {
       setLoading(false);
     }
@@ -27,10 +28,10 @@ const RestoreVoertuigenModal = ({ isOpen, onClose }) => {
     setError("");
     try {
       await api.put(`/Voertuig/Restore/${id}`);
-      alert("Voertuig succesvol teruggebracht.");
+      alert("Voertuig restored successfully.");
       setVoertuigen(prevVoertuigen => prevVoertuigen.filter(v => v.id !== id));
     } catch (err) {
-      alert(err.response?.data?.message || "Niet gelukt om voertuig terug te halen.");
+      alert(err.response?.data?.message || "Failed to restore voertuig.");
     }
   };
 
@@ -53,9 +54,9 @@ const RestoreVoertuigenModal = ({ isOpen, onClose }) => {
           &times;
         </button>
 
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Voertuigen terughalen</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Restore Voertuigen</h2>
 
-        {loading && <p className="text-gray-500">Aan het laden...</p>}
+        {loading && <p className="text-gray-500">Loading...</p>}
         {error && <p className="text-red-500">{error}</p>}
 
         
@@ -74,7 +75,7 @@ const RestoreVoertuigenModal = ({ isOpen, onClose }) => {
                   onClick={() => handleRestore(v.id)}
                   className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
                 >
-                  Terughalen
+                  Restore
                 </button>
               </li>
             ))}
@@ -86,7 +87,7 @@ const RestoreVoertuigenModal = ({ isOpen, onClose }) => {
             onClick={onClose}
             className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
           >
-            Sluit
+            Close
           </button>
         </div>
       </div>

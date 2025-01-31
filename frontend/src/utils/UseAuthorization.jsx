@@ -18,7 +18,7 @@ const UseAuthorization = (allowedRoles) => {
                     setIsAuthorized(true);
                 }
             } catch (error) {
-                console.error("Error bij het controleren van rollen:", error);
+                console.error("Error checking roles:", error);
             }
         };
 

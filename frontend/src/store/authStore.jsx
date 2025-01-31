@@ -26,7 +26,7 @@ export const useAuthStore = create(
           });
         } catch (err) {
           set({
-            error: err.response?.data?.message || "Niet gelukt om informatie op te halen",
+            error: err.response?.data?.message || "Failed to fetch user info",
             loading: false,
             isLoggedIn: false,
             userInfo: null,
@@ -49,10 +49,10 @@ export const useAuthStore = create(
           });
         } catch (err) {
           set({
-            error: err.response?.data?.message || "Niet gelukt om uit te loggen",
+            error: err.response?.data?.message || "Logout failed",
             loading: false,
           });
-          console.error("Niet gelukt om uit te loggen:", err.response?.data?.message);
+          console.error("Logout failed:", err.response?.data?.message);
         }
       },
     }),

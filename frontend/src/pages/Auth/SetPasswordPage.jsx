@@ -5,7 +5,7 @@ import { RedirectIfLoggedIn } from "../../utils/RedirectIfLoggedIn";
 
 const SetPasswordPage = () => {
     const [password, setPassword] = useState("");
-    const [bevestigWachtwoord, setBevestigWachtwoord] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
@@ -28,7 +28,7 @@ const SetPasswordPage = () => {
             return;
         }
 
-        if (password !== bevestigWachtwoord) {
+        if (password !== confirmPassword) {
             setError("Wachtwoorden komen niet overeen.");
             return;
         }
@@ -42,7 +42,7 @@ const SetPasswordPage = () => {
             });
             setSuccess(true);
             alert(response.data.message || "Wachtwoord succesvol ingesteld!");
-            setTimeout(() => navigate("/login"), 2000);
+            setTimeout(() => navigate("/login"), 2000); // Redirect to login page
         } catch (err) {
             setError(err.response?.data.message || "Er is iets misgegaan.");
         } finally {
@@ -77,8 +77,8 @@ const SetPasswordPage = () => {
                             <label className="block font-medium mb-2">Bevestig wachtwoord</label>
                             <input
                                 type="password"
-                                value={bevestigWachtwoord}
-                                onChange={(e) => setBevestigWachtwoord(e.target.value)}
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
                                 className="border px-3 py-2 rounded w-full"
                                 required
                             />

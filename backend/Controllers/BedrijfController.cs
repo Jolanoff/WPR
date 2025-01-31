@@ -149,7 +149,7 @@ namespace backend.Controllers
                     return Ok(new { message = result });
                 }
 
-                return Forbid();
+                return Forbid(); // If neither role is valid for the requested action
             }
             catch (Exception ex)
             {

@@ -20,7 +20,7 @@ namespace backend.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterUserDto model)
         {
             if (!ModelState.IsValid)
-            return BadRequest(new { message = "Ongeldige invoer" });
+            return BadRequest(new { message = "Invalid input." });
 
             var (success, message) = await _authService.RegisterUserAsync(model);
             return success ? Ok(new { message }) : BadRequest(new { message });
@@ -30,7 +30,7 @@ namespace backend.Controllers
         public async Task<IActionResult> VerifyEmail([FromQuery] string userId, [FromQuery] string token)
         {
             var success = await _authService.VerifyEmailAsync(userId, token);
-            return success ? Ok(new { message = "Email succesvol geverifieerd" }) : BadRequest(new { message = "Niet gelukt om email te verifieeren" });
+            return success ? Ok(new { message = "Email verified successfully." }) : BadRequest(new { message = "Email verification failed." });
         }
 
         [HttpPost("login")]
@@ -44,7 +44,7 @@ namespace backend.Controllers
         public async Task<IActionResult> Logout()
         {
             await _authService.LogoutAsync();
-            return Ok(new { message = "Succesvol uitgelogd" });
+            return Ok(new { message = "Logout successful" });
         }
         [HttpPost("set-password")]
         public async Task<IActionResult> SetPassword([FromBody] SetPasswordDto model)

@@ -26,7 +26,7 @@ function ProfielPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState();
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
-  const [WachtwoordData, setWachtwoordData] = useState({
+  const [passwordData, setPasswordData] = useState({
     currentPassword: "",
     newPassword: "",
   });
@@ -95,10 +95,10 @@ function ProfielPage() {
 
   const handleChangePassword = async () => {
     try {
-      const response = await api.put("/Account/Account/ChangePassword", WachtwoordData);
+      const response = await api.put("/Account/Account/ChangePassword", passwordData);
       alert(response.data.message);
       setIsPasswordModalOpen(false);
-      setWachtwoordData({ currentPassword: "", newPassword: "" });
+      setPasswordData({ currentPassword: "", newPassword: "" });
     } catch (err) {
       setError(HandleApiErrors(err.response));
 
@@ -124,8 +124,8 @@ function ProfielPage() {
 
       {isPasswordModalOpen && (
         <PasswordModal
-          WachtwoordData={WachtwoordData}
-          setWachtwoordData={setWachtwoordData}
+          passwordData={passwordData}
+          setPasswordData={setPasswordData}
           onSave={handleChangePassword}
           onClose={() => setIsPasswordModalOpen(false)}
         />

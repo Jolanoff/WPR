@@ -26,14 +26,14 @@ namespace backend.Controllers
                 var Schades = await _schadeService.GetAllSchadesAsync();
                 if(Schades == null)
                 {
-                    return NotFound(new { message = "niets gevonden" });
+                    return NotFound(new { message = "niks gevonden" });
 
                 }
                 return Ok(Schades);
             }
             catch(Exception ex)
             {
-                return StatusCode(500, new { message = "Fout bij het ophalen van schades", details = ex.Message });
+                return StatusCode(500, new { message = "Error retrieving Schades", details = ex.Message });
             }
         }
 
@@ -45,7 +45,7 @@ namespace backend.Controllers
                 var updatedSchade = await _schadeService.SwitchSchadeStatusAsync(id, newStatus);
                 if (updatedSchade == null)
                 {
-                    return NotFound(new { message = "Schade niet gevonden" });
+                    return NotFound(new { message = "Schade not found." });
                 }
                 return Ok(updatedSchade);
             }
@@ -55,7 +55,7 @@ namespace backend.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "Fout bij het veranderen van status", details = ex.Message });
+                return StatusCode(500, new { message = "Error switching status.", details = ex.Message });
             }
         }
 
