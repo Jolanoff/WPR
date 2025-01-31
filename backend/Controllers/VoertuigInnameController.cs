@@ -6,6 +6,7 @@ using backend.Models.Voertuigen;
 using backend.Dtos.Aanvragen;
 using backend.Models.Aanvragen;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 [ApiController]
 [Route("api/vehicle")]
@@ -22,8 +23,24 @@ public class VoertuigInnameController : ControllerBase
     [HttpGet("innamen")]
     public IActionResult GetInnamen()
     {
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return Unauthorized(new { message = "Gebruiker niet geauthenticeerd" });
+        }
+
+        var medewerker = _context.Medewerkers
+            .FirstOrDefault(m => m.UserId == userId);
+
+        if (medewerker == null)
+        {
+            return NotFound(new { message = "Frontoffice medewerker niet gevonden" });
+        }
+        var locatie = medewerker.Locatie;
+
         var innamen = _context.Innames
-            .Where(i => i.Status == "Pending")
+            .Where(i => i.Status == "Pending" && i.Voertuig.Locatie == locatie)
             .Select(i => new
             {
                 i.Id,
