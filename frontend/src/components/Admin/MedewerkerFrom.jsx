@@ -9,6 +9,7 @@ const MedewerkerForm = ({ onUserAdded }) => {
         email: "",
         functie: "FrontOffice",
         role: "FrontOfficeMedewerker",
+        locatie: "" 
     });
 
     const handleInputChange = (e) => {
@@ -37,6 +38,7 @@ const MedewerkerForm = ({ onUserAdded }) => {
                 email: "",
                 functie: "FrontOffice",
                 role: "FrontOfficeMedewerker",
+                locatie: "" 
             });
             onUserAdded();
         } catch (error) {
@@ -89,6 +91,18 @@ const MedewerkerForm = ({ onUserAdded }) => {
                         value={formData.email}
                         onChange={handleInputChange}
                         className="border px-3 py-2 rounded w-full"
+                        required
+                    />
+                </div>
+                <div className="mb-4">
+                    <label className="block font-medium mb-2">Locatie</label> 
+                    <input
+                        type="text"
+                        name="locatie"
+                        value={formData.locatie}
+                        onChange={handleInputChange}
+                        className="border px-3 py-2 rounded w-full"
+                        placeholder="Bijv. Amsterdam, Den Haag"
                         required
                     />
                 </div>

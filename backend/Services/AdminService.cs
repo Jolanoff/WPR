@@ -19,7 +19,7 @@ namespace backend.Services
             _userManager = userManager;
             _emailService = emailService;
         }
-        public async Task<string> AddMedewerkerAsync(string gebruikersnaam, string voornaam, string achternaam, string email, string functie, string role)
+        public async Task<string> AddMedewerkerAsync(string gebruikersnaam, string voornaam, string achternaam, string email, string functie, string role, string locatie)
         {
             var newUser = new User
             {
@@ -43,7 +43,7 @@ namespace backend.Services
             {
                 Functie = role,
                 UserId = newUser.Id,
-                Locatie = "Denhaag",
+                Locatie = locatie,
                 User = newUser
 
             };
@@ -78,5 +78,28 @@ namespace backend.Services
             })
             .ToListAsync();
         }
+
+        public async Task<bool> DeleteMedewerkerAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user == null)
+                throw new KeyNotFoundException("Medewerker niet gevonden.");
+
+            var medewerker = await _context.Set<Medewerker>().FirstOrDefaultAsync(m => m.UserId == user.Id);
+            if (medewerker == null)
+                throw new KeyNotFoundException("Medewerker niet gevonden in het systeem.");
+
+            _context.Set<Medewerker>().Remove(medewerker);
+
+            
+            var result = await _userManager.DeleteAsync(user);
+            if (!result.Succeeded)
+                throw new InvalidOperationException("Fout bij het verwijderen van de gebruiker.");
+
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+
     }
 }

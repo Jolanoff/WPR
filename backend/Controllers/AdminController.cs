@@ -27,7 +27,9 @@ namespace backend.Controllers
                     dto.Achternaam,
                     dto.Email,
                     dto.Functie,
-                    dto.Role
+                    dto.Role,
+                    dto.Locatie
+
                 );
                 return Ok(new { message = result });
             }
@@ -51,5 +53,27 @@ namespace backend.Controllers
                 return StatusCode(500, new { message = "Error retrieving medewerkers", details = ex.Message });
             }
         }
+        [HttpDelete("delete-medewerker/{email}")]
+        public async Task<IActionResult> DeleteMedewerker(string email)
+        {
+            try
+            {
+                bool success = await _adminService.DeleteMedewerkerAsync(email);
+                if (success)
+                    return Ok(new { message = "Medewerker succesvol verwijderd." });
+
+                return BadRequest(new { message = "Verwijdering mislukt." });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Er is een fout opgetreden.", error = ex.Message });
+            }
+        }
+
+
     }
 }

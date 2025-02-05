@@ -4,6 +4,7 @@ using backend.Models.Gebruiker;
 using backend.Models.Klanten;
 using backend.Models.Klanten.Bedrijven;
 using Microsoft.AspNetCore.Identity;
+using System.Text.RegularExpressions;
 using System.Web;
 
 namespace backend.Services
@@ -34,6 +35,11 @@ namespace backend.Services
 
             if (await _userManager.FindByEmailAsync(model.Email) != null)
                 return (false, "Email is already in use.");
+
+            string passwordValidationMessage = ValidatePassword(model.Password);
+            if (!string.IsNullOrEmpty(passwordValidationMessage))
+                return (false, passwordValidationMessage);
+
 
             var user = new User
             {
@@ -90,6 +96,22 @@ namespace backend.Services
 
             return (true, "Account created. Please verify your email address.");
         }
+        private string ValidatePassword(string password)
+        {
+            if (password.Length < 8)
+                return "Password must be at least 8 characters long.";
+            if (!Regex.IsMatch(password, @"[A-Z]"))
+                return "Password must contain at least one uppercase letter.";
+            if (!Regex.IsMatch(password, @"[a-z]"))
+                return "Password must contain at least one lowercase letter.";
+            if (!Regex.IsMatch(password, @"[0-9]"))
+                return "Password must contain at least one number.";
+            if (!Regex.IsMatch(password, @"[\W_]"))
+                return "Password must contain at least one special character.";
+
+            return ""; 
+        }
+
 
         public async Task<bool> VerifyEmailAsync(string userId, string token)
         {

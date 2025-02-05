@@ -16,6 +16,8 @@ namespace backend.Dtos.Admin
         [Required]
         public string Functie { get; set; }
         [Required]
+        public string Locatie { get; set; }
+        [Required]
         public string Role { get; set; }
     }
 }
